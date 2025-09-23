@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 export const useCartStore = create(
   persist(
     (set, get) => ({
-      items: [],
+      items: [], // Your CheckoutForm calls this 'cartItems', but store uses 'items'
       addItem: (product) => {
         const items = get().items;
         const existingItem = items.find(item => item.id === product.id);
@@ -49,17 +49,5 @@ export const useCartStore = create(
   )
 );
 
-export const useAuthStore = create(
-  persist(
-    (set) => ({
-      user: null,
-      token: null,
-      isAdmin: false,
-      setUser: (user, token) => set({ user, token, isAdmin: user?.role === 'admin' }),
-      logout: () => set({ user: null, token: null, isAdmin: false }),
-    }),
-    {
-      name: 'auth-storage',
-    }
-  )
-);
+// For backward compatibility, you can also export as useStore
+export const useStore = useCartStore;

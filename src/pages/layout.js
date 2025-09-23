@@ -1,6 +1,7 @@
 import "./globals.css";
-import Header from "../components/Header";
+import Header from "../components/Layout/Header";
 import Footer from "../components/Footer";
+import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
   title: "School Mall Limited",
@@ -13,7 +14,7 @@ export default function RootLayout({ children }) {
       <body className="bg-gray-50 font-sans">
         {/* Promo bar */}
         <div className="bg-orange-500 text-white text-sm py-2 text-center">
-          Free Delivery on Orders Over KSh 5,000 | Call Us: +254 793 488207
+          Free Delivery on Orders Over KSh 3,000 | Call Us: +254 793 488207
         </div>
 
         <Header />

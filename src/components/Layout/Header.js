@@ -1,12 +1,9 @@
-"use client"
-
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCartIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useCartStore } from '@/store/useStore';
-import CartSidebar from '@/components/CartSideBar';
-
+import CartSidebar from '../Cart/CartSidebar';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
