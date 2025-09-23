@@ -1,26 +1,114 @@
-@import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS for SchoolMall original style */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    background-color: #ffffff;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .container {
+    max-width: 1200px;
+  }
+  
+  /* SchoolMall Original Style Components */
+  .schoolmall-card {
+    @apply bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow;
+  }
+  
+  .schoolmall-btn-primary {
+    @apply bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors font-medium;
+  }
+  
+  .schoolmall-btn-secondary {
+    @apply border-2 border-orange-500 text-orange-600 px-6 py-3 rounded-lg hover:bg-orange-50 transition-colors font-medium;
+  }
+  
+  .schoolmall-category-card {
+    @apply rounded-lg p-6 text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105;
+  }
+  
+  .schoolmall-product-badge {
+    @apply px-2 py-1 rounded text-xs font-medium;
+  }
+  
+  .schoolmall-price {
+    @apply text-lg font-bold text-orange-600;
+  }
+  
+  .schoolmall-price-old {
+    @apply text-sm text-gray-500 line-through;
+  }
+  
+  .schoolmall-header {
+    @apply bg-white shadow-sm sticky top-0 z-50;
+  }
+  
+  .schoolmall-promo-bar {
+    @apply bg-orange-500 text-white text-sm py-2;
+  }
+  
+  /* Quick View Button Style (from original) */
+  .quick-view-btn {
+    @apply bg-white text-gray-800 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors;
+  }
+  
+  /* Best Seller List Style */
+  .best-seller-item {
+    @apply bg-white p-4 rounded-lg border hover:shadow-md transition-shadow cursor-pointer;
+  }
+  
+  /* Category Banner Style */
+  .category-banner {
+    @apply rounded-lg h-32 flex flex-col justify-center text-center cursor-pointer transform hover:scale-105 transition-all duration-300;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Animation for promotional elements */
+@keyframes pulse-orange {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(249, 115, 22, 0);
+  }
+}
+
+.promo-pulse {
+  animation: pulse-orange 2s infinite;
+}
+
+/* Loading animations */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.2s ease-in-out infinite;
+  background: linear-gradient(to right, #eff6ff 8%, #dbeafe 18%, #eff6ff 33%);
+  background-size: 800px 104px;
 }
