@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useAuthStore } from '@/store/useStore';
+import { useAuthStore } from 'store/useStore';
 import {
   HomeIcon,
   ShoppingBagIcon,

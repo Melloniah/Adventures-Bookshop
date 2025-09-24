@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AdminLayout from '@/components/Admin/AdminLayout';
-import { api, productAPI } from '@/lib/api';
+import { api, productAPI } from 'lib/api';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 import Image from 'next/image';

@@ -1,8 +1,12 @@
+
+"use client";
+
+
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCartIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useCartStore } from '@/store/useStore';
+import { useCartStore } from 'store/useStore';
 import CartSidebar from '../Cart/CartSidebar';
 
 const Header = () => {
@@ -10,15 +14,15 @@ const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { getTotalItems } = useCartStore();
 
-  const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Books', href: '/products?category=books' },
-    { name: 'Technology', href: '/products?category=technology' },
-    { name: 'Shop', href: '/products' },
-    { name: 'Stationery', href: '/products?category=stationery' },
-    { name: 'Art Supplies', href: '/products?category=art-supplies' },
-    { name: 'Find a Store', href: '/stores' },
-  ];
+ const navigation = [
+  { name: 'Home', href: '/' },
+  { name: 'Books', href: '/products?category=books' },
+  { name: 'Technology', href: '/products?category=technology' },
+  { name: 'Shop', href: '/products' },
+  { name: 'Stationery', href: '/products?category=stationery' },
+  { name: 'Art Supplies', href: '/products?category=art-supplies' },
+  { name: 'Find a Store', href: '/stores' },
+];
 
   return (
     <>

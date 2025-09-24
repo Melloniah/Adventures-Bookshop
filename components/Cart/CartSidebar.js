@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { useCartStore } from '@/store/useStore';
+import { useCartStore } from 'store/useStore';
 import Image from 'next/image';
 import Link from 'next/link';
 

@@ -1,41 +1,58 @@
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+"use client";
+
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  
+  const [mounted, setMounted] = useState(false);
+
   const slides = [
     {
-      title: 'Fuel your future',
-      subtitle: 'Think. Learn. Achieve',
-      description: 'BRIGHT MINDS',
-      image: '/hero1.jpg',
-      cta: 'Shop Now'
+      title: "Fuel your future",
+      subtitle: "Think. Learn. Achieve",
+      description: "BRIGHT MINDS",
+      image: "/hero1.jpg",
+      cta: "Shop Now",
     },
     {
-      title: 'Quality Education Materials',
-      subtitle: 'For Every Student',
-      description: 'EXCELLENCE',
-      image: '/hero2.jpg',
-      cta: 'Explore'
-    }
+      title: "Quality Education Materials",
+      subtitle: "For Every Student",
+      description: "EXCELLENCE",
+      image: "/hero2.jpg",
+      cta: "Explore",
+    },
   ];
 
-
+  // Mark as mounted to prevent hydration mismatch
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Slideshow interval
+  useEffect(() => {
+    if (!mounted) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, [mounted, slides.length]);
+
+  if (!mounted) {
+    // Prevents server/client mismatch by showing a fallback
+    return (
+      <section className="relative h-96 md:h-[500px] overflow-hidden bg-gray-200" />
+    );
+  }
+
   return (
     <section className="relative h-96 md:h-[500px] overflow-hidden">
       {slides.map((slide, index) => (
         <div
           key={index}
           className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentSlide ? 'opacity-100' : 'opacity-0'
+            mounted && index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
         >
           <div className="relative h-full bg-gradient-to-r from-black/50 to-transparent">
@@ -44,6 +61,7 @@ const HeroSection = () => {
               alt={slide.title}
               fill
               className="object-cover -z-10"
+              priority
             />
             <div className="absolute inset-0 flex items-center">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -69,7 +87,7 @@ const HeroSection = () => {
           </div>
         </div>
       ))}
-      
+
       {/* Slide indicators */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
         {slides.map((_, index) => (
@@ -77,7 +95,7 @@ const HeroSection = () => {
             key={index}
             onClick={() => setCurrentSlide(index)}
             className={`w-3 h-3 rounded-full transition-colors ${
-              index === currentSlide ? 'bg-yellow-400' : 'bg-white/50'
+              index === currentSlide ? "bg-yellow-400" : "bg-white/50"
             }`}
           />
         ))}
