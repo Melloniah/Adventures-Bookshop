@@ -49,5 +49,15 @@ export const useCartStore = create(
   )
 );
 
+// TO ASK OTTY IF HE WANTS USER SIGN IN
+// export const useAuthStore = create((set) => ({
+//   user: null,
+//   isAdmin: false,
+
+//   setUser: (user) => set({ user, isAdmin: user?.role === 'admin' }),
+//   logout: () => set({ user: null, isAdmin: false }),
+// }));
+
+
 // For backward compatibility, you can also export as useStore
 export const useStore = useCartStore;

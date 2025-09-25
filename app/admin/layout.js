@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAuthStore } from '../../store/useStore';
+// import { useAuthStore } from '../../store/useStore';
 import {
   HomeIcon,
   ShoppingBagIcon,
@@ -18,7 +18,7 @@ import {
 export default function AdminLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isAdmin, logout } = useAuthStore();
+  // const { user, isAdmin, logout } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = [
@@ -33,7 +33,8 @@ export default function AdminLayout({ children }) {
     if (!isAdmin && pathname !== '/admin/login') {
       router.push('/admin/login');
     }
-  }, [isAdmin, pathname, router]);
+  // }, [isAdmin, pathname, router]);
+  })
 
   const handleLogout = () => {
     logout();

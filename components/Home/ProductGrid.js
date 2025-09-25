@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCartIcon, HeartIcon } from "@heroicons/react/24/outline";
-// import { useCartStore } from "@/store/useStore"; 
 import { useCartStore } from "../../store/useStore";
+import { getImageUrl } from '../../utils/imageUtils';
 import { productAPI } from "../../lib/api";
 import toast from "react-hot-toast";
 

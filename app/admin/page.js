@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '../../../store/useStore';
-import { authAPI } from '../../../lib/api';
+import { useAuthStore } from '../../store/useStore';
+import { authAPI } from '../../lib/api';
 import toast from 'react-hot-toast';
 
 export default function AdminLogin() {
