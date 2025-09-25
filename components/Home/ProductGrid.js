@@ -60,17 +60,14 @@ const ProductCard = ({ product }) => {
       {/* ✅ Product Image */}
       <Link href={`/products/${product.id}`}>
         <div className="relative h-48 overflow-hidden">
-          <Image
-            src={
-              product.image
-                ? // If backend API returns relative image → prefix with API URL
-                  `${process.env.NEXT_PUBLIC_API_URL || ""}${product.image}`
-                : "/placeholder-product.jpg" // fallback placeholder
-            }
-            alt={product.name || "Product"}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-          />
+          <image
+                    className="h-10 w-10 rounded-full object-cover"
+                    src={getImageUrl(product.image)}  // ✅ Use utility function
+                    alt={product.name || 'Product'}
+                    onError={(e) => {
+                      e.target.src = '/placeholder-product.jpg';
+                    }}
+                  />
         </div>
       </Link>
 

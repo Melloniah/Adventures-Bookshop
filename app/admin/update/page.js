@@ -1,9 +1,11 @@
 // src/app/admin/products/edit/[id]/page.js - Edit Product
 'use client';
 
+import { useCallback } from 'react';
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image'
 import { api, adminAPI } from '../../../../../lib/api';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
@@ -30,15 +32,18 @@ export default function EditProduct() {
     on_sale: false
   });
 
-  useEffect(() => {
-    fetchProduct();
-    fetchCategories();
-  }, [productId]);
 
-  const fetchProduct = async () => {
+useEffect(() => {
+  if (!productId) return;
+
+  const fetchData = async () => {
     try {
-      const response = await api.get(`/products/${productId}`);
-      const product = response.data;
+      const [productRes, categoriesRes] = await Promise.all([
+        api.get(`/products/${productId}`),
+        api.get('/admin/categories')
+      ]);
+
+      const product = productRes.data;
       setFormData({
         name: product.name || '',
         slug: product.slug || '',
@@ -51,22 +56,20 @@ export default function EditProduct() {
         is_featured: product.is_featured || false,
         on_sale: product.on_sale || false
       });
+
+      setCategories(categoriesRes.data);
     } catch (error) {
-      toast.error('Failed to fetch product details');
-      console.error('Error fetching product:', error);
+      toast.error('Failed to fetch product or categories');
+      console.error('Fetch error:', error);
     } finally {
       setInitialLoading(false);
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      const response = await api.get('/admin/categories');
-      setCategories(response.data);
-    } catch (error) {
-      toast.error('Failed to fetch categories');
-    }
-  };
+  fetchData();
+}, [productId]);
+
+
 
   const generateSlug = (name) => {
     return name
@@ -75,6 +78,7 @@ export default function EditProduct() {
       .replace(/^-|-$/g, '');
   };
 
+  
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     
@@ -286,7 +290,7 @@ export default function EditProduct() {
           {formData.image && (
             <div className="mb-4">
               <p className="text-sm text-gray-600 mb-2">Current Image:</p>
-              <img
+              <Image
                 src={`${process.env.NEXT_PUBLIC_API_URL}${formData.image}`}
                 alt="Current product image"
                 className="h-32 w-32 object-cover rounded border"

@@ -108,11 +108,15 @@ const AdminProducts = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
-                            <Image
-                              className="h-10 w-10 rounded-full object-cover"
-                              src={product.image || '/placeholder-product.jpg'}
-                              alt=""
-                            />
+                             <Image
+            src={getImageUrl(product.image)}  //  Using utility function
+            alt={product.name || 'Product'}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={(e) => {
+              e.target.src = '/placeholder-product.jpg'; // Fallback on error
+            }}
+          />
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-medium text-gray-900">

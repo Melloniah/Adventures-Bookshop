@@ -60,12 +60,13 @@ const CartSidebar = ({ isOpen, onClose }) => {
                               <li key={item.id} className="flex py-6">
                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                   <Image
-                                    src={item.image || '/placeholder-product.jpg'}
-                                    alt={item.name}
-                                    width={96}
-                                    height={96}
-                                    className="h-full w-full object-cover object-center"
-                                  />
+                    className="h-10 w-10 rounded-full object-cover"
+                    src={getImageUrl(product.image)}  // ✅ Use utility function
+                    alt={product.name || 'Product'}
+                    onError={(e) => {
+                      e.target.src = '/placeholder-product.jpg';
+                    }}
+                  />
                                 </div>
 
                                 <div className="ml-4 flex flex-1 flex-col">

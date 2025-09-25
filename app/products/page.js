@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { productAPI, api } from '../../../lib/api';
+import Image from 'next/image';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
@@ -103,14 +104,15 @@ export default function AdminProducts() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
-                        <img
-                          className="h-10 w-10 rounded-full object-cover"
-                          src={product.image 
-                            ? `${process.env.NEXT_PUBLIC_API_URL}${product.image}` 
-                            : '/placeholder-product.jpg'
-                          }
-                          alt={product.name || 'Product'}
-                        />
+                          <Image
+            src={getImageUrl(product.image)}  // ✅ Use utility function
+            alt={product.name || 'Product'}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={(e) => {
+              e.target.src = '/placeholder-product.jpg'; // Fallback on error
+            }}
+          />
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">
