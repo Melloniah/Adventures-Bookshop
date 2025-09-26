@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '../../../store/useStore';
 import { authAPI } from '../../../lib/api';
@@ -8,12 +8,19 @@ import toast from 'react-hot-toast';
 
 export default function AdminLogin() {
   const router = useRouter();
-  const { setUser } = useAuthStore();
+  const { setUser, isAdmin } = useAuthStore();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [loading, setLoading] = useState(false);
+
+  // Redirect if already logged in as admin
+  useEffect(() => {
+    if (isAdmin) {
+      router.replace('/admin');
+    }
+  }, [isAdmin, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,10 +35,20 @@ export default function AdminLogin() {
         return;
       }
 
+      // Store in localStorage for persistence
       localStorage.setItem('token', access_token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      // Update store
       setUser(user, access_token);
+      
       toast.success('Login successful!');
-      router.push('/admin');
+      
+      // Use setTimeout to ensure state updates before redirect
+      setTimeout(() => {
+        router.replace('/admin');
+      }, 100);
+      
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Login failed');
     } finally {
@@ -45,6 +62,15 @@ export default function AdminLogin() {
       [e.target.name]: e.target.value
     });
   };
+
+  // Don't render if already admin (will redirect)
+  if (isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-xl">Redirecting...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
