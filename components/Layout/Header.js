@@ -1,28 +1,36 @@
 
 "use client";
 
-
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ShoppingCartIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useCartStore } from 'store/useStore';
-import CartSidebar from '../Cart/CartSidebar';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import {
+  ShoppingCartIcon,
+  UserIcon,
+  Bars3Icon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { useCartStore } from "store/useStore";
+import CartSidebar from "../Cart/CartSidebar";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { getTotalItems } = useCartStore();
 
- const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Books', href: '/products?category=books' },
-  { name: 'Technology', href: '/products?category=technology' },
-  { name: 'Shop', href: '/products' },
-  { name: 'Stationery', href: '/products?category=stationery' },
-  { name: 'Art Supplies', href: '/products?category=art-supplies' },
-  { name: 'Find a Store', href: '/stores' },
-];
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const navigation = [
+    { name: "Home", href: "/" },
+    { name: "Books", href: "/products?category=books" },
+    { name: "Technology", href: "/products?category=technology" },
+    { name: "Shop", href: "/products" },
+    { name: "Stationery", href: "/products?category=stationery" },
+    { name: "Art Supplies", href: "/products?category=art-supplies" },
+    { name: "Find a Store", href: "/stores" },
+  ];
 
   return (
     <>
@@ -46,7 +54,8 @@ const Header = () => {
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <div className="bg-red-600 text-white px-3 py-1 rounded font-bold text-xl">
-                SCHOOL<span className="bg-yellow-400 text-black px-1">MALL</span>
+                SCHOOL
+                <span className="bg-yellow-400 text-black px-1">MALL</span>
               </div>
             </Link>
 
@@ -72,31 +81,45 @@ const Header = () => {
 
             {/* Right side */}
             <div className="flex items-center space-x-4">
-              <Link href="/account" className="p-2 hover:bg-gray-100 rounded-lg">
-                <UserIcon className="h-6 w-6" />
-              </Link>
-              
-              <button
-                onClick={() => setIsCartOpen(true)}
-                className="relative p-2 hover:bg-gray-100 rounded-lg"
-              >
-                <ShoppingCartIcon className="h-6 w-6" />
-                {getTotalItems() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {getTotalItems()}
-                  </span>
-                )}
-              </button>
+              {/* Account only after mount */}
+              {mounted && (
+                <Link
+                  href="/account"
+                  className="p-2 hover:bg-gray-100 rounded-lg"
+                >
+                  <UserIcon className="h-6 w-6" />
+                </Link>
+              )}
 
+              {/* Cart button only after mount */}
+              {mounted && (
+                <button
+                  onClick={() => setIsCartOpen(true)}
+                  className="relative p-2 hover:bg-gray-100 rounded-lg"
+                >
+                  <ShoppingCartIcon className="h-6 w-6" />
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center">
+                      <span className="bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {getTotalItems()}
+                      </span>
+                    </span>
+                  )}
+                </button>
+              )}
+
+              {/* Mobile menu toggle */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="md:hidden p-2 hover:bg-gray-100 rounded-lg"
               >
-                {isMobileMenuOpen ? (
-                  <XMarkIcon className="h-6 w-6" />
-                ) : (
-                  <Bars3Icon className="h-6 w-6" />
-                )}
+                <span>
+                  {isMobileMenuOpen ? (
+                    <XMarkIcon className="h-6 w-6" />
+                  ) : (
+                    <Bars3Icon className="h-6 w-6" />
+                  )}
+                </span>
               </button>
             </div>
           </div>
@@ -140,6 +163,7 @@ const Header = () => {
         </nav>
       </header>
 
+      {/* Cart sidebar */}
       <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );

@@ -1,26 +1,28 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '../../../store/useStore';
-import { authAPI } from '../../../lib/api';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "../../../store/useStore";
+import { authAPI } from "../../../lib/api";
+import toast from "react-hot-toast";
 
 export default function AdminLogin() {
   const router = useRouter();
-  const { setUser, isAdmin } = useAuthStore();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const { setUser, isAdmin, _hasHydrated } = useAuthStore();
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Redirect if already logged in as admin
   useEffect(() => {
-    if (isAdmin) {
-      router.replace('/admin');
+    if (mounted && _hasHydrated && isAdmin) {
+      router.replace("/admin/dashboard");
     }
-  }, [isAdmin, router]);
+  }, [mounted, _hasHydrated, isAdmin, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,42 +30,53 @@ export default function AdminLogin() {
 
     try {
       const response = await authAPI.login(formData);
-      const { access_token, user } = response.data;
+      console.log("Login response:", response.data); // Debug log
       
-      if (user.role !== 'admin') {
-        toast.error('Access denied. Admin privileges required.');
+      const { access_token, user } = response.data;
+
+      if (user.role !== "admin") {
+        toast.error("Access denied. Admin privileges required.");
+        setLoading(false);
         return;
       }
 
-      // Store in localStorage for persistence
-      localStorage.setItem('token', access_token);
-      localStorage.setItem('user', JSON.stringify(user));
-      
+      // Save in localStorage (keep this for client-side access)
+      localStorage.setItem("token", access_token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // FIXED: Set cookie properly for middleware
+      document.cookie = `token=${access_token}; path=/; samesite=lax; max-age=${60 * 60 * 24}`; // 24 hours
+
       // Update store
       setUser(user, access_token);
-      
-      toast.success('Login successful!');
-      
-      // Use setTimeout to ensure state updates before redirect
+
+      toast.success("Login successful!");
+
+      // Small delay to ensure state updates, then redirect
       setTimeout(() => {
-        router.replace('/admin');
+        router.push("/admin/dashboard");
       }, 100);
       
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Login failed');
+      console.error("Login error:", error); // Debug log
+      const errorMessage = error.response?.data?.detail || error.message || "Login failed";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  // Don't render if already admin (will redirect)
+  if (!mounted || !_hasHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-xl">Loading...</div>
+      </div>
+    );
+  }
+
   if (isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -88,14 +101,10 @@ export default function AdminLogin() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
               <input
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
                 required
                 value={formData.email}
                 onChange={handleChange}
@@ -104,14 +113,10 @@ export default function AdminLogin() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
               <input
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
                 required
                 value={formData.password}
                 onChange={handleChange}
@@ -120,7 +125,6 @@ export default function AdminLogin() {
               />
             </div>
           </div>
-
           <div>
             <button
               type="submit"

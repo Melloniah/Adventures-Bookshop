@@ -50,20 +50,22 @@ const ProductCard = ({ product }) => {
       )}
 
       {/* 🖤 Wishlist button */}
-      <button
+      {/* <button
         onClick={handleWishlist}
         className="absolute top-2 right-10 bg-white rounded-full p-2 shadow hover:text-red-600 z-10"
       >
         <HeartIcon className="h-5 w-5" />
-      </button>
+      </button> */}
 
       {/* ✅ Product Image */}
       <Link href={`/products/${product.id}`}>
         <div className="relative h-48 overflow-hidden">
-          <image
+          <Image
                     className="h-10 w-10 rounded-full object-cover"
                     src={getImageUrl(product.image)}  // ✅ Use utility function
                     alt={product.name || 'Product'}
+                    width={300}
+                    height={250}
                     onError={(e) => {
                       e.target.src = '/placeholder-product.jpg';
                     }}

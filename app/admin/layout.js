@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -8,8 +9,6 @@ import {
   HomeIcon,
   ShoppingBagIcon,
   ClipboardDocumentListIcon,
-  UserGroupIcon,
-  Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon
@@ -18,59 +17,49 @@ import {
 export default function AdminLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAdmin, logout, user, token } = useAuthStore();
+  const { isAdmin, logout, setUser, _hasHydrated } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const navigation = [
-    { name: 'Dashboard', href: '/admin', icon: HomeIcon },
-    { name: 'Products', href: '/admin/products', icon: ShoppingBagIcon },
-    { name: 'Orders', href: '/admin/orders', icon: ClipboardDocumentListIcon }
-  ];
-
-  // Initialize auth state on mount
- useEffect(() => {
-  const initializeAuth = () => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    
-    if (storedToken && storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        if (!user && parsedUser.role === 'admin') {
-          // Re-initialize store if needed
-          setUser(parsedUser, storedToken); // <-- ensure store is in sync
-        }
-      } catch (error) {
-        console.error('Error parsing stored user:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-      }
-    }
-    setIsLoading(false);
-  };
-
-  initializeAuth();
-}, []); // <- remove [user] dependency
+ const navigation = [
+  { name: 'Dashboard', href: '/admin/dashboard', icon: HomeIcon },
+  { name: 'Products', href: '/admin/products', icon: ShoppingBagIcon },
+  { name: 'Orders', href: '/admin/orders', icon: ClipboardDocumentListIcon },
+  { name: 'Payments', href: '/admin/payments', icon: ClipboardDocumentListIcon }
+];
 
 
-  // Redirect non-admins to login
+  // Restore user from localStorage if store isn't hydrated yet
   useEffect(() => {
-    if (!isLoading && !isAdmin && pathname !== '/admin/login') {
-      console.log('Redirecting to login - isAdmin:', isAdmin, 'pathname:', pathname);
+    if (_hasHydrated) {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+
+      if (storedToken && storedUser && !isAdmin) {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser.role === 'admin') {
+          setUser(parsedUser, storedToken);
+        }
+      }
+      setIsLoading(false);
+    }
+  }, [_hasHydrated, setUser, isAdmin]);
+
+  // Redirect if not admin
+  useEffect(() => {
+    if (
+      !isLoading &&
+      _hasHydrated &&
+      !isAdmin &&
+      pathname.startsWith('/admin') &&
+      pathname !== '/admin/login'
+    ) {
       router.push('/admin/login');
     }
-  }, [isAdmin, pathname, router, isLoading]);
+  }, [isLoading, _hasHydrated, isAdmin, pathname, router]);
 
-  const handleLogout = () => {
-    logout();
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    router.push('/admin/login');
-  };
-
-  // Show loading while checking admin status
-  if (isLoading) {
+  // Loading screen while hydrating or checking auth
+  if (isLoading || !_hasHydrated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-xl">Loading...</div>
@@ -78,7 +67,7 @@ export default function AdminLayout({ children }) {
     );
   }
 
-  // If not admin and not on login page, don't render anything (redirect will happen)
+  // If not admin and not on login → redirect message
   if (!isAdmin && pathname !== '/admin/login') {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -87,9 +76,16 @@ export default function AdminLayout({ children }) {
     );
   }
 
+  const handleLogout = () => {
+    logout();
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    router.push('/admin/login');
+  };
+
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">
-      {/* Mobile sidebar overlay */}
+      {/* Mobile sidebar */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 flex md:hidden">
           <div
