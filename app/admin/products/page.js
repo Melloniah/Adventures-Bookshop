@@ -1,174 +1,134 @@
-import { useState, useEffect } from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
-import AdminLayout from '@/components/Admin/AdminLayout';
-import { api, productAPI } from 'lib/api';
-import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import toast from 'react-hot-toast';
-import Image from 'next/image';
+'use client'
 
-const AdminProducts = () => {
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import ProductForm from '../../../components/ProductForm';
+import { getImageUrl } from '../../../utils/imageUtils';
+import { adminAPI } from 'lib/api';
+
+export default function AdminProducts() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // 🔎 Fetch products from API with optional search query
+  const fetchProducts = async (query = '') => {
+    try {
+      const res = await adminAPI.getAllProducts(query); 
+      setProducts(res.data);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  const fetchProducts = async () => {
+  //  Call API whenever searchTerm changes (with debounce)
+
+  useEffect(() => {
+  const delayDebounce = setTimeout(() => {
+    if (searchTerm.trim()) {
+      adminAPI.searchProducts(searchTerm)
+        .then((res) => setProducts(res.data))
+        .catch((err) => console.error("Error searching products:", err));
+    } else {
+      adminAPI.getAllProducts()
+        .then((res) => setProducts(res.data))
+        .catch((err) => console.error("Error fetching products:", err));
+    }
+  }, 500); // debounce
+
+  return () => clearTimeout(delayDebounce);
+}, [searchTerm]);
+
+
+
+  const handleDelete = async (productId) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
     try {
-      const response = await productAPI.getAll();
-      setProducts(response.data);
-    } catch (error) {
-      toast.error('Failed to fetch products');
-    } finally {
-      setLoading(false);
+      await adminAPI.deleteProduct(productId);
+      fetchProducts(searchTerm);
+    } catch (err) {
+      console.error('Error deleting product:', err);
     }
   };
 
-  const handleDelete = async (productId, productName) => {
-    if (window.confirm(`Are you sure you want to delete "${productName}"?`)) {
-      try {
-        await api.delete(`/admin/products/${productId}`);
-        toast.success('Product deleted successfully');
-        fetchProducts();
-      } catch (error) {
-        toast.error('Failed to delete product');
-      }
-    }
+  const handleEdit = (product) => {
+    setEditingProduct(product);
+    setShowForm(true);
   };
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleAddNew = () => {
+    setEditingProduct(null);
+    setShowForm(true);
+  };
+
+  const handleFormSaved = () => {
+    setShowForm(false);
+    fetchProducts(searchTerm);
+  };
 
   return (
-    <>
-      <Head>
-        <title>Products Management - Admin</title>
-      </Head>
+    <div className="p-6">
+      <h1 className="text-2xl mb-4">Admin Products</h1>
+      <button
+        onClick={handleAddNew}
+        className="bg-green-500 text-white px-4 py-2 rounded mb-4"
+      >
+        Add New Product
+      </button>
 
-      <AdminLayout>
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-            <Link
-              href="/admin/products/create"
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
-            >
-              <PlusIcon className="h-5 w-5 mr-2" />
-              Add Product
-            </Link>
-          </div>
+      {/* 🔎 Search Bar */}
+      <input
+        type="text"
+        placeholder="Search products..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="border px-3 py-2 rounded w-full mb-4"
+      />
 
-          {/* Search */}
-          <div className="max-w-md">
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-red-500 focus:border-red-500"
-            />
-          </div>
+      {showForm && (
+        <ProductForm product={editingProduct} onSaved={handleFormSaved} />
+      )}
 
-          {/* Products Table */}
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            {loading ? (
-              <div className="text-center py-12">Loading products...</div>
-            ) : (
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Product
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Category
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Price
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Stock
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredProducts.map((product) => (
-                    <tr key={product.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10">
-                             <Image
-            src={getImageUrl(product.image)}  //  Using utility function
-            alt={product.name || 'Product'}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={(e) => {
-              e.target.src = '/placeholder-product.jpg'; // Fallback on error
-            }}
-          />
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
-                              {product.name}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {product.category?.name || 'N/A'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        KSh {product.price?.toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {product.stock_quantity}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          product.is_active
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {product.is_active ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end space-x-2">
-                          <Link
-                            href={`/admin/products/edit/${product.id}`}
-                            className="text-indigo-600 hover:text-indigo-900"
-                          >
-                            <PencilIcon className="h-5 w-5" />
-                          </Link>
-                          <button
-                            onClick={() => handleDelete(product.id, product.name)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <TrashIcon className="h-5 w-5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
-      </AdminLayout>
-    </>
+      <div className="grid grid-cols-3 gap-4 mt-6">
+        {products.length > 0 ? (
+          products.map((product) => (
+            <div key={product.id} className="border p-2 rounded space-y-2">
+              <Image
+                src={getImageUrl(product.image)}
+                alt={product.name}
+                width={150}
+                height={150}
+                className="object-cover"
+              />
+              <h2 className="font-bold">{product.name}</h2>
+              <p>${product.price}</p>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handleEdit(product)}
+                  className="bg-blue-500 text-white px-2 py-1 rounded"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(product.id)}
+                  className="bg-red-500 text-white px-2 py-1 rounded"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="col-span-3 text-center text-gray-500">
+            No products found.
+          </p>
+        )}
+      </div>
+    </div>
   );
-};
-
-export default AdminProducts;
+}

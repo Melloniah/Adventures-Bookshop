@@ -1,13 +1,11 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
-  // reactStrictMode:true,
   images: {
     remotePatterns: [
       {
         protocol: 'http',
         hostname: 'localhost',
         port: '8000',
-        pathname: '/**',
+        pathname: '/static/**',   // 👈 restricts to static files
       },
       {
         protocol: 'https',
@@ -21,9 +19,8 @@ const nextConfig = {
     NEXT_PUBLIC_WHATSAPP_NUMBER: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+254793488207',
   },
   experimental: {
-    // Enable if using server components with client components
-    serverComponentsExternalPackages: []
-  }
+    serverComponentsExternalPackages: [],
+  },
 }
 
 export default nextConfig

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCartIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "../../store/useStore";
-import { getImageUrl } from '../../utils/imageUtils';
+import { getImageUrl, handleImageError } from '../../utils/imageUtils';
 import { productAPI } from "../../lib/api";
 import toast from "react-hot-toast";
 
@@ -13,10 +13,10 @@ import toast from "react-hot-toast";
 const ProductCard = ({ product }) => {
   const { addItem } = useCartStore();
 
-  // 🖤 Handle wishlist (you can connect this to a store or API later)
-  const handleWishlist = () => {
-    toast.success("Added to wishlist!");
-  };
+  // // 🖤 Handle wishlist (you can connect this to a store or API later)
+  // const handleWishlist = () => {
+  //   toast.success("Added to wishlist!");
+  // };
 
   const handleAddToCart = () => {
     addItem(product);
@@ -60,16 +60,13 @@ const ProductCard = ({ product }) => {
       {/* ✅ Product Image */}
       <Link href={`/products/${product.id}`}>
         <div className="relative h-48 overflow-hidden">
-          <Image
-                    className="h-10 w-10 rounded-full object-cover"
-                    src={getImageUrl(product.image)}  // ✅ Use utility function
-                    alt={product.name || 'Product'}
-                    width={300}
-                    height={250}
-                    onError={(e) => {
-                      e.target.src = '/placeholder-product.jpg';
-                    }}
-                  />
+        <Image
+  src={getImageUrl(product.image)}
+  alt={product.name}
+  width={300}
+  height={300}
+  onError={handleImageError}
+/>
         </div>
       </Link>
 

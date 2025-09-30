@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { productAPI, api } from '../../../lib/api';
+import { productAPI, api } from '../../lib/api';
 import Image from 'next/image';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
+import { getImageUrl, handleImageError } from '../../utils/imageUtils';
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -105,14 +106,12 @@ export default function AdminProducts() {
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
                           <Image
-            src={getImageUrl(product.image)}  // ✅ Use utility function
-            alt={product.name || 'Product'}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={(e) => {
-              e.target.src = '/placeholder-product.jpg'; // Fallback on error
-            }}
-          />
+  src={getImageUrl(product.image)}
+  alt={product.name}
+  width={300}
+  height={300}
+  onError={handleImageError}
+/>
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">

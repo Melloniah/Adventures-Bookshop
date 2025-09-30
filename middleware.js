@@ -1,41 +1,45 @@
 // middleware.js
 import { NextResponse } from "next/server";
-import { jwtVerify } from "jose"; // You'll need to install this: npm install jose
+import { jwtVerify } from "jose";
 
 export async function middleware(req) {
-  const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
 
-  console.log("Middleware - Token:", token ? "Present" : "Missing"); // Debug log
-  console.log("Middleware - Path:", pathname); // Debug log
+  // Only protect /admin paths (ignore static assets)
+  const protectedPath = pathname.startsWith("/admin") && pathname !== "/admin/login";
 
-  // If no token and trying to access protected /admin path (except login)
-  if (!token && pathname.startsWith("/admin") && pathname !== "/admin/login") {
-    console.log("Redirecting to login - no token"); // Debug log
-    return NextResponse.redirect(new URL("/admin/login", req.url));
-  }
+  // Get token: first from req.cookies, fallback to cookie header (httpOnly safe)
+  const token = req.cookies.get("token")?.value;
+  const cookieHeader = req.headers.get("cookie") || "";
+  const rawToken = token || cookieHeader.match(/token=([^;]+)/)?.[1];
 
-  // If token exists and trying to access login page, verify the token first
-  if (token && pathname === "/admin/login") {
+  // Validate token
+  let isValidToken = false;
+  if (rawToken) {
     try {
-      // Use the same secret as your backend
       const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-      await jwtVerify(token, secret);
-      
-      // Token is valid, redirect to dashboard
-      console.log("Valid token, redirecting to dashboard"); // Debug log
-      return NextResponse.redirect(new URL("/admin/dashboard", req.url));
-    } catch (error) {
-      console.log("Invalid token, allowing login page"); // Debug log
-      // Token is invalid, allow access to login page
-      return NextResponse.next();
+      await jwtVerify(rawToken, secret);
+      isValidToken = true;
+    } catch (err) {
+      isValidToken = false;
     }
   }
 
+  // Redirect unauthenticated users trying to access protected pages
+  if (!isValidToken && protectedPath) {
+    return NextResponse.redirect(new URL("/admin/login", req.url));
+  }
+
+  // Redirect logged-in users away from login page
+  if (isValidToken && pathname === "/admin/login") {
+    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+  }
+
+  // All other requests pass through
   return NextResponse.next();
 }
 
-// Paths that middleware runs on
+// Apply middleware only to /admin paths
 export const config = {
   matcher: ["/admin/:path*"],
 };
