@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+// import Cookies from "js-cookie";
 
 // Utility: get cookie by name
 function getCookie(name) {
@@ -60,53 +61,37 @@ export const useAuthStore = create(
   persist(
     (set, get) => ({
       user: null,
-      token: null,
       isAdmin: false,
       _hasHydrated: false,
 
-      setUser: (user, token) => {
-        // Save both in localStorage (for client) + cookies (for middleware)
+      setUser: (user) => { // Removed token argument
         if (typeof window !== "undefined") {
-          localStorage.setItem("token", token);
           localStorage.setItem("user", JSON.stringify(user));
-          document.cookie = `token=${token}; path=/; samesite=strict`; // 🔥
         }
-
-        set({
-          user,
-          token,
-          isAdmin: user?.role === "admin",
-        });
+        set({ user, isAdmin: user?.role === "admin" });
       },
 
       logout: () => {
         if (typeof window !== "undefined") {
-          localStorage.removeItem("token");
           localStorage.removeItem("user");
-          document.cookie =
-            "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; samesite=strict";
         }
-        set({ user: null, token: null, isAdmin: false });
+        set({ user: null, isAdmin: false });
       },
 
-      setHasHydrated: (hasHydrated) => {
-        set({ _hasHydrated: hasHydrated });
-      },
+      setHasHydrated: (hydrated) => set({ _hasHydrated: hydrated }),
     }),
     {
       name: "auth-storage",
       onRehydrateStorage: () => (state) => {
-        // Called after localStorage hydration
-        // ✅ Sync cookies into Zustand if available
-        const cookieToken = getCookie("token");
-        if (cookieToken && !state?.token) {
-          try {
-            const user = JSON.parse(localStorage.getItem("user"));
-            state?.setUser(user, cookieToken);
-          } catch (err) {
-            console.error("Failed to sync user from cookie:", err);
+        // Hydration logic on the client side only needs to read the user
+        // The token is handled by the server (middleware)
+        if (typeof window === "undefined") return;
+        try {
+          const user = JSON.parse(localStorage.getItem("user"));
+          if (user) { // Check if user exists
+            state?.setUser(user);
           }
-        }
+        } catch {}
         state?.setHasHydrated(true);
       },
     }

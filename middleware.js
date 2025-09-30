@@ -1,45 +1,37 @@
-// middleware.js
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
 
-  // Only protect /admin paths (ignore static assets)
-  const protectedPath = pathname.startsWith("/admin") && pathname !== "/admin/login";
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isLoginPage = pathname === "/admin/login";
+  const protectedPath = isAdminRoute && !isLoginPage;
 
-  // Get token: first from req.cookies, fallback to cookie header (httpOnly safe)
   const token = req.cookies.get("token")?.value;
-  const cookieHeader = req.headers.get("cookie") || "";
-  const rawToken = token || cookieHeader.match(/token=([^;]+)/)?.[1];
-
-  // Validate token
   let isValidToken = false;
-  if (rawToken) {
+
+  if (token) {
     try {
       const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-      await jwtVerify(rawToken, secret);
+      await jwtVerify(token, secret);
       isValidToken = true;
-    } catch (err) {
+    } catch {
       isValidToken = false;
     }
   }
 
-  // Redirect unauthenticated users trying to access protected pages
-  if (!isValidToken && protectedPath) {
+  // Redirect if trying to access protected page without valid token
+  if (protectedPath && !isValidToken) {
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
 
-  // Redirect logged-in users away from login page
-  if (isValidToken && pathname === "/admin/login") {
+  // Redirect from login if already logged in
+  if (isLoginPage && isValidToken) {
     return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }
 
-  // All other requests pass through
   return NextResponse.next();
 }
 
-// Apply middleware only to /admin paths
-export const config = {
-  matcher: ["/admin/:path*"],
-};
+export const config = { matcher: ["/admin/:path*"] };
