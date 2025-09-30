@@ -11,6 +11,7 @@ export default function AdminProducts() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+   const [categories, setCategories] = useState([]);
 
   // 🔎 Fetch products from API with optional search query
   const fetchProducts = async (query = '') => {
@@ -22,8 +23,21 @@ export default function AdminProducts() {
     }
   };
 
+  // fetch categories
   useEffect(() => {
     fetchProducts();
+  }, []);
+
+    useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await adminAPI.getCategories(); 
+        setCategories(res.data);
+      } catch (err) {
+        console.error("Failed to fetch categories", err);
+      }
+    };
+    fetchCategories();
   }, []);
 
   //  Call API whenever searchTerm changes (with debounce)
@@ -88,11 +102,12 @@ export default function AdminProducts() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="border px-3 py-2 rounded w-full mb-4"
+        
       />
 
-      {showForm && (
-        <ProductForm product={editingProduct} onSaved={handleFormSaved} />
-      )}
+        {showForm && (
+  <ProductForm product={editingProduct} categories={categories} onSaved={handleFormSaved} />
+)}
 
       <div className="grid grid-cols-3 gap-4 mt-6">
         {products.length > 0 ? (
