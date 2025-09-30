@@ -13,7 +13,7 @@ export async function middleware(req) {
 
   if (token) {
     try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key-change-this-in-production");
       await jwtVerify(token, secret);
       isValidToken = true;
     } catch {

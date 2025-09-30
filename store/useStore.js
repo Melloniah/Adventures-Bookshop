@@ -64,7 +64,7 @@ export const useAuthStore = create(
       isAdmin: false,
       _hasHydrated: false,
 
-      setUser: (user) => { // Removed token argument
+      setUser: (user) => {
         if (typeof window !== "undefined") {
           localStorage.setItem("user", JSON.stringify(user));
         }

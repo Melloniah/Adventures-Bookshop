@@ -8,21 +8,28 @@ import toast from "react-hot-toast";
 
 export default function AdminLogin() {
   const router = useRouter();
-  const { setUser, isAdmin, _hasHydrated } = useAuthStore();
+  const { setUser, isAdmin, _hasHydrated, setHasHydrated } = useAuthStore();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
-
-  // Redirect if already logged in as admin
-  useEffect(() => {
-    if (mounted && _hasHydrated && isAdmin) {
-      router.replace("/admin/dashboard");
+    // Force hydration if not already done
+    if (!_hasHydrated) {
+      setHasHydrated(true);
     }
-  }, [mounted, _hasHydrated, isAdmin, router]);
+    // Clear any existing auth data when accessing login page
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }, [_hasHydrated, setHasHydrated]);
+
+  // Don't redirect if already logged in - let user login again
+  // useEffect(() => {
+  //   if (mounted && _hasHydrated && isAdmin) {
+  //     router.replace("/admin/dashboard");
+  //   }
+  // }, [mounted, _hasHydrated, isAdmin, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,11 +59,11 @@ export default function AdminLogin() {
         return;
       }
 
-      // Store user info locally if needed (optional)
+      // Store user info locally (token is in HttpOnly cookie)
       localStorage.setItem("user", JSON.stringify(user));
 
-      // Update your store
-      setUser(user, access_token);
+      // Update store (no token needed, cookie handles auth)
+      setUser(user);
 
       toast.success("Login successful!");
       setTimeout(()=>{
@@ -74,18 +81,10 @@ export default function AdminLogin() {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  if (!mounted || !_hasHydrated) {
+  if (!mounted) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-xl">Loading...</div>
-      </div>
-    );
-  }
-
-  if (isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Redirecting...</div>
       </div>
     );
   }
@@ -95,7 +94,7 @@ export default function AdminLogin() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="bg-red-600 text-white px-4 py-2 rounded font-bold text-xl inline-block">
-            SCHOOL<span className="bg-yellow-400 text-black px-1">MALL</span>
+            ADVENTURES<span className="bg-turqouise-green-400 text-black px-1">MALL</span>
           </div>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Admin Sign In</h2>
         </div>

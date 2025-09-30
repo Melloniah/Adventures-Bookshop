@@ -3,8 +3,8 @@ import CategorySection from '../components/Home/CategorySection';
 import ProductGrid from '../components/Home/ProductGrid';
 
 export const metadata = {
-  title: 'SchoolMall - Educational Materials & Supplies',
-  description: 'Your one-stop shop for educational materials, books, stationery, and technology for students of all ages.',
+  title: 'Adventure Bookshop - ',
+  description: ' "Open a book. Unlock a world. Return renewed."Visit us, your one-stop shop for educational materials, books, stationery, and technology for students of all ages.',
 };
 
 export default function Home() {
@@ -42,7 +42,7 @@ export default function Home() {
       <ProductGrid title="Best Seller" />
       
       {/* Newsletter */}
-      <section className="bg-gray-900 py-12">
+      {/* <section className="bg-gray-900 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
             Stay Updated
@@ -61,7 +61,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-      </section>
+      </section> */}
     </>
   );
 }

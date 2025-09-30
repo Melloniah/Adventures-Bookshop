@@ -4,14 +4,14 @@ import Header from "../components/Layout/Header";
 import Footer from "../components/Layout/Footer";
 
 export const metadata = {
-  title: "School Mall Limited",
-  description: "Fuel your future. Think. Learn. Achieve.",
+  title: "Adventurs Bookshop ",
+  description: "Open a book. Unlock a world. Return renewed.",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-gray-50 font-sans">
+      <body className="bg-turquouise-green-50 font-sans">
         <Header />
 
         <main>{children}</main>

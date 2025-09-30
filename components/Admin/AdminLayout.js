@@ -47,10 +47,18 @@ export default function AdminLayout({ children }) {
   useEffect(() => {
     if (!_hasHydrated || isLoading) return;
 
-    if (!isAdmin && pathname.startsWith("/admin") && pathname !== "/admin/login") {
+    // Don't redirect if on login page
+    if (pathname === "/admin/login") return;
+
+    if (!isAdmin && pathname.startsWith("/admin")) {
       router.replace("/admin/login");
     }
   }, [_hasHydrated, isLoading, isAdmin, pathname, router]);
+
+  // If on login page, don't show loading or admin layout
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
 
   if (!_hasHydrated || isLoading) {
     return (
@@ -60,9 +68,19 @@ export default function AdminLayout({ children }) {
     );
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      // Call logout API to clear HttpOnly cookie
+      await fetch('http://localhost:8000/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Logout API error:', error);
+    }
+    
+    // Clear local state
     logout();
-    localStorage.removeItem("token");
     localStorage.removeItem("user");
     router.replace("/admin/login");
   };
