@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "dev:clean": "fuser -k 3000/tcp 2>/dev/null; npm run dev",
     "start": "next start",
     "lint": "next lint"
   },
@@ -21,7 +22,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.47.0",
-    "react-hot-toast": "^2.4.1",
+    "react-hot-toast": "^2.6.0",
     "react-query": "^3.39.3",
     "yup": "^1.3.3",
     "zustand": "^4.4.1"

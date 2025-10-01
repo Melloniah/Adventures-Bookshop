@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCartIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "../../store/useStore";
-import { getImageUrl, handleImageError } from '../../utils/imageUtils';
+import { getImageUrl, handleImageError, placeholderSVG } from '../../utils/imageUtils';
 import { productAPI } from "../../lib/api";
 import toast from "react-hot-toast";
 
@@ -61,7 +61,7 @@ const ProductCard = ({ product }) => {
       <Link href={`/products/${product.id}`}>
         <div className="relative h-48 overflow-hidden">
         <Image
-  src={getImageUrl(product.image)}
+  src={getImageUrl(product.image)|| placeholderSVG}
   alt={product.name}
   width={300}
   height={300}

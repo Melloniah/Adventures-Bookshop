@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { adminAPI } from '../lib/api';
-import { getImageUrl } from '../utils/imageUtils';
+import { getImageUrl, handleImageError, placeholderSVG } from '../utils/imageUtils';
 import Image from 'next/image';
 
 export default function ProductForm({ product, categories = [], onSaved }) {
@@ -33,7 +33,7 @@ export default function ProductForm({ product, categories = [], onSaved }) {
       setIsActive(product.is_active ?? true);
       setIsFeatured(product.is_featured ?? false);
       setOnSale(product.on_sale ?? false);
-      setPreviewUrl(product.image ? getImageUrl(product.image) : null);
+      setPreviewUrl(product.image ? getImageUrl(product.image) : placeholderSVG);
     } else {
       // Reset for new product
       setName('');

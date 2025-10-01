@@ -39,8 +39,8 @@ const Header = () => {
         <div className="bg-gray-50 px-4 py-2 text-sm text-gray-600">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <div className="flex items-center space-x-4">
-              <span>📞 +254 793 488207</span>
-              <span>✉️ info@schoolmall.co.ke</span>
+              <span>📞 +254 724047489</span>
+              <span>✉️ adventures@gmail.com</span>
             </div>
             <Link href="/admin" className="hover:text-red-600">
               Admin
@@ -54,8 +54,8 @@ const Header = () => {
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <div className="bg-red-600 text-white px-3 py-1 rounded font-bold text-xl">
-                SCHOOL
-                <span className="bg-yellow-400 text-black px-1">MALL</span>
+                ADVENTURES
+                <span className="bg-white-400 text-black px-1">BOOKSHOP</span>
               </div>
             </Link>
 

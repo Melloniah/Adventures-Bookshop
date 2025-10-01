@@ -6,7 +6,7 @@ export default function CheckoutPage() {
   return (
     <>
       <Head>
-        <title>Checkout - SchoolMall</title>
+        <title>Checkout - Adventures Bookshop</title>
         <meta name="description" content="Complete your order securely with M-Pesa or WhatsApp" />
       </Head>
 

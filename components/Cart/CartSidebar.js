@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useCartStore } from 'store/useStore';
-import { getImageUrl } from '../../utils/imageUtils';
+import { getImageUrl, handleImageError, placeholderSVG } from '../../utils/imageUtils';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -63,10 +63,11 @@ const CartSidebar = ({ isOpen, onClose }) => {
     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
       <Image
         className="h-full w-full object-cover"
-        src={getImageUrl(item?.image)}   // ✅ correct variable
+        src={getImageUrl(item?.image)||placeholderSVG}   // ✅ correct variable
         alt={item?.name || 'Product'}
         width={96}                       // ✅ required for Next.js Image
         height={96}
+        onError={handleImageError}
       />
     </div>
 

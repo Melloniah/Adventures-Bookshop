@@ -6,7 +6,7 @@ import { productAPI, api } from '../../lib/api';
 import Image from 'next/image';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
-import { getImageUrl, handleImageError } from '../../utils/imageUtils';
+import { getImageUrl, handleImageError, placeholderSVG } from '../../utils/imageUtils';
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -106,7 +106,7 @@ export default function AdminProducts() {
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
                           <Image
-  src={getImageUrl(product.image)}
+  src={getImageUrl(product.image)|| placeholderSVG}
   alt={product.name}
   width={300}
   height={300}

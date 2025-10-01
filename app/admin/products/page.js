@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import ProductForm from '../../../components/ProductForm';
-import { getImageUrl } from '../../../utils/imageUtils';
+import { getImageUrl, handleImageError, placeholderSVG } from '../../../utils/imageUtils';
 import { adminAPI } from 'lib/api';
 
 export default function AdminProducts() {
@@ -114,11 +114,12 @@ export default function AdminProducts() {
           products.map((product) => (
             <div key={product.id} className="border p-2 rounded space-y-2">
               <Image
-                src={getImageUrl(product.image)}
+                src={getImageUrl(product.image)|| placeholderSVG}
                 alt={product.name}
                 width={150}
                 height={150}
                 className="object-cover"
+                onError={handleImageError}
               />
               <h2 className="font-bold">{product.name}</h2>
               <p>${product.price}</p>

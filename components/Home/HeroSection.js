@@ -1,10 +1,10 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "../../lib/api";
+import { getImageUrl, handleImageError, placeholderSVG } from "utils/imageUtils";
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -60,16 +60,14 @@ const HeroSection = () => {
         {slides.map((slide) => (
           <div key={slide.id} className="flex-shrink-0 w-full h-full relative">
             <Image
-              src={
-                slide.image.startsWith("http")
-                  ? slide.image
-                  : `/images/${slide.image}`
-              }
+              src={getImageUrl(slide.image)||placeholderSVG}
               alt={slide.title || "Hero Banner"}
               fill
               className="object-cover"
               priority
+              onError={handleImageError} // fallback to placeholder
             />
+
             {/* Overlay content */}
             <div className="absolute inset-0 bg-black/40 flex items-center">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
