@@ -1,40 +1,42 @@
-
-export function getImageUrl(path) {
-  console.log('🔍 Original path from DB:', path);
-  
-  // If no path provided, return null
-  if (!path) return null;
-  
-  // If it's already a full URL, return as is
-  if (path.startsWith('http://') || path.startsWith('https://')) {
-    return path;
-  }
-  
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-  
-  // Remove leading slash if present, then check
-  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-  
-  // If it's the path from DB (static/images/...)
-  if (cleanPath.startsWith('static/images/')) {
-    const fullUrl = `${baseUrl}/${cleanPath}`;
-    console.log('✅ Final URL:', fullUrl);
-    return fullUrl;
-  }
-  
-  // If it's just a filename, add the full path
-  const fullUrl = `${baseUrl}/static/images/${cleanPath}`;
-  console.log('✅ Final URL:', fullUrl);
-  return fullUrl;
-}
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 // Inline SVG placeholder - gray box with "No Image" text
-const placeholderSVG = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23e5e7eb"/%3E%3Ctext x="50%25" y="50%25" font-size="18" text-anchor="middle" dy=".3em" fill="%23666666"%3ENo Image%3C/text%3E%3C/svg%3E';
+const placeholderSVG =
+  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23e5e7eb"/%3E%3Ctext x="50%25" y="50%25" font-size="18" text-anchor="middle" dy=".3em" fill="%23666666"%3ENo Image%3C/text%3E%3C/svg%3E';
 
-export function handleImageError(e) {
-  e.target.src = placeholderSVG;
-  e.target.onerror = null; // Prevent infinite loop
+/**
+ * Returns a full image URL for Next.js <Image> or null if invalid.
+ * @param {string} path - Filename, relative path, or full URL
+ * @returns {string|null}
+ */
+export function getImageUrl(path) {
+  if (!path) return null; // No path provided
+
+  // Already a full URL
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+
+  // Remove leading slash
+  const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+
+  // If path already contains 'static/images/', just prepend baseUrl
+  if (cleanPath.startsWith("static/images/")) {
+    return `${baseUrl}/${cleanPath}`;
+  }
+
+  // Otherwise, assume it's just a filename
+  return `${baseUrl}/static/images/${cleanPath}`;
 }
 
-// Optional: Export the placeholder for use in conditional rendering
+/**
+ * Handles broken images by replacing with a placeholder.
+ */
+export function handleImageError(e) {
+  if (e?.target) {
+    e.target.src = placeholderSVG;
+    e.target.onerror = null; // prevent infinite loop
+  }
+}
+
 export { placeholderSVG };

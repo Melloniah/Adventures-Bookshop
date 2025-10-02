@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
-import { adminAPI } from '../lib/api';
-import { getImageUrl, handleImageError, placeholderSVG } from '../utils/imageUtils';
+import { adminAPI, categoryAPI } from '../../lib/api';
+import { getImageUrl, handleImageError, placeholderSVG } from '../../utils/imageUtils';
 import Image from 'next/image';
 
-export default function ProductForm({ product, categories = [], onSaved }) {
+export default function ProductForm({ product, onSaved }) {
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [description, setDescription] = useState('');
@@ -13,6 +13,7 @@ export default function ProductForm({ product, categories = [], onSaved }) {
   const [originalPrice, setOriginalPrice] = useState('');
   const [stock, setStock] = useState(0);
   const [categoryId, setCategoryId] = useState('');
+  const [categories, setCategories] = useState([]); // fetch categories internally
   const [isActive, setIsActive] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
   const [onSale, setOnSale] = useState(false);
@@ -20,7 +21,20 @@ export default function ProductForm({ product, categories = [], onSaved }) {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Prefill form on mount or when `product` changes
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await categoryAPI.getCategories(); // GET /categories from backend
+        setCategories(res.data);
+      } catch (err) {
+        console.error('Failed to fetch categories:', err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Prefill form when editing a product
   useEffect(() => {
     if (product) {
       setName(product.name || '');
@@ -35,7 +49,7 @@ export default function ProductForm({ product, categories = [], onSaved }) {
       setOnSale(product.on_sale ?? false);
       setPreviewUrl(product.image ? getImageUrl(product.image) : placeholderSVG);
     } else {
-      // Reset for new product
+      // reset form for new product
       setName('');
       setSlug('');
       setDescription('');
@@ -50,7 +64,7 @@ export default function ProductForm({ product, categories = [], onSaved }) {
     }
   }, [product]);
 
-  // Preview image when selected
+  // Preview selected image
   useEffect(() => {
     if (!imageFile) return;
     const reader = new FileReader();
@@ -65,7 +79,7 @@ export default function ProductForm({ product, categories = [], onSaved }) {
     try {
       let filename = product?.image || null;
 
-      // Upload image if selected
+      // Upload new image if selected
       if (imageFile) {
         const formData = new FormData();
         formData.append('file', imageFile);
@@ -86,7 +100,7 @@ export default function ProductForm({ product, categories = [], onSaved }) {
         on_sale: onSale,
         image: filename,
       };
-// update or create
+
       if (product?.id) {
         await adminAPI.updateProduct(product.id, payload);
       } else {
@@ -96,9 +110,9 @@ export default function ProductForm({ product, categories = [], onSaved }) {
       onSaved();
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -111,7 +125,6 @@ export default function ProductForm({ product, categories = [], onSaved }) {
         required
         className="border p-2 w-full"
       />
-
       <input
         type="text"
         placeholder="Slug"
@@ -120,7 +133,6 @@ export default function ProductForm({ product, categories = [], onSaved }) {
         required
         className="border p-2 w-full"
       />
-
       <textarea
         placeholder="Description"
         value={description}
@@ -128,7 +140,6 @@ export default function ProductForm({ product, categories = [], onSaved }) {
         className="border p-2 w-full"
         rows={3}
       />
-
       <input
         type="number"
         placeholder="Price"
@@ -137,7 +148,6 @@ export default function ProductForm({ product, categories = [], onSaved }) {
         required
         className="border p-2 w-full"
       />
-
       <input
         type="number"
         placeholder="Original Price"
@@ -145,7 +155,6 @@ export default function ProductForm({ product, categories = [], onSaved }) {
         onChange={(e) => setOriginalPrice(e.target.value)}
         className="border p-2 w-full"
       />
-
       <input
         type="number"
         placeholder="Stock Quantity"
@@ -161,8 +170,10 @@ export default function ProductForm({ product, categories = [], onSaved }) {
         className="border p-2 w-full"
       >
         <option value="">Select Category</option>
-        {categories?.map((cat) => (
-          <option key={cat.id} value={cat.id}>{cat.name}</option>
+        {categories.map((cat) => (
+          <option key={cat.id} value={cat.id}>
+            {cat.name}
+          </option>
         ))}
       </select>
 

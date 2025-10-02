@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import ProductForm from '../../../components/ProductForm';
+import ProductForm from '../../../components/Products/ProductForm';
 import { getImageUrl, handleImageError, placeholderSVG } from '../../../utils/imageUtils';
 import { adminAPI } from 'lib/api';
 
@@ -31,7 +31,7 @@ export default function AdminProducts() {
     useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await adminAPI.getCategories(); 
+        const res = await categoryAPI.getCategories(); 
         setCategories(res.data);
       } catch (err) {
         console.error("Failed to fetch categories", err);

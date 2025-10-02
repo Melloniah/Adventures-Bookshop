@@ -1,6 +1,6 @@
 import HeroSection from '../components/Home/HeroSection';
 import CategorySection from '../components/Home/CategorySection';
-import ProductGrid from '../components/Home/ProductGrid';
+import ProductGrid from '../components/Products/ProductGrid';
 
 export const metadata = {
   title: 'Adventure Bookshop - ',
