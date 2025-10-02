@@ -1,14 +1,9 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  ShoppingCartIcon,
-  UserIcon,
-  Bars3Icon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { usePathname, useRouter } from "next/navigation";
+import { ShoppingCartIcon, UserIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "store/useStore";
 import CartSidebar from "../Cart/CartSidebar";
 
@@ -17,20 +12,23 @@ const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { getTotalItems } = useCartStore();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
-  const navigation = [
+  // Hardcoded header links
+  const headerLinks = [
     { name: "Home", href: "/" },
     { name: "Books", href: "/products?category=books" },
     { name: "Technology", href: "/products?category=technology" },
-    { name: "Shop", href: "/products" },
-    { name: "Stationery", href: "/products?category=stationery" },
-    { name: "Art Supplies", href: "/products?category=art-supplies" },
-    { name: "Find a Store", href: "/stores" },
+    { name: "Art Supplies", href: "/products?category=arts" },
   ];
+
+  const isActive = (href) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
   return (
     <>
@@ -39,12 +37,10 @@ const Header = () => {
         <div className="bg-gray-50 px-4 py-2 text-sm text-gray-600">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <div className="flex items-center space-x-4">
-              <span>📞 +254 793 488207</span>
-              <span>✉️ info@schoolmall.co.ke</span>
+              <span>📞 +254 724047489</span>
+              <span>✉️ adventuresbookshop@gmail.com</span>
             </div>
-            <Link href="/admin" className="hover:text-red-600">
-              Admin
-            </Link>
+            <Link href="/admin" className="hover:text-red-600">Admin</Link>
           </div>
         </div>
 
@@ -54,44 +50,18 @@ const Header = () => {
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <div className="bg-red-600 text-white px-3 py-1 rounded font-bold text-xl">
-                SCHOOL
-                <span className="bg-yellow-400 text-black px-1">MALL</span>
+                ADVENTURES
+                <span className="bg-white-400 text-black px-1">BOOKSHOP</span>
               </div>
             </Link>
 
-            {/* Search bar */}
-            <div className="hidden md:flex flex-1 max-w-lg mx-8">
-              <div className="relative w-full">
-                <select className="absolute left-0 top-0 h-full border-r border-gray-300 bg-gray-50 px-3 text-sm rounded-l-lg">
-                  <option>All Collection</option>
-                  <option>Books</option>
-                  <option>Stationery</option>
-                  <option>Technology</option>
-                </select>
-                <input
-                  type="text"
-                  placeholder="Search for product..."
-                  className="w-full pl-32 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                />
-                <button className="absolute right-0 top-0 h-full bg-yellow-400 text-black px-6 rounded-r-lg font-medium hover:bg-yellow-500">
-                  Search
-                </button>
-              </div>
-            </div>
-
             {/* Right side */}
             <div className="flex items-center space-x-4">
-              {/* Account only after mount */}
               {mounted && (
-                <Link
-                  href="/account"
-                  className="p-2 hover:bg-gray-100 rounded-lg"
-                >
+                <Link href="/account" className="p-2 hover:bg-gray-100 rounded-lg">
                   <UserIcon className="h-6 w-6" />
                 </Link>
               )}
-
-              {/* Cart button only after mount */}
               {mounted && (
                 <button
                   onClick={() => setIsCartOpen(true)}
@@ -107,19 +77,11 @@ const Header = () => {
                   )}
                 </button>
               )}
-
-              {/* Mobile menu toggle */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="md:hidden p-2 hover:bg-gray-100 rounded-lg"
               >
-                <span>
-                  {isMobileMenuOpen ? (
-                    <XMarkIcon className="h-6 w-6" />
-                  ) : (
-                    <Bars3Icon className="h-6 w-6" />
-                  )}
-                </span>
+                {isMobileMenuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
               </button>
             </div>
           </div>
@@ -128,33 +90,33 @@ const Header = () => {
         {/* Navigation */}
         <nav className="bg-red-600 text-white">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="hidden md:flex items-center space-x-8 h-12">
-              <button className="flex items-center space-x-1 hover:bg-red-700 px-3 py-2 rounded">
-                <Bars3Icon className="h-4 w-4" />
-                <span>SHOP CATEGORIES</span>
-              </button>
-              {navigation.map((item) => (
+            <div className="hidden md:flex items-center space-x-4 h-12">
+              {headerLinks.map((link) => (
                 <Link
-                  key={item.name}
-                  href={item.href}
-                  className="hover:bg-red-700 px-3 py-2 rounded transition-colors"
+                  key={link.href}
+                  href={link.href}
+                  className={`px-3 py-2 rounded transition-colors ${
+                    isActive(link.href) ? "bg-red-700" : "hover:bg-red-700"
+                  }`}
                 >
-                  {item.name}
+                  {link.name}
                 </Link>
               ))}
             </div>
 
             {/* Mobile menu */}
             {isMobileMenuOpen && (
-              <div className="md:hidden py-4">
-                {navigation.map((item) => (
+              <div className="md:hidden py-4 flex flex-col gap-2">
+                {headerLinks.map((link) => (
                   <Link
-                    key={item.name}
-                    href={item.href}
-                    className="block py-2 hover:bg-red-700 px-3 rounded"
+                    key={link.href}
+                    href={link.href}
+                    className={`block py-2 px-3 rounded ${
+                      isActive(link.href) ? "bg-red-700" : "hover:bg-red-700"
+                    }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {item.name}
+                    {link.name}
                   </Link>
                 ))}
               </div>
@@ -163,7 +125,6 @@ const Header = () => {
         </nav>
       </header>
 
-      {/* Cart sidebar */}
       <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );

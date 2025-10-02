@@ -3,23 +3,23 @@ import Image from 'next/image';
 
 const Footer = () => {
   const quickLinks = [
-    { name: 'Lower Primary', href: '/products?category=lower-primary' },
+    { name: 'Lower Primary', href: '/products?category=grade3' },
     { name: 'Pre-school', href: '/products?category=pre-school' },
     { name: 'Stationery', href: '/products?category=stationery' },
     { name: 'Technology', href: '/products?category=technology' },
-    { name: 'Upper Primary', href: '/products?category=upper-primary' },
-    { name: 'Junior Secondary School', href: '/products?category=junior-secondary' },
+    { name: 'Upper Primary', href: '/products?category=grade 8' },
+    { name: 'Junior High School', href: '/products?category=junior high' },
   ];
 
   const information = [
     { name: 'Home', href: '/' },
     { name: 'Shop', href: '/products' },
-    { name: 'About Us', href: '/about' },
-    { name: 'Find a Store', href: '/stores' },
+    // { name: 'About Us', href: '/about' }, can add an about section
+    // { name: 'Find a Store', href: '/stores' },
   ];
 
   const popularTags = [
-    'Stationery', 'Textbooks', 'Story books', 'Art supplies', 'Revision books'
+    'Stationery', 'Textbooks', 'books', 'Art supplies', 'technology'
   ];
 
   const publishers = [
@@ -44,22 +44,22 @@ const Footer = () => {
                 <div className="flex items-start space-x-2">
                   <span className="text-red-600">📞</span>
                   <div>
-                    <p>Call On Order 7 Get it Delivered!</p>
-                    <p className="font-semibold">+254 793 488207</p>
+                    <p>Make an order here or via whatsapp and get it delivered immediately</p>
+                    <p className="font-semibold">+254 724047489</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <span className="text-red-600">📍</span>
-                  <p>Greenspan | Ruai | Utawala | Embakasi | Fedha</p>
+                  <span className="text-red-600">📍Located at </span>
+                  <p>Information House, Mfangano Street, directly Opposite Quickmart Afya center</p>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-red-600">✉️</span>
-                  <p>info@schoolmall.co.ke</p>
+                  <p>adventuresbookshop@gmail.com</p>
                 </div>
               </div>
             </div>
 
-            {/* Quick View */}
+            Quick View
             <div>
               <h3 className="font-bold text-gray-900 mb-4">Quick View</h3>
               <ul className="space-y-2">
@@ -113,8 +113,7 @@ const Footer = () => {
               <div>
                 <h3 className="font-bold mb-4">About Us</h3>
                 <p className="text-gray-300 text-sm leading-relaxed">
-                  School mall Bookshop is offering you the opportunity to order books and 
-                  stationery at the comfort of your home or office.
+                  Adventures Bookshop offers books online ordering and delivery with ease.
                 </p>
               </div>
 
@@ -144,7 +143,7 @@ const Footer = () => {
               <div>
                 <h3 className="font-bold mb-4">Shop Online</h3>
                 <p className="text-gray-300 text-sm italic">
-                  Books delivered to your door - fast, affordable, and hassle-free!
+                  Books delivered to your door - fast, affordable, and securely!
                 </p>
               </div>
             </div>
@@ -154,8 +153,8 @@ const Footer = () => {
           <div className="border-t border-gray-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-                <p>Copyright 2025 School Mall Bookshop. All Rights Reserved.</p>
-                <p>Designed & Managed by Deloway Solutions</p>
+                <p>Copyright 2025 adventures Bookshop. All Rights Reserved.</p>
+                <p>Designed & Managed by Melloniah</p>
               </div>
             </div>
           </div>
@@ -164,7 +163,7 @@ const Footer = () => {
 
       {/* WhatsApp Float Button */}
       <Link
-        href="https://wa.me/254793488207"
+        href="https://wa.me/254724047489"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-colors z-40"

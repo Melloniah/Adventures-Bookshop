@@ -14,11 +14,14 @@ export const useCartStore = create(
   persist(
     (set, get) => ({
       items: [],
+
+      // Add item to cart
       addItem: (product) => {
         const items = get().items;
         const existingItem = items.find((item) => item.id === product.id);
 
         if (existingItem) {
+          // If product already in cart, just increase quantity
           set({
             items: items.map((item) =>
               item.id === product.id
@@ -27,12 +30,23 @@ export const useCartStore = create(
             ),
           });
         } else {
-          set({ items: [...items, { ...product, quantity: 1 }] });
+          // Normalize payload: only keep id, name, price, quantity
+          const normalizedItem = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: 1,
+          };
+          set({ items: [...items, normalizedItem] });
         }
       },
+
+      // Remove item entirely
       removeItem: (id) => {
         set({ items: get().items.filter((item) => item.id !== id) });
       },
+
+      // Update quantity
       updateQuantity: (id, quantity) => {
         if (quantity <= 0) {
           get().removeItem(id);
@@ -44,14 +58,19 @@ export const useCartStore = create(
           ),
         });
       },
+
+      // Clear cart
       clearCart: () => set({ items: [] }),
+
+      // Calculate totals
       getTotalPrice: () =>
         get().items.reduce((total, item) => total + item.price * item.quantity, 0),
+
       getTotalItems: () =>
         get().items.reduce((total, item) => total + item.quantity, 0),
     }),
     {
-      name: "cart-storage",
+      name: "cart-storage", // persists in localStorage
     }
   )
 );

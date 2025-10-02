@@ -2,10 +2,7 @@ import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useCartStore } from 'store/useStore';
-import { getImageUrl } from '../../utils/imageUtils';
-import Image from 'next/image';
 import Link from 'next/link';
-
 
 const CartSidebar = ({ isOpen, onClose }) => {
   const { items, removeItem, updateQuantity, getTotalPrice, clearCart } = useCartStore();
@@ -59,57 +56,45 @@ const CartSidebar = ({ isOpen, onClose }) => {
                         <div className="flow-root">
                           <ul className="-my-6 divide-y divide-gray-200">
                             {items.map((item) => (
-  <li key={item.id} className="flex py-6">
-    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-      <Image
-        className="h-full w-full object-cover"
-        src={getImageUrl(item?.image)}   // ✅ correct variable
-        alt={item?.name || 'Product'}
-        width={96}                       // ✅ required for Next.js Image
-        height={96}
-      />
-    </div>
+                              <li key={item.id} className="flex py-6">
+                                <div className="flex-1 flex flex-col">
+                                  <div className="flex justify-between text-base font-medium text-gray-900">
+                                    <h3 className="line-clamp-2">{item.name}</h3>
+                                    <p className="ml-4">
+                                      KSh {(item.price * item.quantity).toLocaleString()}
+                                    </p>
+                                  </div>
 
-    <div className="ml-4 flex flex-1 flex-col">
-      <div>
-        <div className="flex justify-between text-base font-medium text-gray-900">
-          <h3 className="line-clamp-2">{item.name}</h3>
-          <p className="ml-4">KSh {(item.price * item.quantity).toLocaleString()}</p>
-        </div>
-        <p className="mt-1 text-sm text-gray-500">{item.category}</p>
-      </div>
+                                  <div className="flex flex-1 items-end justify-between text-sm mt-2">
+                                    <div className="flex items-center space-x-2">
+                                      <button
+                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                        className="p-1 hover:bg-gray-100 rounded"
+                                      >
+                                        <MinusIcon className="h-4 w-4" />
+                                      </button>
+                                      <span className="px-2">{item.quantity}</span>
+                                      <button
+                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                        className="p-1 hover:bg-gray-100 rounded"
+                                      >
+                                        <PlusIcon className="h-4 w-4" />
+                                      </button>
+                                    </div>
 
-      <div className="flex flex-1 items-end justify-between text-sm">
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => updateQuantity(item.id, item.quantity - 1)}
-            className="p-1 hover:bg-gray-100 rounded"
-          >
-            <MinusIcon className="h-4 w-4" />
-          </button>
-          <span className="px-2">{item.quantity}</span>
-          <button
-            onClick={() => updateQuantity(item.id, item.quantity + 1)}
-            className="p-1 hover:bg-gray-100 rounded"
-          >
-            <PlusIcon className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="flex">
-          <button
-            type="button"
-            onClick={() => removeItem(item.id)}
-            className="font-medium text-red-600 hover:text-red-500"
-          >
-            Remove
-          </button>
-        </div>
-      </div>
-    </div>
-  </li>
-))}
-
+                                    <div className="flex">
+                                      <button
+                                        type="button"
+                                        onClick={() => removeItem(item.id)}
+                                        className="font-medium text-red-600 hover:text-red-500"
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            ))}
                           </ul>
                         </div>
                       </div>
@@ -125,7 +110,9 @@ const CartSidebar = ({ isOpen, onClose }) => {
                           <p>Subtotal</p>
                           <p>KSh {getTotalPrice().toLocaleString()}</p>
                         </div>
-                        <p className="mt-0.5 text-sm text-gray-500">Shipping calculated at checkout.</p>
+                        <p className="mt-0.5 text-sm text-gray-500">
+                          Shipping calculated at checkout.
+                        </p>
                         <div className="mt-6 space-y-4">
                           <Link
                             href="/checkout"

@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
- import Image from 'next/image';
+import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
+import { getImageUrl, handleImageError, placeholderSVG } from "utils/imageUtils";
 
-const BannerForm = ({ onSubmit, initialData, isEditing }) => {
+const BannerForm = ({ onSubmit, initialData, isEditing, onCancel }) => {
   const [title, setTitle] = useState(initialData?.title || "");
   const [subtitle, setSubtitle] = useState(initialData?.subtitle || "");
   const [description, setDescription] = useState(initialData?.description || "");
   const [file, setFile] = useState(null);
- 
+  const fileInputRef = useRef(null);
 
+  // Handle form submit
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -19,13 +21,42 @@ const BannerForm = ({ onSubmit, initialData, isEditing }) => {
     if (file) formData.append("file", file);
 
     onSubmit(formData);
+
+    // Reset file input after submit
+    setFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
+
+  // Reset fields when initialData changes (edit mode vs create)
+  useEffect(() => {
+    if (initialData) {
+      setTitle(initialData.title || "");
+      setSubtitle(initialData.subtitle || "");
+      setDescription(initialData.description || "");
+      setFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } else {
+      // fresh blank form when not editing
+      setTitle("");
+      setSubtitle("");
+      setDescription("");
+      setFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  }, [initialData]);
 
   return (
     <form
       onSubmit={handleSubmit}
       className="bg-white p-6 rounded-lg shadow-md space-y-4"
     >
+      {/* Title */}
       <div>
         <label className="block text-sm font-medium">Title</label>
         <input
@@ -37,6 +68,7 @@ const BannerForm = ({ onSubmit, initialData, isEditing }) => {
         />
       </div>
 
+      {/* Subtitle */}
       <div>
         <label className="block text-sm font-medium">Subtitle</label>
         <input
@@ -47,6 +79,7 @@ const BannerForm = ({ onSubmit, initialData, isEditing }) => {
         />
       </div>
 
+      {/* Description */}
       <div>
         <label className="block text-sm font-medium">Description</label>
         <textarea
@@ -56,29 +89,51 @@ const BannerForm = ({ onSubmit, initialData, isEditing }) => {
         />
       </div>
 
+      {/* Image Upload */}
       <div>
-        <label className="block text-sm font-medium">Image</label>
+        <label className="block text-sm font-medium">Banner Image</label>
         <input
           type="file"
           accept="image/*"
+          ref={fileInputRef}   // ✅ attach ref
           onChange={(e) => setFile(e.target.files[0])}
           className="mt-1 block w-full text-sm"
         />
-        {initialData?.image && (
+        {initialData?.image && !file && (
           <Image
-            src={initialData.image}
+            src={getImageUrl(initialData.image)}
             alt="Current banner"
-            className="mt-2 h-24 object-cover rounded"
+            width={400}
+            height={200}
+            className="mt-2 object-cover rounded"
+            onError={handleImageError}
           />
+        )}
+        {file && (
+          <p className="text-sm text-gray-500 mt-2">
+            New file selected: {file.name}
+          </p>
         )}
       </div>
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        {isEditing ? "Update Banner" : "Create Banner"}
-      </button>
+      {/* Actions */}
+      <div className="flex gap-4">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          {isEditing ? "Update Banner" : "Create Banner"}
+        </button>
+        {isEditing && (
+          <button
+            type="button"
+            onClick={onCancel}  // ✅ call cancel from parent
+            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+          >
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
   );
 };

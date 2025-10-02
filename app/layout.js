@@ -2,6 +2,7 @@ import Script from "next/script";
 import "./globals.css";
 import Header from "../components/Layout/Header";
 import Footer from "../components/Layout/Footer";
+import { Toaster } from "react-hot-toast";
 
 export const metadata = {
   title: "Adventurs Bookshop ",
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
         />
 
         <Footer />
+        <Toaster position="top-right" />
       </body>
     </html>
   );
