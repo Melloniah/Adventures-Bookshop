@@ -177,30 +177,46 @@ export default function ProductForm({ product, onSaved }) {
         ))}
       </select>
 
-      {/* Checkboxes */}
-      <div className="flex space-x-4">
-        <label>
-          <input
-            type="checkbox"
-            checked={isActive}
-            onChange={(e) => setIsActive(e.target.checked)}
-          /> Active
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={isFeatured}
-            onChange={(e) => setIsFeatured(e.target.checked)}
-          /> Featured
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={onSale}
-            onChange={(e) => setOnSale(e.target.checked)}
-          /> On Sale
-        </label>
-      </div>
+       {/* --- Product Status Checkboxes --- */}
+<div className="flex space-x-6 mt-2">
+  <label className="flex items-center space-x-2">
+    <input
+      type="checkbox"
+      checked={isFeatured}
+      onChange={(e) => setIsFeatured(e.target.checked)}
+    />
+    <span>New / Featured</span>
+  </label>
+  <label className="flex items-center space-x-2">
+    <input
+      type="checkbox"
+      checked={onSale}
+      onChange={(e) => setOnSale(e.target.checked)}
+    />
+    <span>On Sale</span>
+  </label>
+  <label className="flex items-center space-x-2">
+    <input
+      type="checkbox"
+      checked={isActive}
+      onChange={(e) => setIsActive(e.target.checked)}
+    />
+    <span>Active</span>
+  </label>
+</div>
+
+{/* --- Live Badge Preview Above Image --- */}
+{(isFeatured || onSale) && (
+  <div className="flex space-x-2 mt-2">
+    {isFeatured && (
+      <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">NEW</span>
+    )}
+    {onSale && (
+      <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">ON SALE</span>
+    )}
+  </div>
+)}
+
 
       <input
         type="file"

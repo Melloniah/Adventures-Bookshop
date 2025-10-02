@@ -15,8 +15,10 @@ export default function ProductsPage() {
   const searchParams = useSearchParams();
   const categorySlug = searchParams.get("category") || "";
   const searchTerm = searchParams.get("search") || "";
+  const onSale = searchParams.get("on_sale") === "true";
+  const isFeatured = searchParams.get("is_featured") === "true";
   const router = useRouter();
-const [searchInput, setSearchInput] = useState(searchTerm); 
+  const [searchInput, setSearchInput] = useState(searchTerm);
 
   // Fetch categories once
   useEffect(() => {
@@ -31,7 +33,7 @@ const [searchInput, setSearchInput] = useState(searchTerm);
     fetchCategories();
   }, []);
 
-  // Fetch products whenever category or search changes
+  // Fetch products whenever filters change
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -39,6 +41,8 @@ const [searchInput, setSearchInput] = useState(searchTerm);
         const params = new URLSearchParams();
         if (categorySlug) params.append("category", categorySlug);
         if (searchTerm) params.append("search", searchTerm);
+        if (onSale) params.append("on_sale", "true");
+        if (isFeatured) params.append("is_featured", "true");
 
         const res = await api.get(`/products?${params.toString()}`);
         setProducts(res.data);
@@ -50,9 +54,18 @@ const [searchInput, setSearchInput] = useState(searchTerm);
       }
     };
     fetchProducts();
-  }, [categorySlug, searchTerm]);
+  }, [categorySlug, searchTerm, onSale, isFeatured]);
 
   const currentCategory = categories.find((cat) => cat.slug === categorySlug);
+
+  // Determine page title based on filters
+  const getPageTitle = () => {
+    if (onSale) return "On Sale";
+    if (isFeatured) return "Featured Products";
+    if (currentCategory) return currentCategory.name;
+    if (searchTerm) return `Search Results for "${searchTerm}"`;
+    return "All Products";
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -60,70 +73,78 @@ const [searchInput, setSearchInput] = useState(searchTerm);
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            {currentCategory ? currentCategory.name : "All Products"}
+            {getPageTitle()}
           </h1>
-          {currentCategory?.description && (
+          {currentCategory?.description && !onSale && !isFeatured && (
             <p className="mt-2 text-gray-600">{currentCategory.description}</p>
           )}
+          <p className="mt-2 text-gray-600">
+            {products.length} {products.length === 1 ? "product" : "products"} found
+          </p>
         </div>
 
-        {/* Category Filter */}
-        <div className="mb-6 flex gap-2 flex-wrap">
-          <Link
-            href={`/products${searchTerm ? `?search=${searchTerm}` : ""}`}
-            className={`px-4 py-2 rounded-lg ${
-              !categorySlug
-                ? "bg-red-600 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            All Products
-          </Link>
-          {categories.map((cat) => (
+        {/* Category Filter - Hide when showing on_sale or is_featured */}
+        {!onSale && !isFeatured && (
+          <div className="mb-6 flex gap-2 flex-wrap">
             <Link
-              key={cat.id}
-              href={`/products?category=${cat.slug}${searchTerm ? `&search=${searchTerm}` : ""}`}
+              href={`/products${searchTerm ? `?search=${searchTerm}` : ""}`}
               className={`px-4 py-2 rounded-lg ${
-                categorySlug === cat.slug
+                !categorySlug
                   ? "bg-red-600 text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
             >
-              {cat.name}
+              All Products
             </Link>
-          ))}
-        </div>
+            {categories.map((cat) => (
+              <Link
+                key={cat.id}
+                href={`/products?category=${cat.slug}${searchTerm ? `&search=${searchTerm}` : ""}`}
+                className={`px-4 py-2 rounded-lg ${
+                  categorySlug === cat.slug
+                    ? "bg-red-600 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                {cat.name}
+              </Link>
+            ))}
+          </div>
+        )}
 
-         <div className="mb-6">
-  <input
-    type="text"
-    placeholder="Search products..."
-    value={searchInput}
-    onChange={(e) => setSearchInput(e.target.value)}
-    onKeyDown={(e) => {
-      if (e.key === "Enter") {
-        // Update URL with current category + search term
-        const params = new URLSearchParams();
-        if (categorySlug) params.append("category", categorySlug);
-        if (searchInput.trim()) params.append("search", searchInput.trim());
-        router.push(`/products?${params.toString()}`);
-      }
-    }}
-    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
-  />
-</div>
-        
-        <button
-  onClick={() => {
-    const params = new URLSearchParams();
-    if (categorySlug) params.append("category", categorySlug);
-    if (searchInput.trim()) params.append("search", searchInput.trim());
-    router.push(`/products?${params.toString()}`);
-  }}
-  className="ml-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
->
-  Search
-</button>
+        {/* Search Bar */}
+        <div className="mb-6 flex gap-2">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                const params = new URLSearchParams();
+                if (categorySlug) params.append("category", categorySlug);
+                if (onSale) params.append("on_sale", "true");
+                if (isFeatured) params.append("is_featured", "true");
+                if (searchInput.trim()) params.append("search", searchInput.trim());
+                router.push(`/products?${params.toString()}`);
+              }
+            }}
+            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+          />
+          <button
+            onClick={() => {
+              const params = new URLSearchParams();
+              if (categorySlug) params.append("category", categorySlug);
+              if (onSale) params.append("on_sale", "true");
+              if (isFeatured) params.append("is_featured", "true");
+              if (searchInput.trim()) params.append("search", searchInput.trim());
+              router.push(`/products?${params.toString()}`);
+            }}
+            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            Search
+          </button>
+        </div>
 
         {/* Products Grid */}
         {loading ? (
@@ -136,7 +157,6 @@ const [searchInput, setSearchInput] = useState(searchTerm);
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            
             {products.map((product) => (
               <Link
                 key={product.id}

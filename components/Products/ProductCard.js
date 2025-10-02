@@ -7,7 +7,7 @@ import { useCartStore } from "../../store/useStore";
 import { getImageUrl, handleImageError, placeholderSVG } from '../../utils/imageUtils';
 import toast from "react-hot-toast";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, showSaleBadge = false }) => {
   const { addItem } = useCartStore();
 
   const handleAddToCart = () => {
@@ -15,32 +15,29 @@ const ProductCard = ({ product }) => {
     toast.success("Added to cart!");
   };
 
-  const discount =
-    product.original_price || product.originalPrice
-      ? Math.round(
-          ((product.original_price || product.originalPrice - product.price) / (product.original_price || product.originalPrice)) * 100
-        )
-      : null;
-
   // Safely get image URL
   const imageUrl = getImageUrl(product.image);
 
   return (
     <div className="relative bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden group hover:shadow-lg transition-shadow">
       
-      {/* Sale Badge */}
-      {(product.sale || product.on_sale) && (
-        <div className="absolute top-2 left-2 bg-purple-600 text-white px-2 py-1 text-xs rounded z-10">
-          Sale
+      {/* Status Badges */}
+      <div className="absolute top-2 left-2 flex flex-col space-y-1 z-10">
+        {product.is_featured && (
+          <span className="bg-blue-500 text-white px-2 py-1 text-xs rounded">NEW</span>
+        )}
+        {/* Only show ON SALE badge if showSaleBadge prop is true */}
+        {showSaleBadge && product.on_sale && (
+          <span className="bg-red-500 text-white px-2 py-1 text-xs rounded">ON SALE</span>
+        )}
+      </div>
+
+      {/* Discount Badge */}
+      {product.original_price && product.original_price > product.price && (
+        <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 text-xs rounded z-10">
+          -{Math.round(((product.original_price - product.price) / product.original_price) * 100)}%
         </div>
       )}
-
-     {/* Discount Badge */}
-{product.original_price && product.original_price > product.price && (
-  <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 text-xs rounded z-10">
-    -{Math.round(((product.original_price - product.price) / product.original_price) * 100)}%
-  </div>
-)}
 
       {/* Product Image */}
       <Link href={`/products/${product.id}`}>
@@ -51,17 +48,17 @@ const ProductCard = ({ product }) => {
             width={300}
             height={300}
             onError={handleImageError}
-            unoptimized={!!product.image} // Use backend URL as-is
+            unoptimized={!!product.image}
             className="object-cover w-full h-full"
           />
         </div>
       </Link>
 
       <div className="p-4">
-       {/* Category */}
-<div className="text-xs text-gray-500 uppercase mb-1">
-  {product.category?.name || "GENERAL"}
-</div>
+        {/* Category */}
+        <div className="text-xs text-gray-500 uppercase mb-1">
+          {product.category?.name || "GENERAL"}
+        </div>
 
         {/* Name */}
         <Link href={`/products/${product.id}`}>
