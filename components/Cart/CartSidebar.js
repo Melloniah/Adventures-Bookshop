@@ -2,8 +2,6 @@ import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useCartStore } from 'store/useStore';
-import { getImageUrl, handleImageError, placeholderSVG } from '../../utils/imageUtils';
-import Image from 'next/image';
 import Link from 'next/link';
 
 const CartSidebar = ({ isOpen, onClose }) => {
@@ -59,30 +57,15 @@ const CartSidebar = ({ isOpen, onClose }) => {
                           <ul className="-my-6 divide-y divide-gray-200">
                             {items.map((item) => (
                               <li key={item.id} className="flex py-6">
-                                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                  <Image
-                                    className="h-full w-full object-cover"
-                                    src={getImageUrl(item?.image) || placeholderSVG}
-                                    alt={item?.name || 'Product'}
-                                    width={96}
-                                    height={96}
-                                    onError={handleImageError}
-                                  />
-                                </div>
-
-                                <div className="ml-4 flex flex-1 flex-col">
-                                  <div>
-                                    <div className="flex justify-between text-base font-medium text-gray-900">
-                                      <h3 className="line-clamp-2">{item.name}</h3>
-                                      <p className="ml-4">KSh {(item.price * item.quantity).toLocaleString()}</p>
-                                    </div>
-                                    {/* FIX: Safely render category */}
-                                    <p className="mt-1 text-sm text-gray-500">
-                                      {typeof item.category === 'object' ? item.category?.name : item.category || 'Uncategorized'}
+                                <div className="flex-1 flex flex-col">
+                                  <div className="flex justify-between text-base font-medium text-gray-900">
+                                    <h3 className="line-clamp-2">{item.name}</h3>
+                                    <p className="ml-4">
+                                      KSh {(item.price * item.quantity).toLocaleString()}
                                     </p>
                                   </div>
 
-                                  <div className="flex flex-1 items-end justify-between text-sm">
+                                  <div className="flex flex-1 items-end justify-between text-sm mt-2">
                                     <div className="flex items-center space-x-2">
                                       <button
                                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -127,7 +110,9 @@ const CartSidebar = ({ isOpen, onClose }) => {
                           <p>Subtotal</p>
                           <p>KSh {getTotalPrice().toLocaleString()}</p>
                         </div>
-                        <p className="mt-0.5 text-sm text-gray-500">Shipping calculated at checkout.</p>
+                        <p className="mt-0.5 text-sm text-gray-500">
+                          Shipping calculated at checkout.
+                        </p>
                         <div className="mt-6 space-y-4">
                           <Link
                             href="/checkout"

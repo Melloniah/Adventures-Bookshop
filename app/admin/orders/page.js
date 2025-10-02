@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { orderAPI, api } from '../../../lib/api';
+import { adminAPI } from '../../../lib/api';
 import { EyeIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
@@ -11,31 +11,36 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
+  // Fetch orders function
+  const fetchOrders = useCallback(async () => {
+    setLoading(true);
     try {
-      const response = await api.get('/admin/orders');
-      setOrders(response.data);
+      const { data } = await adminAPI.getAllOrders();
+      setOrders(data);
     } catch (error) {
       toast.error('Failed to fetch orders');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
+  // Run fetchOrders on mount
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  // Handle status update
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {
-      await api.patch(`/admin/orders/${orderId}/status`, { status: newStatus });
+      await adminAPI.updateOrderStatus(orderId, { status: newStatus });
       toast.success('Order status updated successfully');
-      fetchOrders(); // Refresh the list
+      fetchOrders(); // Refresh list after update
     } catch (error) {
       toast.error('Failed to update order status');
     }
   };
 
+  // Status badge colors
   const getStatusColor = (status) => {
     const colors = {
       pending: 'bg-yellow-100 text-yellow-800',
@@ -73,7 +78,6 @@ export default function AdminOrders() {
         </div>
       </div>
 
-      {/* Orders Table */}
       <div className="bg-white shadow overflow-hidden sm:rounded-md">
         {loading ? (
           <div className="text-center py-12">Loading orders...</div>
@@ -108,15 +112,11 @@ export default function AdminOrders() {
               {filteredOrders.map((order) => (
                 <tr key={order.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
-                      {order.order_number}
-                    </div>
+                    <div className="text-sm font-medium text-gray-900">{order.order_number}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {order.full_name}
-                      </div>
+                      <div className="text-sm font-medium text-gray-900">{order.full_name}</div>
                       <div className="text-sm text-gray-500">{order.email}</div>
                       <div className="text-sm text-gray-500">{order.phone}</div>
                     </div>
