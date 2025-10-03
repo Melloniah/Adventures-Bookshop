@@ -2,34 +2,30 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "../../../store/useStore";
+import { useAuthStore } from "../../../store/useAuthStore";
 import { authAPI } from "../../../lib/api";
 import toast from "react-hot-toast";
 
 export default function AdminLogin() {
   const router = useRouter();
-  const { setUser, isAdmin, _hasHydrated, setHasHydrated } = useAuthStore();
+  const { setUser, isAdmin, _hasHydrated, logout } = useAuthStore();
+
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    // Force hydration if not already done
-    if (!_hasHydrated) {
-      setHasHydrated(true);
-    }
-    // Clear any existing auth data when accessing login page
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  }, [_hasHydrated, setHasHydrated]);
+  }, []);
 
-  // Don't redirect if already logged in - let user login again
-  // useEffect(() => {
-  //   if (mounted && _hasHydrated && isAdmin) {
-  //     router.replace("/admin/dashboard");
-  //   }
-  // }, [mounted, _hasHydrated, isAdmin, router]);
+  // 🚀 Redirect if already logged in as admin
+  useEffect(() => {
+    console.log("🔍 Redirect check:", { mounted, _hasHydrated, isAdmin });
+    if (mounted && _hasHydrated && isAdmin) {
+      console.log("🚀 Redirecting to dashboard...");
+      router.replace("/admin/dashboard");
+    }
+  }, [mounted, _hasHydrated, isAdmin, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,43 +33,38 @@ export default function AdminLogin() {
 
     try {
       const response = await authAPI.login(formData);
+      const { user } = response.data;
 
-      if (!response.data) {
-        toast.error("Invalid response from server");
-        setLoading(false);
-        return;
-      }
+      console.log("📥 Login response:", user);
 
-      const { access_token, user } = response.data;
-      
-
-      if (!access_token || !user) {
+      if (!user) {
         toast.error("Invalid login response");
-        setLoading(false);
         return;
       }
 
       if (user.role !== "admin") {
         toast.error("Access denied. Admin privileges required.");
-        setLoading(false);
         return;
       }
 
-      // Store user info locally (token is in HttpOnly cookie)
-      localStorage.setItem("user", JSON.stringify(user));
-
-      // Update store (no token needed, cookie handles auth)
+      // ✅ Save to Zustand
       setUser(user);
 
       toast.success("Login successful!");
-      setTimeout(()=>{
-       router.push("/admin/dashboard");
-      }, 200)
-       
-
+      
+      console.log("🔄 Attempting redirect...");
+      
+      // ✅ Try multiple redirect strategies
+      setTimeout(() => {
+        console.log("⏰ Timeout redirect");
+        window.location.href = "/admin/dashboard";
+      }, 100);
+      
     } catch (error) {
-      const errorMessage = error.response?.data?.detail || error.message || "Login failed";
+      const errorMessage =
+        error.response?.data?.detail || error.message || "Login failed";
       toast.error(errorMessage);
+    } finally {
       setLoading(false);
     }
   };
@@ -93,10 +84,13 @@ export default function AdminLogin() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <div className="bg-red-600 text-white px-4 py-2 rounded font-bold text-xl inline-block">
-            ADVENTURES<span className="bg-turqouise-green-400 text-black px-1">MALL</span>
+          <div className="bg-teal-600 text-white px-4 py-2 rounded font-bold text-xl inline-block">
+            ADVENTURES
+            <span className="bg-black-400 text-black px-1">BOOKSHOP</span>
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Admin Sign In</h2>
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+            Admin Sign In
+          </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -124,9 +118,9 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:bg-gray-400"
+            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:bg-gray-400"
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? "Signing in..." : "Login in"}
           </button>
         </form>
       </div>

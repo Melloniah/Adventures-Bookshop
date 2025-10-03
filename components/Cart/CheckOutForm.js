@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react';
-import { useCartStore } from '../../store/useStore';
+import { useCartStore } from '../../store/useCartStore';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { orderAPI, paymentAPI } from 'lib/api';

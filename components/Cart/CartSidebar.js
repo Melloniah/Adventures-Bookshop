@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { useCartStore } from 'store/useStore';
+import { useCartStore } from 'store/useCartStore';
 import Link from 'next/link';
 
 const CartSidebar = ({ isOpen, onClose }) => {

@@ -121,7 +121,7 @@ const Footer = () => {
               <div>
                 <h3 className="font-bold mb-4">Follow Us</h3>
                 <p className="text-gray-300 text-sm mb-4">
-                  Stay connected with Schoolmall Bookshop!
+                  Stay connected with Adventures Bookshop!
                 </p>
                 <div className="flex space-x-3">
                   <a href="#" className="bg-blue-600 p-2 rounded hover:bg-blue-700">

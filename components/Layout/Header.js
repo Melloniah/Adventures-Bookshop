@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ShoppingCartIcon, UserIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useCartStore } from "store/useStore";
+import { useCartStore } from "store/useCartStore";
 import CartSidebar from "../Cart/CartSidebar";
 
 const Header = () => {
@@ -40,7 +40,7 @@ const Header = () => {
               <span>📞 +254 724047489</span>
               <span>✉️ adventuresbookshop@gmail.com</span>
             </div>
-            <Link href="/admin" className="hover:text-red-600">Admin</Link>
+            
           </div>
         </div>
 
@@ -49,10 +49,10 @@ const Header = () => {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center">
-              <div className="bg-red-600 text-white px-3 py-1 rounded font-bold text-xl">
-                ADVENTURES
-                <span className="bg-white-400 text-black px-1">BOOKSHOP</span>
-              </div>
+               <div className="bg-teal-600 text-white px-4 py-2 rounded font-bold text-xl inline-block">
+            ADVENTURES
+            <span className="bg-black-400 text-black px-1">BOOKSHOP</span>
+          </div>
             </Link>
 
             {/* Right side */}
@@ -83,12 +83,13 @@ const Header = () => {
               >
                 {isMobileMenuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
               </button>
+              <Link href="/admin" className="hover:text-red-600">Admin</Link>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="bg-red-600 text-white">
+        <nav className="bg-teal-600 text-white">
           <div className="max-w-7xl mx-auto px-4">
             <div className="hidden md:flex items-center space-x-4 h-12">
               {headerLinks.map((link) => (
@@ -96,7 +97,7 @@ const Header = () => {
                   key={link.href}
                   href={link.href}
                   className={`px-3 py-2 rounded transition-colors ${
-                    isActive(link.href) ? "bg-red-700" : "hover:bg-red-700"
+                    isActive(link.href) ? "bg-teal-700" : "hover:bg-red-700"
                   }`}
                 >
                   {link.name}
@@ -112,7 +113,7 @@ const Header = () => {
                     key={link.href}
                     href={link.href}
                     className={`block py-2 px-3 rounded ${
-                      isActive(link.href) ? "bg-red-700" : "hover:bg-red-700"
+                      isActive(link.href) ? "bg-teal-700" : "hover:bg-red-700"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
