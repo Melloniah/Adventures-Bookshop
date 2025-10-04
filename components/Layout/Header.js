@@ -21,8 +21,10 @@ const Header = () => {
   const headerLinks = [
     { name: "Home", href: "/" },
     { name: "Books", href: "/products?category=books" },
+     { name: "Stationery", href: "/products?category=stationery" },
     { name: "Technology", href: "/products?category=technology" },
     { name: "Art Supplies", href: "/products?category=arts" },
+     { name: "Toys", href: "/products?category=toys" },
   ];
 
   const isActive = (href) => {
@@ -34,7 +36,7 @@ const Header = () => {
     <>
       <header className="bg-white shadow-sm">
         {/* Top bar */}
-        <div className="bg-gray-50 px-4 py-2 text-sm text-gray-600">
+        <div className="bg-gray-50 px-4 py-2 text-sm text-gray-1400">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <div className="flex items-center space-x-4">
               <span>📞 +254 724047489</span>
@@ -58,14 +60,14 @@ const Header = () => {
             {/* Right side */}
             <div className="flex items-center space-x-4">
               {mounted && (
-                <Link href="/account" className="p-2 hover:bg-gray-100 rounded-lg">
+                <Link href="/account" className="p-2 hover:bg-teal-500 rounded-lg">
                   <UserIcon className="h-6 w-6" />
                 </Link>
               )}
               {mounted && (
                 <button
                   onClick={() => setIsCartOpen(true)}
-                  className="relative p-2 hover:bg-gray-100 rounded-lg"
+                  className="relative p-2 hover:bg-teal-500 rounded-lg"
                 >
                   <ShoppingCartIcon className="h-6 w-6" />
                   {getTotalItems() > 0 && (
@@ -83,47 +85,67 @@ const Header = () => {
               >
                 {isMobileMenuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
               </button>
-              <Link href="/admin" className="hover:text-red-600">Admin</Link>
+              <Link href="/admin" className="hover:text-teal-500">Admin</Link>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="bg-teal-600 text-white">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="hidden md:flex items-center space-x-4 h-12">
-              {headerLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-3 py-2 rounded transition-colors ${
-                    isActive(link.href) ? "bg-teal-700" : "hover:bg-red-700"
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </div>
+<nav className="bg-teal-600 text-white">
+  <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+    {/* Left: main links */}
+    <div className="hidden md:flex items-center space-x-4 h-12">
+      {headerLinks.map((link) => (
+        <Link
+          key={link.href}
+          href={link.href}
+          className={`px-3 py-2 rounded transition-colors ${
+            isActive(link.href) ? "bg-teal-700" : "hover:bg-gray-600"
+          }`}
+        >
+          {link.name}
+        </Link>
+      ))}
+    </div>
 
-            {/* Mobile menu */}
-            {isMobileMenuOpen && (
-              <div className="md:hidden py-4 flex flex-col gap-2">
-                {headerLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`block py-2 px-3 rounded ${
-                      isActive(link.href) ? "bg-teal-700" : "hover:bg-red-700"
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </nav>
+    {/* Right: Track Order */}
+    <div className="hidden md:flex items-center">
+      <Link
+        href="/track-order"
+        className="px-3 py-2 rounded hover:bg-teal-500 transition-colors font-medium"
+      >
+        Track Your Order
+        <span className="ml-1 text-white animate-bounce">➡️</span>
+      </Link>
+    </div>
+
+    {/* Mobile menu toggle */}
+    {isMobileMenuOpen && (
+      <div className="md:hidden py-4 flex flex-col gap-2">
+        {headerLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={`block py-2 px-3 rounded ${
+              isActive(link.href) ? "bg-teal-700" : "hover:bg-red-700"
+            }`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            {link.name}
+          </Link>
+        ))}
+        <Link
+          href="/track-order"
+          className="block py-2 px-3 rounded hover:bg-teal-500"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Track Your Order
+          <span className="ml-1 text-white animate-bounce">➡️</span>
+        </Link>
+      </div>
+    )}
+  </div>
+</nav>
       </header>
 
       <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
