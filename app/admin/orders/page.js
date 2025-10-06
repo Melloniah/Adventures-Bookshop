@@ -83,90 +83,98 @@ export default function AdminOrders() {
           <div className="text-center py-12">Loading orders...</div>
         ) : (
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Order #
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Customer
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Items
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredOrders.map((order) => (
-                <tr key={order.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{order.order_number}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{order.full_name}</div>
-                      <div className="text-sm text-gray-500">{order.email}</div>
-                      <div className="text-sm text-gray-500">{order.phone}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {order.order_items?.length || 0} items
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    KSh {order.total_amount?.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(order.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <Link
-                        href={`/admin/orders/${order.id}`}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        <EyeIcon className="h-5 w-5" />
-                      </Link>
-                      {order.status === 'pending' && (
-                        <button
-                          onClick={() => handleStatusUpdate(order.id, 'confirmed')}
-                          className="text-green-600 hover:text-green-900"
-                          title="Confirm Order"
-                        >
-                          <CheckIcon className="h-5 w-5" />
-                        </button>
-                      )}
-                      {order.status !== 'cancelled' && order.status !== 'delivered' && (
-                        <button
-                          onClick={() => handleStatusUpdate(order.id, 'cancelled')}
-                          className="text-red-600 hover:text-red-900"
-                          title="Cancel Order"
-                        >
-                          <XMarkIcon className="h-5 w-5" />
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+  <thead className="bg-gray-50">
+    <tr>
+      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Order #
+      </th>
+      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Customer
+      </th>
+      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Stop
+      </th>
+      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Route
+      </th>
+      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Items
+      </th>
+      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Total
+      </th>
+      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Status
+      </th>
+      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Date
+      </th>
+      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody className="bg-white divide-y divide-gray-200">
+    {filteredOrders.map((order) => (
+      <tr key={order.id}>
+        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          {order.order_number}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          <div>{order.full_name}</div>
+          <div className="text-gray-500">{order.email}</div>
+          <div className="text-gray-500">{order.phone}</div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          {order.delivery_stop?.name || '—'}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          {order.delivery_route?.name || '—'}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          {order.order_items?.length || 0} items
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          KSh {order.total_amount?.toLocaleString()}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
+            {order.status}
+          </span>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+          {new Date(order.created_at).toLocaleDateString()}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+          <div className="flex justify-end space-x-2">
+            <Link href={`/admin/orders/${order.id}`} className="text-indigo-600 hover:text-indigo-900">
+              <EyeIcon className="h-5 w-5" />
+            </Link>
+            {order.status === 'pending' && (
+              <button
+                onClick={() => handleStatusUpdate(order.id, 'confirmed')}
+                className="text-green-600 hover:text-green-900"
+                title="Confirm Order"
+              >
+                <CheckIcon className="h-5 w-5" />
+              </button>
+            )}
+            {order.status !== 'cancelled' && order.status !== 'delivered' && (
+              <button
+                onClick={() => handleStatusUpdate(order.id, 'cancelled')}
+                className="text-red-600 hover:text-red-900"
+                title="Cancel Order"
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            )}
+          </div>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
         )}
       </div>
     </div>

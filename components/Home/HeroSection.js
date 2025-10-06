@@ -10,6 +10,7 @@ const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slides, setSlides] = useState([]);
   const [paused, setPaused] = useState(false);
+  const [imageHeight, setImageHeight] = useState(600);
   const intervalRef = useRef(null);
 
   // Fetch banners
@@ -25,6 +26,20 @@ const HeroSection = () => {
     fetchBanners();
   }, []);
 
+  // Load first image to get dimensions
+  useEffect(() => {
+    if (slides.length > 0 && slides[0]?.image) {
+      const img = document.createElement('img');
+      img.onload = () => {
+        const aspectRatio = img.height / img.width;
+        const viewportWidth = window.innerWidth;
+        const calculatedHeight = Math.min(Math.max(viewportWidth * aspectRatio, 400), 900);
+        setImageHeight(calculatedHeight);
+      };
+      img.src = getImageUrl(slides[0].image) || placeholderSVG;
+    }
+  }, [slides]);
+
   // Auto slide
   useEffect(() => {
     if (slides.length === 0) return;
@@ -38,9 +53,28 @@ const HeroSection = () => {
     return () => clearInterval(intervalRef.current);
   }, [slides.length, paused]);
 
+  // Update height on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (slides.length > 0 && slides[0]?.image) {
+        const img = document.createElement('img');
+        img.onload = () => {
+          const aspectRatio = img.height / img.width;
+          const viewportWidth = window.innerWidth;
+          const calculatedHeight = Math.min(Math.max(viewportWidth * aspectRatio, 400), 900);
+          setImageHeight(calculatedHeight);
+        };
+        img.src = getImageUrl(slides[0].image) || placeholderSVG;
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [slides]);
+
   if (slides.length === 0) {
     return (
-      <section className="relative h-96 md:h-[500px] flex items-center justify-center bg-gray-200">
+      <section className="relative flex items-center justify-center bg-gray-200 m-0 block" style={{ height: '500px' }}>
         <p className="text-gray-600">Loading banners...</p>
       </section>
     );
@@ -48,24 +82,27 @@ const HeroSection = () => {
 
   return (
     <section
-      className="relative h-96 md:h-[500px] overflow-hidden"
+      className="relative overflow-hidden m-0 p-0 block"
+      style={{ height: `${imageHeight}px` }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
       {/* Slides wrapper */}
       <div
-        className="flex h-full transition-transform duration-700 ease-in-out"
+        className="flex h-full transition-transform duration-700 ease-in-out m-0 p-0"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
         {slides.map((slide) => (
-          <div key={slide.id} className="flex-shrink-0 w-full h-full relative">
+          <div key={slide.id} className="flex-shrink-0 w-full h-full relative m-0 p-0">
             <Image
               src={getImageUrl(slide.image)||placeholderSVG}
               alt={slide.title || "Hero Banner"}
               fill
-              className="object-cover"
+              className="object-cover m-0 p-0"
               priority
-              onError={handleImageError} // fallback to placeholder
+              onError={handleImageError}
+              sizes="100vw"
+              style={{ display: 'block' }}
             />
 
             {/* Overlay content */}
@@ -105,7 +142,7 @@ const HeroSection = () => {
             prev === 0 ? slides.length - 1 : prev - 1
           )
         }
-        className="absolute top-1/2 left-4 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full hover:bg-black/60"
+        className="absolute top-1/2 left-4 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full hover:bg-black/60 z-10"
       >
         ❮
       </button>
@@ -113,13 +150,13 @@ const HeroSection = () => {
         onClick={() =>
           setCurrentSlide((prev) => (prev + 1) % slides.length)
         }
-        className="absolute top-1/2 right-4 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full hover:bg-black/60"
+        className="absolute top-1/2 right-4 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full hover:bg-black/60 z-10"
       >
         ❯
       </button>
 
       {/* Indicators */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
         {slides.map((_, index) => (
           <button
             key={index}

@@ -1,12 +1,14 @@
-'use client'
+'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCartStore } from '../../store/useCartStore';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { orderAPI, paymentAPI } from 'lib/api';
+import { orderAPI, paymentAPI, deliveryAPI } from 'lib/api';
 
 export default function CheckoutForm() {
+  const router = useRouter();
   const [customerInfo, setCustomerInfo] = useState({
     full_name: '',
     phone: '',
@@ -16,6 +18,13 @@ export default function CheckoutForm() {
   const [paymentMethod, setPaymentMethod] = useState('mpesa');
   const [loading, setLoading] = useState(false);
 
+  const [deliverOrder, setDeliverOrder] = useState(false);
+  const [routes, setRoutes] = useState([]);
+  const [stops, setStops] = useState([]);
+  const [selectedRoute, setSelectedRoute] = useState('');
+  const [selectedStop, setSelectedStop] = useState('');
+  const [deliveryFee, setDeliveryFee] = useState(0);
+
   const { items: cartItems, clearCart, getTotalPrice } = useCartStore();
   const totalAmount = getTotalPrice();
 
@@ -24,80 +33,115 @@ export default function CheckoutForm() {
     setCustomerInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  useEffect(() => {
+    deliveryAPI.getAllRoutes()
+      .then((res) => setRoutes(res.data))
+      .catch(console.error);
+  }, []);
 
-  try {
-    const orderData = {
-      full_name: customerInfo.full_name,
-      email: customerInfo.email,
-      phone: customerInfo.phone,
-      location: customerInfo.location,
-      notes: customerInfo.notes || '',
-      payment_method: paymentMethod,
-      items: cartItems.map((item) => ({
-        product_id: item.id,
-        quantity: item.quantity,
-        price: item.price,
-      })),
-    };
-
-    // Create order
-    const orderResponse = await orderAPI.customerAddAOrder(orderData);
-    const orderResult = orderResponse.data;
-
-    if (paymentMethod === 'mpesa') {
-      const mpesaResponse = await paymentAPI.initiateMpesa({
-        order_id: orderResult.id,
-        phone_number: customerInfo.phone,
-        amount: totalAmount,
-      });
-      const mpesaResult = mpesaResponse.data;
-
-      if (mpesaResult.success) {
-        toast.success('M-Pesa STK push sent! Check your phone.');
-        clearCart();
-        window.location.href = `/orders/${orderResult.id}?payment_pending=true`;
-      } else {
-        toast.error('M-Pesa payment failed. Try again.');
-      }
-
-    } else if (paymentMethod === 'whatsapp') {
-      const whatsappResponse = await paymentAPI.sendWhatsappOrder(orderResult.id);
-      const whatsappResult = whatsappResponse.data;
-
-      if (whatsappResult.success) {
-        window.open(whatsappResult.whatsapp_url, '_blank');
-        toast.success('Order sent via WhatsApp! We’ll contact you soon.');
-        clearCart();
-      } else {
-        toast.error('Failed to send order via WhatsApp.');
-      }
-    }
-
-  } catch (error) {
-    console.error('Order failed:', error);
-    if (error.response?.data?.detail) {
-      toast.error(error.response.data.detail);
+  useEffect(() => {
+    if (selectedRoute) {
+      deliveryAPI.getRouteById(selectedRoute)
+        .then((res) => setStops(res.data.stops || []))
+        .catch(console.error);
     } else {
-      toast.error('Order failed. Check your connection and try again.');
+      setStops([]);
     }
-  } finally {
-    setLoading(false);
-  }
+  }, [selectedRoute]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (deliverOrder && !selectedStop) {
+      return toast.error('Please select a delivery stop');
+    }
+
+    setLoading(true);
+
+    try {
+      // Map selected IDs to names
+      const routeName = routes.find(r => r.id === parseInt(selectedRoute))?.name || '';
+      const stopObj = stops.find(s => s.id === parseInt(selectedStop));
+      const stopName = stopObj?.name || '';
+      const fee = stopObj?.price || 0;
+
+      const orderData = {
+  full_name: customerInfo.full_name,
+  email: customerInfo.email,
+  phone: customerInfo.phone,
+  location: deliverOrder ? customerInfo.location : null,
+  delivery_route_id: deliverOrder ? parseInt(selectedRoute) : null,  // ✅ correct
+  delivery_stop_id: deliverOrder ? parseInt(selectedStop) : null,    // ✅ correct
+  delivery_fee: deliverOrder ? fee : 0,
+  notes: customerInfo.notes || '',
+  payment_method: paymentMethod,
+  items: cartItems.map((item) => ({
+    product_id: item.id,
+    quantity: item.quantity,
+    price: item.price,
+  })),
 };
 
+      console.log('Order data being sent:', orderData); // ✅ ADD THIS
+    console.log('deliverOrder:', deliverOrder); // ✅ ADD THIS
+    console.log('selectedRoute:', selectedRoute); // ✅ ADD THIS
+    console.log('selectedStop:', selectedStop); // ✅ ADD THIS
 
+      const orderResponse = await orderAPI.customerAddAOrder(orderData);
+      const orderResult = orderResponse.data;
+
+      clearCart();
+
+      if (paymentMethod === 'mpesa') {
+        const mpesaResponse = await paymentAPI.initiateMpesa({
+          order_id: orderResult.id,
+          phone_number: customerInfo.phone,
+          amount: totalAmount + (deliverOrder ? fee : 0),
+        });
+        const mpesaResult = mpesaResponse.data;
+
+        if (mpesaResult.success) {
+          toast.success('M-Pesa STK push sent! Check your phone.');
+          window.location.href = `/orders/${orderResult.id}?payment_pending=true`;
+        } else {
+          toast.error('M-Pesa payment failed. Try again.');
+        }
+      } else if (paymentMethod === 'whatsapp') {
+        const whatsappResponse = await paymentAPI.sendWhatsappOrder(orderResult.id);
+        const whatsappResult = whatsappResponse.data;
+
+        if (whatsappResult.success) {
+          window.open(whatsappResult.whatsapp_url, '_blank');
+          toast.success('Order sent via WhatsApp! We will contact you soon.')
+        } else {
+          toast.error('Failed to send order via WhatsApp.');
+        }
+      }
+
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.detail || 'Order failed. Try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleContinueShopping = () => {
+    clearCart();        // Ensure cart is cleared
+    router.push('/');   // Navigate to home page
+  };
 
   if (cartItems.length === 0) {
     return (
       <div className="text-center py-16 max-w-2xl mx-auto">
         <h2 className="text-3xl font-bold mb-4">Your cart is empty</h2>
         <p className="text-gray-600 mb-8">Add some products to continue with checkout</p>
-        <Link href="/products" className="bg-red-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors">
+        <button
+          onClick={handleContinueShopping}
+          className="bg-red-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+        >
           Continue Shopping
-        </Link>
+        </button>
       </div>
     );
   }
@@ -115,13 +159,27 @@ export default function CheckoutForm() {
             <span className="text-lg font-bold text-red-600">KSh {(item.price * item.quantity).toLocaleString()}</span>
           </div>
         ))}
-        <div className="flex justify-between items-center font-bold text-lg mt-4 pt-4 border-t border-red-200">
+
+        {deliverOrder && selectedRoute && selectedStop && (
+          <div className="mt-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <h4 className="font-semibold text-gray-800 mb-2">Delivery Details</h4>
+            <p className="text-sm text-gray-700"><span className="font-medium">Route:</span> {routes.find(r => r.id === parseInt(selectedRoute))?.name}</p>
+            <p className="text-sm text-gray-700"><span className="font-medium">Stop:</span> {stops.find(s => s.id === parseInt(selectedStop))?.name}</p>
+          </div>
+        )}
+
+        <div className="flex justify-between items-center font-bold text-lg mt-2">
+          <span>Delivery Fee:</span>
+          <span className="text-xl text-teal-600">KSh {(deliverOrder ? deliveryFee : 0).toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between items-center font-bold text-lg mt-2">
           <span>Total Amount:</span>
-          <span className="text-xl text-red-600">KSh {totalAmount.toLocaleString()}</span>
+          <span className="text-xl text-teal-600">KSh {(totalAmount + (deliverOrder ? deliveryFee : 0)).toLocaleString()}</span>
         </div>
       </div>
 
       {/* Checkout Form */}
+     {/* Checkout Form */}
       <form onSubmit={handleSubmit}>
         {/* Customer Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -143,11 +201,67 @@ export default function CheckoutForm() {
             className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" />
         </div>
 
-        <div className="mb-8">
-          <label className="block text-sm font-semibold mb-2 text-gray-700">Delivery Location *</label>
-          <textarea name="location" required value={customerInfo.location} onChange={handleInputChange}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" rows={3} />
+        {/* Deliver toggle */}
+        <div className="mb-6 flex items-center">
+          <input
+            type="checkbox"
+            id="deliverOrder"
+            checked={deliverOrder}
+            onChange={() => setDeliverOrder(!deliverOrder)}
+            className="mr-3 h-5 w-5 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
+          />
+          <label htmlFor="deliverOrder" className="text-gray-700 font-semibold">Deliver my order</label>
         </div>
+
+        {/* Delivery Info (only if delivery is chosen) */}
+        {deliverOrder && (
+          <>
+            <div className="mb-6">
+              <label className="block text-sm font-semibold mb-2 text-gray-700">Delivery Location *</label>
+              <textarea name="location" required value={customerInfo.location} onChange={handleInputChange}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" rows={3} />
+            </div>
+
+            <div className="mb-8">
+              <label className="block text-sm font-semibold mb-2 text-gray-700">Delivery Route *</label>
+              <select
+                value={selectedRoute}
+                onChange={(e) => setSelectedRoute(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none"
+              >
+                <option value="">Select a route</option>
+                {routes.map((route) => (
+                  <option key={route.id} value={route.id}>
+                    {route.name}
+                  </option>
+                ))}
+              </select>
+
+              {stops.length > 0 && (
+                <>
+                  <label className="block text-sm font-semibold mb-2 mt-4 text-gray-700">Delivery Stop *</label>
+                  <select
+                    value={selectedStop}
+                    onChange={(e) => {
+                      const stopId = e.target.value;
+                      setSelectedStop(stopId);
+                      const stop = stops.find((s) => s.id === parseInt(stopId));
+                      setDeliveryFee(stop ? stop.price : 0);
+                    }}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none"
+                  >
+                    <option value="">Select a stop</option>
+                    {stops.map((stop) => (
+                      <option key={stop.id} value={stop.id}>
+                        {stop.name} — KSh {stop.price}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
+            </div>
+          </>
+        )}
 
         {/* Payment Methods */}
         <div className="mb-8">
@@ -170,11 +284,15 @@ export default function CheckoutForm() {
           </div>
         </div>
 
-        <button type="submit" disabled={loading}
-          className="w-full bg-red-600 text-white py-4 px-6 rounded-lg hover:bg-red-700 transition-colors text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
-          {loading ? 'Processing Order...' : `Complete Order - KSh ${totalAmount.toLocaleString()}`}
+        <button type="submit"
+          disabled={loading}
+          className="w-full bg-teal-600 text-white py-4 px-6 rounded-lg hover:bg-teal-700 transition-colors text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Processing Order...' : `Complete Order - KSh ${(totalAmount + (deliverOrder ? deliveryFee : 0)).toLocaleString()}`}
         </button>
       </form>
     </div>
   );
 }
+
+  

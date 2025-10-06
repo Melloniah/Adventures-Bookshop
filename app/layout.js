@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "../components/Layout/Header";
 import Footer from "../components/Layout/Footer";
 import { Toaster } from "react-hot-toast";
+import { HeartOff } from "lucide-react";
 
 export const metadata = {
   title: "Adventurs Bookshop ",
@@ -14,11 +15,10 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className="bg-turquouise-green-50 font-sans">
         <Header />
+      
 
         <main>{children}</main>
-        <div className="bg-orange-500 text-white text-sm py-2 text-center">
-          Free Delivery on Orders Over KSh 3,000 | Call Us: +254 793 488207
-        </div>
+       
 
         <Script
           src="https://example.com/chat-widget.js"

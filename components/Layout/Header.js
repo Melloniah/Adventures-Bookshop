@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -21,10 +22,10 @@ const Header = () => {
   const headerLinks = [
     { name: "Home", href: "/" },
     { name: "Books", href: "/products?category=books" },
-     { name: "Stationery", href: "/products?category=stationery" },
+    { name: "Stationery", href: "/products?category=stationery" },
     { name: "Technology", href: "/products?category=technology" },
     { name: "Art Supplies", href: "/products?category=arts" },
-     { name: "Toys", href: "/products?category=toys" },
+    { name: "Toys", href: "/products?category=toys" },
   ];
 
   const isActive = (href) => {
@@ -34,7 +35,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm mb-0">
         {/* Top bar */}
         <div className="bg-gray-50 px-4 py-2 text-sm text-gray-1400">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -42,7 +43,6 @@ const Header = () => {
               <span>📞 +254 724047489</span>
               <span>✉️ adventuresbookshop@gmail.com</span>
             </div>
-            
           </div>
         </div>
 
@@ -51,10 +51,10 @@ const Header = () => {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center">
-               <div className="bg-teal-600 text-white px-4 py-2 rounded font-bold text-xl inline-block">
-            ADVENTURES
-            <span className="bg-black-400 text-black px-1">BOOKSHOP</span>
-          </div>
+              <div className="bg-teal-600 text-white px-4 py-2 rounded font-bold text-xl inline-block">
+                ADVENTURES
+                <span className="bg-black-400 text-black px-1">BOOKSHOP</span>
+              </div>
             </Link>
 
             {/* Right side */}
@@ -91,64 +91,102 @@ const Header = () => {
         </div>
 
         {/* Navigation */}
-<nav className="bg-teal-600 text-white">
-  <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-    {/* Left: main links */}
-    <div className="hidden md:flex items-center space-x-4 h-12">
-      {headerLinks.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className={`px-3 py-2 rounded transition-colors ${
-            isActive(link.href) ? "bg-teal-700" : "hover:bg-gray-600"
-          }`}
-        >
-          {link.name}
-        </Link>
-      ))}
-    </div>
+        <nav className="bg-teal-600 text-white">
+          <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            {/* Left: main links */}
+            <div className="hidden md:flex items-center space-x-4 h-12">
+              {headerLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-3 py-2 rounded transition-colors ${
+                    isActive(link.href) ? "bg-teal-700" : "hover:bg-gray-600"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
 
-    {/* Right: Track Order */}
-    <div className="hidden md:flex items-center">
-      <Link
-        href="/track-order"
-        className="px-3 py-2 rounded hover:bg-teal-500 transition-colors font-medium"
-      >
-        Track Your Order
-        <span className="ml-1 text-white animate-bounce">➡️</span>
-      </Link>
-    </div>
+            {/* Right: Track Order */}
+            <div className="hidden md:flex items-center">
+              <Link
+                href="/track-order"
+                className="px-3 py-2 rounded hover:bg-teal-500 transition-colors font-medium"
+              >
+                Track Your Order
+                <span className="ml-1 text-white inline-block animate-arrow-bounce">➡️</span>
+              </Link>
+            </div>
 
-    {/* Mobile menu toggle */}
-    {isMobileMenuOpen && (
-      <div className="md:hidden py-4 flex flex-col gap-2">
-        {headerLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`block py-2 px-3 rounded ${
-              isActive(link.href) ? "bg-teal-700" : "hover:bg-red-700"
-            }`}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            {link.name}
-          </Link>
-        ))}
-        <Link
-          href="/track-order"
-          className="block py-2 px-3 rounded hover:bg-teal-500"
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          Track Your Order
-          <span className="ml-1 text-white animate-bounce">➡️</span>
-        </Link>
-      </div>
-    )}
-  </div>
-</nav>
+            {/* Mobile menu toggle */}
+            {isMobileMenuOpen && (
+              <div className="md:hidden py-4 flex flex-col gap-2">
+                {headerLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`block py-2 px-3 rounded ${
+                      isActive(link.href) ? "bg-teal-700" : "hover:bg-red-700"
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+                <Link
+                  href="/track-order"
+                  className="block py-2 px-3 rounded hover:bg-teal-500"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Track Your Order
+                  <span className="ml-1 text-white inline-block animate-arrow-bounce">➡️</span>
+                </Link>
+              </div>
+            )}
+          </div>
+        </nav>
+
+        {/* Running Banner */}
+        <div className="bg-orange-500 text-black text-sm py-2 overflow-hidden">
+          <div className="animate-marquee whitespace-nowrap">
+            <span className="inline-block px-4"> Free Delivery on Orders Over KSh 3,000</span>
+            <span className="inline-block px-4">📞 Call Us: +254 724047489</span>
+            <span className="inline-block px-4">Free Delivery on Orders Over KSh 3,000</span>
+            <span className="inline-block px-4">📞 Call Us: +254 724047489</span>
+            {/* <span className="inline-block px-4"> Free Delivery on Orders Over KSh 3,000</span> */}
+            {/* <span className="inline-block px-4">📞 Call Us: +254 724047489</span> */}
+          </div>
+        </div>
       </header>
 
       <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+
+      <style jsx>{`
+        @keyframes marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        .animate-marquee {
+          display: inline-block;
+          animation: marquee 20s linear infinite;
+        }
+        @keyframes arrow-bounce {
+          0%, 100% {
+            transform: translateX(0);
+          }
+          50% {
+            transform: translateX(5px);
+          }
+        }
+        .animate-arrow-bounce {
+          animation: arrow-bounce 1s ease-in-out infinite;
+        }
+      `}</style>
     </>
   );
 };
