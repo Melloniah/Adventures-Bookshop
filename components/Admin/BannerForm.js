@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import { getImageUrl, handleImageError, placeholderSVG } from "utils/imageUtils";
+import { getImageUrl, handleImageError } from "utils/imageUtils";
 
 const BannerForm = ({ onSubmit, initialData, isEditing, onCancel }) => {
   const [title, setTitle] = useState(initialData?.title || "");
@@ -11,7 +11,7 @@ const BannerForm = ({ onSubmit, initialData, isEditing, onCancel }) => {
   const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
 
-  // Handle form submit
+  // ✅ Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -22,113 +22,124 @@ const BannerForm = ({ onSubmit, initialData, isEditing, onCancel }) => {
 
     onSubmit(formData);
 
-    // Reset file input after submit
+    // Reset file input
     setFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // Reset fields when initialData changes (edit mode vs create)
+  // ✅ Reset when editing or switching mode
   useEffect(() => {
     if (initialData) {
       setTitle(initialData.title || "");
       setSubtitle(initialData.subtitle || "");
       setDescription(initialData.description || "");
       setFile(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     } else {
-      // fresh blank form when not editing
       setTitle("");
       setSubtitle("");
       setDescription("");
       setFile(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }, [initialData]);
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-lg shadow-md space-y-4"
+      className="bg-white p-4 sm:p-6 rounded-lg shadow-md space-y-4 w-full max-w-2xl mx-auto"
     >
       {/* Title */}
       <div>
-        <label className="block text-sm font-medium">Title</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Title
+        </label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          className="mt-1 block w-full border rounded-md px-3 py-2"
+          className="mt-1 block w-full border rounded-md px-3 py-2 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 outline-none"
+          placeholder="Enter banner title"
         />
       </div>
 
       {/* Subtitle */}
       <div>
-        <label className="block text-sm font-medium">Subtitle</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Subtitle
+        </label>
         <input
           type="text"
           value={subtitle}
           onChange={(e) => setSubtitle(e.target.value)}
-          className="mt-1 block w-full border rounded-md px-3 py-2"
+          className="mt-1 block w-full border rounded-md px-3 py-2 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 outline-none"
+          placeholder="Optional subtitle"
         />
       </div>
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium">Description</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Description
+        </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="mt-1 block w-full border rounded-md px-3 py-2"
+          className="mt-1 block w-full border rounded-md px-3 py-2 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 outline-none"
+          rows={3}
+          placeholder="Add a short banner description"
         />
       </div>
 
       {/* Image Upload */}
       <div>
-        <label className="block text-sm font-medium">Banner Image</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Banner Image
+        </label>
         <input
           type="file"
           accept="image/*"
-          ref={fileInputRef}   // ✅ attach ref
+          ref={fileInputRef}
           onChange={(e) => setFile(e.target.files[0])}
-          className="mt-1 block w-full text-sm"
+          className="mt-2 block w-full text-sm text-gray-600"
         />
-        {initialData?.image && !file && (
-          <Image
-            src={getImageUrl(initialData.image)}
-            alt="Current banner"
-            width={400}
-            height={200}
-            className="mt-2 object-cover rounded"
-            onError={handleImageError}
-          />
-        )}
+
+        {/* Image Preview */}
+        <div className="mt-3 flex justify-center sm:justify-start">
+          {initialData?.image && !file && (
+            <div className="relative w-full sm:w-80 h-40 sm:h-48 rounded-md overflow-hidden border">
+              <Image
+                src={getImageUrl(initialData.image)}
+                alt="Current banner"
+                fill
+                className="object-cover"
+                onError={handleImageError}
+              />
+            </div>
+          )}
+        </div>
+
         {file && (
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-gray-500 mt-2 break-all">
             New file selected: {file.name}
           </p>
         )}
       </div>
 
       {/* Actions */}
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm sm:text-base w-full sm:w-auto"
         >
           {isEditing ? "Update Banner" : "Create Banner"}
         </button>
+
         {isEditing && (
           <button
             type="button"
-            onClick={onCancel}  // ✅ call cancel from parent
-            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+            onClick={onCancel}
+            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 text-sm sm:text-base w-full sm:w-auto"
           >
             Cancel
           </button>

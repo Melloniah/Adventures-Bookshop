@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "../../store/useAuthStore";
 import {
   HomeIcon,
+  MapPinIcon,
   ShoppingBagIcon,
   ClipboardDocumentListIcon,
   PhotoIcon,
@@ -16,8 +17,7 @@ import {
 export default function AdminLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
-
-  const { isAdmin, logout, validateSession } = useAuthStore();
+  const { logout, validateSession } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -27,9 +27,10 @@ export default function AdminLayout({ children }) {
     { name: "Orders", href: "/admin/orders", icon: ClipboardDocumentListIcon },
     { name: "Payments", href: "/admin/payments", icon: ClipboardDocumentListIcon },
     { name: "Hero Banners", href: "/admin/hero-banners", icon: PhotoIcon },
+    { name: "Delivery Routes", href: "/admin/delivery-routes", icon: MapPinIcon },
   ];
 
-  // Validate session for admin pages
+  // ✅ Validate session
   useEffect(() => {
     if (pathname === "/admin/login") {
       setIsLoading(false);
@@ -50,24 +51,21 @@ export default function AdminLayout({ children }) {
         setIsLoading(false);
       }
     };
-
     checkSession();
   }, [pathname, validateSession, logout, router]);
 
-  // Skip layout for login page
   if (pathname === "/admin/login") return <>{children}</>;
 
-  // Loading screen
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center text-xl">
+        Loading...
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex bg-gray-100">
+    <div className="h-screen flex bg-gray-100 overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         navigation={navigation}
@@ -76,10 +74,11 @@ export default function AdminLayout({ children }) {
         setSidebarOpen={setSidebarOpen}
       />
 
-      {/* Main content */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-y-auto">
-        {/* Top bar */}
-        <header className="flex items-center justify-between bg-white shadow px-4 py-2 sm:px-6">
+        {/* Top Navbar */}
+        <header className="flex items-center justify-between bg-white shadow px-4 py-3 sm:px-6 sticky top-0 z-20">
+          {/* Mobile Menu Button */}
           <button
             className="sm:hidden text-gray-700"
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -90,58 +89,92 @@ export default function AdminLayout({ children }) {
               <Bars3Icon className="h-6 w-6" />
             )}
           </button>
+
+          <h1 className="text-lg font-semibold text-gray-800 sm:hidden">
+            Admin Panel
+          </h1>
+
           <div className="flex-1" />
-         <button
-  onClick={() => logout(router)} // pass router here
-  className="m-4 px-3 py-2 bg-teal-600 rounded hover:bg-gray-500 "
->
-  Logout
-</button>
+
+          {/* Logout */}
+          <button
+            onClick={() => logout(router)}
+            className="px-3 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 text-sm"
+          >
+            Logout
+          </button>
         </header>
 
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">{children}</main>
       </div>
     </div>
   );
 }
 
 function Sidebar({ navigation, pathname, sidebarOpen, setSidebarOpen }) {
+  const [expanded, setExpanded] = useState(false); // ✅ For desktop hover
+
   return (
     <>
-      {/* Overlay for mobile */}
+      {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-30 z-40 sm:hidden"
+          className="fixed inset-0 bg-black/40 z-40 sm:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      <div
-        className={`fixed z-50 inset-y-0 left-0 w-64 bg-teal-700 text-white transform ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out sm:translate-x-0 sm:static sm:flex sm:flex-col`}
+      {/* Sidebar */}
+      <aside
+        onMouseEnter={() => setExpanded(true)}
+        onMouseLeave={() => setExpanded(false)}
+        className={`fixed z-50 inset-y-0 left-0 bg-teal-700 text-white transform transition-all duration-300 ease-in-out
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          sm:translate-x-0 sm:static sm:flex sm:flex-col
+          ${expanded ? "sm:w-64" : "sm:w-20"}
+        `}
       >
-        <div className="p-4 text-xl font-bold">Adventures Admin</div>
-        <nav className="flex-1 px-2 space-y-1">
+        {/* Sidebar Header */}
+        <div className="p-4 border-b border-teal-600 flex items-center justify-center sm:justify-start">
+          <span
+            className={`text-xl font-bold whitespace-nowrap transition-all duration-200 ${
+              expanded ? "opacity-100 ml-2" : "opacity-0 sm:hidden"
+            } sm:block`}
+          >
+            {expanded && "Adventures Admin"}
+          </span>
+        </div>
+
+        {/* Navigation Links */}
+        <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
           {navigation.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
-           key={item.name}
-href={item.href}
-className={`${
-  isActive ? "bg-gray-300 text-gray-900" : "hover:bg-gray-500 text-white-700"
-} block px-2 py-2 rounded-md`}
-onClick={() => setSidebarOpen(false)}
->
-  <item.icon className="inline-block h-6 w-6 mr-2" />
-  {item.name}
-</Link>
-
+                key={item.name}
+                href={item.href}
+                onClick={() => setSidebarOpen(false)}
+                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
+                  ${
+                    isActive
+                      ? "bg-gray-100 text-teal-700"
+                      : "hover:bg-teal-600 text-gray-100"
+                  }
+                `}
+              >
+                <item.icon className="h-5 w-5 flex-shrink-0" />
+                <span
+                  className={`ml-3 transition-all duration-200 ${
+                    expanded ? "opacity-100" : "opacity-0 hidden sm:block"
+                  }`}
+                >
+                  {item.name}
+                </span>
+              </Link>
             );
           })}
         </nav>
-      </div>
+      </aside>
     </>
   );
 }

@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../../store/useAuthStore";
 import { authAPI } from "../../../lib/api";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 export default function AdminLogin() {
   const router = useRouter();
-  const { setUser, isAdmin, _hasHydrated, logout } = useAuthStore();
+  const { setUser, isAdmin, _hasHydrated } = useAuthStore();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -20,9 +21,7 @@ export default function AdminLogin() {
 
   // 🚀 Redirect if already logged in as admin
   useEffect(() => {
-    console.log("🔍 Redirect check:", { mounted, _hasHydrated, isAdmin });
     if (mounted && _hasHydrated && isAdmin) {
-      console.log("🚀 Redirecting to dashboard...");
       router.replace("/admin/dashboard");
     }
   }, [mounted, _hasHydrated, isAdmin, router]);
@@ -35,8 +34,6 @@ export default function AdminLogin() {
       const response = await authAPI.login(formData);
       const { user } = response.data;
 
-      console.log("📥 Login response:", user);
-
       if (!user) {
         toast.error("Invalid login response");
         return;
@@ -47,19 +44,12 @@ export default function AdminLogin() {
         return;
       }
 
-      // ✅ Save to Zustand
       setUser(user);
-
       toast.success("Login successful!");
-      
-      console.log("🔄 Attempting redirect...");
-      
-      // ✅ Try multiple redirect strategies
+
       setTimeout(() => {
-        console.log("⏰ Timeout redirect");
         window.location.href = "/admin/dashboard";
       }, 100);
-      
     } catch (error) {
       const errorMessage =
         error.response?.data?.detail || error.message || "Login failed";
@@ -74,25 +64,33 @@ export default function AdminLogin() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-xl text-gray-700">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-sm sm:max-w-md bg-white rounded-2xl shadow-md p-6 sm:p-8 space-y-6">
+        {/* Header */}
         <div className="text-center">
-          <div className="bg-teal-600 text-white px-4 py-2 rounded font-bold text-xl inline-block">
+          <div className="bg-teal-600 text-white px-4 py-2 rounded font-bold text-lg sm:text-xl inline-block">
             ADVENTURES
-            <span className="bg-black-400 text-black px-1">BOOKSHOP</span>
+            <span className="text-black bg-gray-100 px-1 ml-1 rounded">
+              BOOKSHOP
+            </span>
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-2xl sm:text-3xl font-extrabold text-gray-900">
             Admin Sign In
           </h2>
+          <p className="mt-2 text-sm text-gray-500">
+            Enter your credentials to access the admin dashboard.
+          </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+
+        {/* Form */}
+        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <input
               id="email"
@@ -101,7 +99,7 @@ export default function AdminLogin() {
               required
               value={formData.email}
               onChange={handleChange}
-              className="block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500"
+              className="block w-full px-4 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
               placeholder="Email address"
             />
             <input
@@ -111,18 +109,29 @@ export default function AdminLogin() {
               required
               value={formData.password}
               onChange={handleChange}
-              className="block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500"
+              className="block w-full px-4 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
               placeholder="Password"
             />
           </div>
+
           <button
             type="submit"
             disabled={loading}
-            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:bg-gray-400"
+            className="w-full py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white bg-teal-600 hover:bg-teal-700 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-400 transition"
           >
-            {loading ? "Signing in..." : "Login in"}
+            {loading ? "Signing in..." : "Login"}
           </button>
         </form>
+
+        {/* Back to Home link */}
+        <div className="text-center mt-4">
+          <Link
+            href="/"
+            className="inline-block text-teal-600 text-sm sm:text-base hover:underline hover:text-teal-700 transition"
+          >
+            ← Back to Home
+          </Link>
+        </div>
       </div>
     </div>
   );

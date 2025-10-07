@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { api } from "../../lib/api";
+import { getPublicHeroBannersAPI  } from "../../lib/api";
 import { getImageUrl, handleImageError, placeholderSVG } from "utils/imageUtils";
 
 const HeroSection = () => {
@@ -17,7 +17,7 @@ const HeroSection = () => {
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const res = await api.get("/hero-banners");
+        const res = await getPublicHeroBannersAPI.getPublicHeroBanners();
         setSlides(res.data);
       } catch (err) {
         console.error("Failed to fetch hero banners:", err);
@@ -47,7 +47,7 @@ const HeroSection = () => {
     if (!paused) {
       intervalRef.current = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % slides.length);
-      }, 5000);
+      }, 3000);
     }
 
     return () => clearInterval(intervalRef.current);
@@ -82,8 +82,11 @@ const HeroSection = () => {
 
   return (
     <section
-      className="relative overflow-hidden m-0 p-0 block"
-      style={{ height: `${imageHeight}px` }}
+      className="relative overflow-hidden w-full block"
+  style={{
+    height: `${imageHeight}px`,
+    maxHeight: "90vh",
+  }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -106,25 +109,25 @@ const HeroSection = () => {
             />
 
             {/* Overlay content */}
-            <div className="absolute inset-0 bg-black/40 flex items-center">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="absolute inset-0 bg-black/40 flex items-center px-4 sm:px-6 md:px-12">
+              <div className="text-left max-w-xs sm:max-w-md md:max-w-lg">
                 <div className="max-w-lg">
                   {slide.description && (
                     <div className="inline-block bg-yellow-400 text-black px-4 py-1 rounded-full text-sm font-medium mb-4">
                       {slide.description}
                     </div>
                   )}
-                  <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                  <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
                     {slide.title}
                   </h1>
                   {slide.subtitle && (
-                    <p className="text-xl md:text-2xl text-gray-200 mb-8">
+                    <p className="text-base sm:text-lg md:text-2xl text-gray-200 mb-8">
                       {slide.subtitle}
                     </p>
                   )}
                   <Link
                     href="/products"
-                    className="inline-block bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                     className="inline-block bg-white text-black px-6 py-2 sm:px-8 sm:py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-sm sm:text-base"
                   >
                     Shop Now
                   </Link>

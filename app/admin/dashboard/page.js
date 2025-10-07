@@ -1,8 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { adminAPI } from '../../../lib/api';
-
+import { useState, useEffect, useState as useToggle } from "react";
+import { adminAPI } from "../../../lib/api";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -12,32 +11,26 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
-        console.log('Fetching dashboard stats...');
         const response = await adminAPI.getDashboardStats();
-        console.log('Dashboard stats response:', response.data);
         setStats(response.data);
       } catch (error) {
-        console.error('Failed to fetch dashboard stats:', error);
-        setError('Failed to load dashboard data');
+        console.error("Failed to fetch dashboard stats:", error);
+        setError("Failed to load dashboard data");
       } finally {
         setLoading(false);
       }
     };
-
     fetchDashboardStats();
   }, []);
 
   if (loading) {
     return (
       <div className="p-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white p-6 rounded-lg shadow">
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-              </div>
+              <div key={i} className="h-28 bg-gray-200 rounded"></div>
             ))}
           </div>
         </div>
@@ -49,9 +42,9 @@ export default function AdminDashboard() {
     return (
       <div className="p-6">
         <div className="bg-red-50 border border-red-200 rounded-md p-4">
-          <div className="text-red-800">{error}</div>
-          <button 
-            onClick={() => window.location.reload()} 
+          <p className="text-red-700">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
             className="mt-2 text-red-600 underline"
           >
             Try Again
@@ -62,91 +55,187 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-    
+    <div className="min-h-screen bg-gray-50 p-6">
+      <header className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+        <p className="text-gray-600">
+          Welcome to Adventures Bookshop Admin Panel
+        </p>
+      </header>
 
-      <div className="p-6">
-        <p className="text-gray-600 mb-6">Welcome to Adventures Bookshop Admin</p>
-        
-        {stats && (
-          <>
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex items-center">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-medium text-gray-900">Total Products</h3>
-                    <p className="text-3xl font-bold text-red-600 mt-2">{stats.total_products}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
-                  </div>
-                </div>
+      {stats && (
+        <>
+          {/* --- STAT CARDS --- */}
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            <StatCard
+              title="Total Products"
+              value={stats.total_products}
+              iconPath="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              color="red"
+            />
+            <StatCard
+              title="Total Orders"
+              value={stats.total_orders}
+              iconPath="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+              color="blue"
+            />
+            <StatCard
+              title="Active Categories"
+              value={stats.total_categories}
+              iconPath="M12 4v16m8-8H4"
+              color="teal"
+            />
+          </section>
+
+          {/* --- RECENT ORDERS --- */}
+          {stats.recent_orders?.length > 0 && (
+            <section className="bg-white shadow rounded-lg overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Recent Orders
+                </h2>
+                <span className="text-sm text-gray-500">
+                  {stats.recent_orders.length} shown
+                </span>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex items-center">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-medium text-gray-900">Total Orders</h3>
-                    <p className="text-3xl font-bold text-red-600 mt-2">{stats.total_orders}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Recent Orders */}
-            {stats.recent_orders && stats.recent_orders.length > 0 && (
-              <div className="bg-white shadow rounded-lg">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-xl font-bold text-gray-900">Recent Orders</h2>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              {/* DESKTOP TABLE */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="min-w-full text-sm divide-y divide-gray-200">
+                  <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+                    <tr>
+                      <th className="px-4 py-3 text-left">Order ID</th>
+                      <th className="px-4 py-3 text-left">Customer</th>
+                      <th className="px-4 py-3 text-left">Total</th>
+                      <th className="px-4 py-3 text-left">Status</th>
+                      <th className="px-4 py-3 text-left">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {stats.recent_orders.map((order) => (
+                      <tr key={order.id}>
+                        <td className="px-4 py-3 font-medium text-gray-800">
+                          #{order.id}
+                        </td>
+                        <td className="px-4 py-3 text-gray-600">
+                          {order.customer_name ||
+                            order.customer_phone ||
+                            "N/A"}
+                        </td>
+                        <td className="px-4 py-3 text-gray-800 font-semibold">
+                          KSh {order.total_amount?.toLocaleString() || "0"}
+                        </td>
+                        <td className="px-4 py-3">
+                          <StatusBadge status={order.status} />
+                        </td>
+                        <td className="px-4 py-3 text-gray-500">
+                          {new Date(order.created_at).toLocaleDateString()}
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {stats.recent_orders.map((order) => (
-                        <tr key={order.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{order.id}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.customer_name || order.customer_phone || 'N/A'}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">KSh {order.total_amount?.toLocaleString() || '0'}</td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                              order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                              {order.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {new Date(order.created_at).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            )}
-          </>
-        )}
+
+              {/* MOBILE COLLAPSIBLE CARDS */}
+              <div className="block md:hidden">
+                {stats.recent_orders.map((order) => (
+                  <OrderCard key={order.id} order={order} />
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+/* --- Helper Components --- */
+function StatCard({ title, value, iconPath, color }) {
+  const colorMap = {
+    red: "text-red-600 bg-red-100",
+    blue: "text-blue-600 bg-blue-100",
+    teal: "text-teal-600 bg-teal-100",
+  };
+
+  return (
+    <div className="bg-white p-6 rounded-lg shadow flex items-center justify-between">
+      <div>
+        <h3 className="text-gray-600 text-sm font-medium">{title}</h3>
+        <p className="text-3xl font-bold text-gray-900 mt-1">{value}</p>
       </div>
+      <div
+        className={`w-12 h-12 rounded-lg flex items-center justify-center ${colorMap[color]}`}
+      >
+        <svg
+          className={`w-6 h-6 ${colorMap[color].split(" ")[0]}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d={iconPath}
+          />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function StatusBadge({ status }) {
+  const badgeClasses = {
+    completed: "bg-green-100 text-green-800",
+    pending: "bg-yellow-100 text-yellow-800",
+    cancelled: "bg-red-100 text-red-800",
+    default: "bg-gray-100 text-gray-800",
+  };
+
+  return (
+    <span
+      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+        badgeClasses[status] || badgeClasses.default
+      }`}
+    >
+      {status}
+    </span>
+  );
+}
+
+/* --- Collapsible Mobile Order Card --- */
+function OrderCard({ order }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div
+      className="border-b border-gray-200 px-4 py-3 hover:bg-gray-50 transition"
+      onClick={() => setExpanded(!expanded)}
+    >
+      <div className="flex justify-between items-center">
+        <div>
+          <p className="font-medium text-gray-800">Order #{order.id}</p>
+          <p className="text-gray-600 text-sm">
+            KSh {order.total_amount?.toLocaleString() || "0"}
+          </p>
+        </div>
+        <StatusBadge status={order.status} />
+      </div>
+
+      {expanded && (
+        <div className="mt-2 text-sm text-gray-600 space-y-1">
+          <p>
+            <strong>Customer:</strong>{" "}
+            {order.customer_name || order.customer_phone || "N/A"}
+          </p>
+          <p>
+            <strong>Date:</strong>{" "}
+            {new Date(order.created_at).toLocaleDateString()}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
