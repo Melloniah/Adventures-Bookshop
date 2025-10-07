@@ -14,49 +14,45 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 
+const navigation = [
+  { name: "Dashboard", href: "/admin/dashboard", icon: HomeIcon },
+  { name: "Products", href: "/admin/products", icon: ShoppingBagIcon },
+  { name: "Orders", href: "/admin/orders", icon: ClipboardDocumentListIcon },
+  { name: "Delivery Routes", href: "/admin/delivery-routes", icon: MapPinIcon },
+  { name: "Hero Images", href: "/admin/hero-images", icon: PhotoIcon },
+];
+
 export default function AdminLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { logout, validateSession } = useAuthStore();
+  const { logout, validateSession, user, _hasHydrated } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navigation = [
-    { name: "Dashboard", href: "/admin/dashboard", icon: HomeIcon },
-    { name: "Products", href: "/admin/products", icon: ShoppingBagIcon },
-    { name: "Orders", href: "/admin/orders", icon: ClipboardDocumentListIcon },
-    { name: "Payments", href: "/admin/payments", icon: ClipboardDocumentListIcon },
-    { name: "Hero Banners", href: "/admin/hero-banners", icon: PhotoIcon },
-    { name: "Delivery Routes", href: "/admin/delivery-routes", icon: MapPinIcon },
-  ];
-
-  // ✅ Validate session
   useEffect(() => {
-    if (pathname === "/admin/login") {
-      setIsLoading(false);
-      return;
-    }
-
     const checkSession = async () => {
-      try {
-        const user = await validateSession();
-        if (!user || user.role !== "admin") {
-          logout();
-          router.replace("/admin/login");
+      if (!_hasHydrated) return; // wait for hydration
+
+      if (pathname === "/admin/login") {
+        if (user?.role === "admin") {
+          router.replace("/admin/dashboard"); // SPA-safe redirect
         }
-      } catch {
+        setIsLoading(false);
+        return;
+      }
+
+      const currentUser = await validateSession();
+      if (!currentUser || currentUser.role !== "admin") {
         logout();
         router.replace("/admin/login");
-      } finally {
-        setIsLoading(false);
       }
+      setIsLoading(false);
     };
+
     checkSession();
-  }, [pathname, validateSession, logout, router]);
+  }, [pathname, validateSession, logout, router, user, _hasHydrated]);
 
-  if (pathname === "/admin/login") return <>{children}</>;
-
-  if (isLoading) {
+  if (!_hasHydrated || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-xl">
         Loading...
@@ -64,8 +60,12 @@ export default function AdminLayout({ children }) {
     );
   }
 
+  // ✅ Render login page normally without sidebar if at /admin/login
+  if (pathname === "/admin/login") return <>{children}</>;
+
+
   return (
-    <div className="h-screen flex bg-gray-100 overflow-hidden">
+   <div className="h-screen flex bg-gray-100 overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         navigation={navigation}
@@ -147,32 +147,25 @@ function Sidebar({ navigation, pathname, sidebarOpen, setSidebarOpen }) {
 
         {/* Navigation Links */}
         <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
-                  ${
-                    isActive
-                      ? "bg-gray-100 text-teal-700"
-                      : "hover:bg-teal-600 text-gray-100"
-                  }
-                `}
-              >
-                <item.icon className="h-5 w-5 flex-shrink-0" />
-                <span
-                  className={`ml-3 transition-all duration-200 ${
-                    expanded ? "opacity-100" : "opacity-0 hidden sm:block"
-                  }`}
-                >
-                  {item.name}
-                </span>
-              </Link>
-            );
-          })}
+        {navigation?.map((item) => {
+  const isActive = pathname === item.href;
+  return (
+    <Link
+      key={item.name}
+      href={item.href}
+      onClick={() => setSidebarOpen(false)}
+      className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
+        ${isActive ? "bg-gray-100 text-teal-700" : "hover:bg-teal-600 text-gray-100"}
+      `}
+    >
+      <item.icon className="h-5 w-5 flex-shrink-0" />
+      <span className={`ml-3 transition-all duration-200 ${expanded ? "opacity-100" : "opacity-0 hidden sm:block"}`}>
+        {item.name}
+      </span>
+    </Link>
+  );
+})}
+
         </nav>
       </aside>
     </>

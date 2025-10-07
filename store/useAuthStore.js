@@ -11,7 +11,7 @@ export const useAuthStore = create((set, get) => ({
     set({ user, isAdmin: user?.role === "admin" });
   },
 
-   // Logout clears backend cookie + local state + optional redirect
+  // Logout clears backend cookie + local state + optional redirect
   logout: async (router) => {
     try {
       await authAPI.logout();
@@ -19,11 +19,10 @@ export const useAuthStore = create((set, get) => ({
       console.error("Logout failed:", err);
     } finally {
       set({ user: null, isAdmin: false });
-      // redirect immediately if router is passed
       if (router) router.replace("/admin/login");
     }
   },
-  
+
   // Hydration flag
   setHasHydrated: (hydrated) => set({ _hasHydrated: hydrated }),
 
@@ -41,12 +40,23 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Hydrate on initial load
+  // ------------------------
+  // 🔹 Automatic hydration on initial load
+  // ------------------------
   hydrate: async () => {
-    const isLoginPage = typeof window !== "undefined" && window.location.pathname.includes("/login");
+    const isLoginPage =
+      typeof window !== "undefined" &&
+      window.location.pathname.includes("/login");
+
     if (!isLoginPage) {
-      await get().validateSession();
+      await get().validateSession(); // validate cookie/session automatically
     }
-    set({ _hasHydrated: true });
+
+    set({ _hasHydrated: true }); // ✅ mark store as hydrated
   },
 }));
+
+// ------------------------
+// 🔹 Immediately call hydrate when store is imported
+// This ensures _hasHydrated becomes true automatically on page load
+useAuthStore.getState().hydrate();

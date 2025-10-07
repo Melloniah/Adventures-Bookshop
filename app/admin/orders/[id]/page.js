@@ -118,10 +118,19 @@ export default function AdminOrderDetail() {
             ))}
           </ul>
         </div>
-        <div className="mt-2 font-bold text-sm sm:text-base flex justify-between">
-          <span>Total Amount:</span>
-          <span>KSh {(order.total_amount + (order.delivery_fee || 0)).toLocaleString()}</span>
-        </div>
+          <div className="flex justify-between">
+  <span>Subtotal:</span>
+  <span>KSh {(order.total_amount - (order.delivery_fee || 0)).toLocaleString()}</span>
+</div>
+<div className="flex justify-between">
+  <span>Delivery Fee:</span>
+  <span>KSh {(order.delivery_fee || 0).toLocaleString()}</span>
+</div>
+<div className="flex justify-between font-bold">
+  <span>Total:</span>
+  <span>KSh {order.total_amount?.toLocaleString()}</span>
+</div>
+
       </div>
 
       {/* Status */}
