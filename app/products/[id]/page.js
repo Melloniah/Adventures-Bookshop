@@ -1,42 +1,73 @@
-// app/products/[id]/page.js
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { api } from "../../../lib/api"; 
+import { productAPI } from "../../../lib/api";
+import Image from "next/image";
+import { useCartStore } from "../../../store/useCartStore";
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import toast from "react-hot-toast";
+import { getImageUrl, placeholderSVG } from '../../../utils/imageUtils';
 
-export default function ProductDetail() {
-  const { id } = useParams();   // gets :id from URL
+export default function ProductPage() {
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { addItem } = useCartStore();
 
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const res = await api.get(`/products/${id}`);
+        const res = await productAPI.getById(id);
         setProduct(res.data);
       } catch (err) {
         console.error("Error fetching product:", err);
+      } finally {
+        setLoading(false);
       }
     }
     if (id) fetchProduct();
   }, [id]);
 
-  if (!product) return <p>Loading...</p>;
+  if (loading) return <p className="text-center py-10">Loading product...</p>;
+  if (!product) return <p className="text-center py-10">Product not found.</p>;
+
+  const handleAddToCart = () => {
+    addItem(product);
+    toast.success("Added to cart!");
+  };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">{product.name}</h1>
-      <p>{product.description}</p>
-      <p className="font-semibold">Price: KES {product.price}</p>
-      <p className={product.stock_quantity > 0 ? "text-green-600" : "text-red-600"}>
-  {product.stock_quantity > 0 ? "In Stock" : "Out of Stock"}
-</p>
+    <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col items-center">
+      <div className="w-full relative">
+        <Image
+          src={getImageUrl(product.image) || placeholderSVG}
+          alt={product.name}
+          width={0}
+          height={0}
+          sizes="100vw"
+          className="w-full max-w-md h-auto object-cover rounded-lg shadow"
+        />
+      </div>
 
-{product.stock_quantity > 0 && (
-  <button className="bg-blue-600 text-white px-4 py-2 mt-4 rounded">
-    Add to Cart
-  </button>
-)}
+      <div className="mt-4 w-full flex flex-col items-center space-y-3 text-center">
+        <h1 className="text-2xl font-bold">{product.name}</h1>
+        <p className="text-gray-700">{product.description}</p>
+        <p className="text-lg font-semibold">Price: KES {product.price}</p>
+        <p className={product.stock_quantity > 0 ? "text-green-600" : "text-red-600"}>
+          {product.stock_quantity > 0 ? "In Stock" : "Out of Stock"}
+        </p>
+
+        {product.stock_quantity > 0 && (
+          <button
+            onClick={handleAddToCart}
+            className="w-full mt-3 bg-teal-400 text-black-700 py-2 px-4 rounded hover:bg-red-600 hover:text-white transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ShoppingCartIcon className="h-4 w-4 mr-2" />
+            ADD TO CART
+          </button>
+        )}
+      </div>
     </div>
   );
 }

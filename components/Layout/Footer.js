@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -7,65 +8,57 @@ const Footer = () => {
     { name: 'Pre-school', href: '/products?category=pre-school' },
     { name: 'Stationery', href: '/products?category=stationery' },
     { name: 'Technology', href: '/products?category=technology' },
-    { name: 'Upper Primary', href: '/products?category=grade 8' },
-    { name: 'Junior High School', href: '/products?category=junior high' },
+    { name: 'Toys', href: '/products?category=toys' },
+    { name: 'Secondary School', href: '/products?category=grade9' },
   ];
 
   const information = [
     { name: 'Home', href: '/' },
     { name: 'Shop', href: '/products' },
-    // { name: 'About Us', href: '/about' }, can add an about section
-    // { name: 'Find a Store', href: '/stores' },
+
   ];
 
   const popularTags = [
-    'Stationery', 'Textbooks', 'books', 'Art supplies', 'technology'
-  ];
-
-  const publishers = [
-    { name: 'Longhorn Publishers', logo: '/longhorn-logo.png' },
-    { name: 'Storymoja', logo: '/storymoja-logo.png' },
-    { name: 'Oxford University Press', logo: '/oxford-logo.png' },
-    { name: 'Spotlight', logo: '/spotlight-logo.png' },
-    { name: 'Phoenix Publishers', logo: '/phoenix-logo.png' },
+    'Stationery', 'Textbooks', 'Books', 'Art Supplies', 'Technology'
   ];
 
   return (
     <>
-      {/* Unified Footer */}
-      <footer className="bg-yellow-400">
-        {/* Main Footer Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Store Information */}
+      {/* --- FOOTER --- */}
+      <footer className="bg-amber-200">
+        {/* Main Footer */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+
+            {/* Store Info */}
             <div>
-              <h3 className="font-bold text-gray-900 mb-4">Store Information</h3>
-              <div className="space-y-3 text-gray-700">
+              <h3 className="font-bold text-teal-800 mb-3 text-lg">Store Information</h3>
+              <div className="space-y-2 text-gray-700 text-sm">
                 <div className="flex items-start space-x-2">
-                  <span className="text-red-600">📞</span>
+                  <span className="text-teal-600">📞</span>
                   <div>
-                    <p>Make an order here or via whatsapp and get it delivered immediately</p>
-                    <p className="font-semibold">+254 724047489</p>
+                    <p>Order via WhatsApp for immediate delivery</p>
+                    <p className="font-semibold text-teal-700">+254 724 047489</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <span className="text-red-600">📍Located at </span>
-                  <p>Information House, Mfangano Street, directly Opposite Quickmart Afya center</p>
+                  <span className="text-teal-600">📍</span>
+                  <p>Information House, Mfangano Street, Opp. Quickmart Afya Center</p>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <span className="text-red-600">✉️</span>
+                  <span className="text-teal-600">✉️</span>
                   <p>adventuresbookshop@gmail.com</p>
                 </div>
               </div>
             </div>
 
-            Quick View
+            {/* Quick View */}
             <div>
-              <h3 className="font-bold text-gray-900 mb-4">Quick View</h3>
-              <ul className="space-y-2">
+              <h3 className="font-bold text-teal-800 mb-3 text-lg">Quick View</h3>
+              <ul className="space-y-1.5">
                 {quickLinks.map((link) => (
                   <li key={link.name}>
-                    <Link href={link.href} className="text-gray-700 hover:text-red-600 transition-colors">
+                    <Link href={link.href} className="text-gray-700 hover:text-teal-600 text-sm transition-colors">
                       {link.name}
                     </Link>
                   </li>
@@ -75,11 +68,11 @@ const Footer = () => {
 
             {/* Information */}
             <div>
-              <h3 className="font-bold text-gray-900 mb-4">Information</h3>
-              <ul className="space-y-2">
+              <h3 className="font-bold text-teal-800 mb-3 text-lg">Information</h3>
+              <ul className="space-y-1.5">
                 {information.map((link) => (
                   <li key={link.name}>
-                    <Link href={link.href} className="text-gray-700 hover:text-red-600 transition-colors">
+                    <Link href={link.href} className="text-gray-700 hover:text-teal-600 text-sm transition-colors">
                       {link.name}
                     </Link>
                   </li>
@@ -89,13 +82,13 @@ const Footer = () => {
 
             {/* Popular Tags */}
             <div>
-              <h3 className="font-bold text-gray-900 mb-4">Popular Tag</h3>
+              <h3 className="font-bold text-teal-800 mb-3 text-lg">Popular Tags</h3>
               <div className="flex flex-wrap gap-2">
                 {popularTags.map((tag) => (
                   <Link
                     key={tag}
                     href={`/products?search=${tag.toLowerCase()}`}
-                    className="bg-white px-3 py-1 rounded text-gray-700 hover:bg-red-600 hover:text-white transition-colors text-sm"
+                    className="bg-white px-3 py-1 rounded-full text-gray-700 border border-teal-200 text-xs hover:bg-teal-600 hover:text-white transition-colors"
                   >
                     {tag}
                   </Link>
@@ -105,74 +98,72 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Footer Section - Now inside the footer */}
-        <div className="bg-black text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Bottom Footer */}
+        <div className="bg-teal-900 text-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+
               {/* About Us */}
               <div>
-                <h3 className="font-bold mb-4">About Us</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  Adventures Bookshop offers books online ordering and delivery with ease.
+                <h3 className="font-bold mb-2 text-sm uppercase tracking-wide">About Us</h3>
+                <p className="text-gray-300 text-xs leading-relaxed">
+                  Adventures Bookshop offers convenient online ordering and fast delivery for all your educational and stationery needs.
                 </p>
               </div>
 
               {/* Follow Us */}
               <div>
-                <h3 className="font-bold mb-4">Follow Us</h3>
-                <p className="text-gray-300 text-sm mb-4">
-                  Stay connected with Schoolmall Bookshop!
-                </p>
+                <h3 className="font-bold mb-2 text-sm uppercase tracking-wide">Follow Us</h3>
+                <p className="text-gray-300 text-xs mb-3">Stay connected with Adventures Bookshop!</p>
                 <div className="flex space-x-3">
-                  <a href="#" className="bg-blue-600 p-2 rounded hover:bg-blue-700">
-                    <span className="text-white text-xl">f</span>
+                  <a href="#" className="bg-blue-600 w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-700 transition">
+                    <span className="text-white text-sm font-bold">f</span>
                   </a>
-                  <a href="#" className="bg-blue-400 p-2 rounded hover:bg-blue-500">
-                    <span className="text-white text-xl">t</span>
+                  <a href="#" className="bg-blue-400 w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-500 transition">
+                    <span className="text-white text-sm font-bold">t</span>
                   </a>
-                  <a href="#" className="bg-pink-600 p-2 rounded hover:bg-pink-700">
-                    <span className="text-white text-xl">📷</span>
+                  <a href="#" className="bg-pink-600 w-8 h-8 rounded-full flex items-center justify-center hover:bg-pink-700 transition">
+                    <span className="text-white text-sm">📷</span>
                   </a>
-                  <a href="#" className="bg-blue-800 p-2 rounded hover:bg-blue-900">
-                    <span className="text-white text-xl">in</span>
+                  <a href="#" className="bg-blue-800 w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-900 transition">
+                    <span className="text-white text-xs font-bold">in</span>
                   </a>
                 </div>
               </div>
 
               {/* Shop Online */}
               <div>
-                <h3 className="font-bold mb-4">Shop Online</h3>
-                <p className="text-gray-300 text-sm italic">
-                  Books delivered to your door - fast, affordable, and securely!
+                <h3 className="font-bold mb-2 text-sm uppercase tracking-wide">Shop Online</h3>
+                <p className="text-gray-300 text-xs italic">
+                  Books delivered to your door — fast, affordable, and secure!
                 </p>
               </div>
             </div>
           </div>
 
           {/* Copyright */}
-          <div className="border-t border-gray-800">
+          <div className="border-t border-teal-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-                <p>Copyright 2025 adventures Bookshop. All Rights Reserved.</p>
-                <p>Designed & Managed by Melloniah</p>
+              <div className="flex flex-col sm:flex-row justify-between items-center text-[11px] text-gray-400 text-center sm:text-left space-y-2 sm:space-y-0">
+                <p>© 2025 Adventures Bookshop. All Rights Reserved.</p>
+                <p>Designed & Managed by <span className="text-blue-400 font-medium">Melloniah</span></p>
               </div>
             </div>
           </div>
         </div>
       </footer>
 
-      {/* WhatsApp Float Button */}
+      {/* WhatsApp Floating Button */}
       <Link
         href="https://wa.me/254724047489"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-colors z-40"
+        className="fixed bottom-5 right-5 bg-green-500 text-white p-3 sm:p-4 rounded-full shadow-lg hover:bg-green-600 hover:scale-110 transform transition duration-200 z-50"
       >
-        <span className="text-2xl">💬</span>
+        <span className="text-2xl sm:text-3xl">💬</span>
       </Link>
     </>
   );
 };
-
 
 export default Footer;

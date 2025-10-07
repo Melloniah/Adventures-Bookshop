@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '../../store/useStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import { authAPI } from '../../lib/api';
 import toast from 'react-hot-toast';
 

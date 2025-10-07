@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
-import { useCartStore } from "../../store/useStore";
+import { useCartStore } from "../../store/useCartStore";
 import { getImageUrl, handleImageError, placeholderSVG } from '../../utils/imageUtils';
 import toast from "react-hot-toast";
 

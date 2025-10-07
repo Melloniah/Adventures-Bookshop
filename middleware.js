@@ -1,37 +1,47 @@
 import { NextResponse } from "next/server";
-import { jwtVerify } from "jose";
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const isAdminRoute = pathname.startsWith("/admin");
   const isLoginPage = pathname === "/admin/login";
   const protectedPath = isAdminRoute && !isLoginPage;
 
-  const token = req.cookies.get("token")?.value;
-  let isValidToken = false;
+  // Forward cookie
+  const cookieHeader = req.headers.get("cookie");
+  const fetchHeaders = { "Content-Type": "application/json" };
+  if (cookieHeader) fetchHeaders["Cookie"] = cookieHeader;
 
-  if (token) {
+  if (isAdminRoute) {
     try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key-change-this-in-production");
-      await jwtVerify(token, secret);
-      isValidToken = true;
-    } catch {
-      isValidToken = false;
+      const res = await fetch(`${API_URL}/auth/me`, {
+        method: "GET",
+        headers: fetchHeaders,
+      });
+
+      if (res.ok) {
+        const user = await res.json();
+
+        // Logged in → block login page
+        if (isLoginPage) {
+          return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+        }
+      } else {
+        // Not logged in → redirect protected pages
+        if (protectedPath) {
+          return NextResponse.redirect(new URL("/admin/login", req.url));
+        }
+      }
+    } catch (err) {
+      console.error("Middleware error:", err);
+      if (protectedPath) {
+        return NextResponse.redirect(new URL("/admin/login", req.url));
+      }
     }
-  }
-
-  // Redirect if trying to access protected page without valid token
-  if (protectedPath && !isValidToken) {
-    return NextResponse.redirect(new URL("/admin/login", req.url));
-  }
-
-  // Redirect from login if already logged in
-  if (isLoginPage && isValidToken) {
-    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }
 
   return NextResponse.next();
 }
 
-export const config = { matcher: ["/admin/:path*"] };
+export const config = { matcher: ["/admin", "/admin/:path*"] };
