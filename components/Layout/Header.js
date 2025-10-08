@@ -171,7 +171,7 @@ const Header = () => {
         </nav>
 
         {/* Running Banner */}
-        <div className="bg-red-500 text-black text-sm py-2 overflow-hidden">
+        <div className="bg-red-600 text-black text-sm py-2 overflow-hidden">
           <div className="animate-marquee whitespace-nowrap">
             <span className="inline-block px-4"> Free Delivery on Orders Over KSh 3,000</span>
             <span className="inline-block px-4">📞 Call Us: +254 724047489</span>
