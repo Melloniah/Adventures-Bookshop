@@ -5,13 +5,12 @@ export const useAuthStore = create((set, get) => ({
   user: null,
   isAdmin: false,
   _hasHydrated: false,
+  _isValidating: false, // ✅ Prevent multiple simultaneous calls
 
-  // Set user and isAdmin
   setUser: (user) => {
     set({ user, isAdmin: user?.role === "admin" });
   },
 
-   // Logout clears backend cookie + local state + optional redirect
   logout: async (router) => {
     try {
       await authAPI.logout();
@@ -19,16 +18,23 @@ export const useAuthStore = create((set, get) => ({
       console.error("Logout failed:", err);
     } finally {
       set({ user: null, isAdmin: false });
-      // redirect immediately if router is passed
       if (router) router.replace("/admin/login");
     }
   },
-  
-  // Hydration flag
+
   setHasHydrated: (hydrated) => set({ _hasHydrated: hydrated }),
 
-  // Validate cookie-based session
+  // ✅ Debounced validation - only runs once at a time
   validateSession: async () => {
+    const state = get();
+    
+    // Skip if already validating
+    if (state._isValidating) {
+      return state.user;
+    }
+
+    set({ _isValidating: true });
+
     try {
       const { data } = await authAPI.me();
       set({ user: data, isAdmin: data?.role === "admin" });
@@ -38,15 +44,30 @@ export const useAuthStore = create((set, get) => ({
         set({ user: null, isAdmin: false });
       }
       return null;
+    } finally {
+      set({ _isValidating: false });
     }
   },
 
-  // Hydrate on initial load
+  // ✅ Only hydrate once on client mount
   hydrate: async () => {
-    const isLoginPage = typeof window !== "undefined" && window.location.pathname.includes("/login");
+    const state = get();
+    
+    if (state._hasHydrated) return; // Already hydrated
+
+    const isLoginPage =
+      typeof window !== "undefined" &&
+      window.location.pathname.includes("/login");
+
     if (!isLoginPage) {
       await get().validateSession();
     }
+
     set({ _hasHydrated: true });
   },
 }));
+
+// ✅ Call hydrate only once when store initializes
+if (typeof window !== "undefined") {
+  useAuthStore.getState().hydrate();
+}

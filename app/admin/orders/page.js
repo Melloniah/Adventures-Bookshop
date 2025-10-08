@@ -10,28 +10,46 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 20;
 
-  const fetchOrders = useCallback(async () => {
-    setLoading(true);
-    try {
-      const { data } = await adminAPI.getAllOrders();
-      setOrders(data);
-    } catch (error) {
-      toast.error('Failed to fetch orders');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const fetchOrders = useCallback(
+    async (page = 1) => {
+      setLoading(true);
+      try {
+        const { data } = await adminAPI.getAllOrders({
+          page,
+          limit,
+          status: statusFilter || undefined,
+        });
+        setOrders(data.orders);
+        setTotalPages(data.total_pages);
+        setCurrentPage(data.current_page);
+      } catch (error) {
+        toast.error('Failed to fetch orders');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [statusFilter]
+  );
 
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    fetchOrders(currentPage);
+  }, [fetchOrders, currentPage]);
+
+  // Reset to page 1 when changing filter
+  useEffect(() => {
+    setCurrentPage(1);
+    fetchOrders(1);
+  }, [statusFilter, fetchOrders]);
 
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {
       await adminAPI.updateOrderStatus(orderId, { status: newStatus });
       toast.success('Order status updated successfully');
-      fetchOrders();
+      fetchOrders(currentPage);
     } catch (error) {
       toast.error('Failed to update order status');
     }
@@ -49,10 +67,6 @@ export default function AdminOrders() {
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
-  const filteredOrders = statusFilter
-    ? orders.filter((order) => order.status === statusFilter)
-    : orders;
-
   return (
     <div className="space-y-6 px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
@@ -60,7 +74,6 @@ export default function AdminOrders() {
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center sm:text-left">
           Orders Management
         </h1>
-
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
@@ -78,6 +91,8 @@ export default function AdminOrders() {
 
       {loading ? (
         <div className="text-center py-12 text-gray-500">Loading orders...</div>
+      ) : orders.length === 0 ? (
+        <div className="text-center py-12 text-gray-500">No orders found</div>
       ) : (
         <>
           {/* Desktop Table */}
@@ -106,7 +121,7 @@ export default function AdminOrders() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredOrders.map((order) => (
+                {orders.map((order) => (
                   <tr key={order.id}>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">
                       {order.order_number}
@@ -179,9 +194,9 @@ export default function AdminOrders() {
             </table>
           </div>
 
-          {/* ✅ Mobile Cards */}
+          {/* Mobile Cards */}
           <div className="md:hidden space-y-4">
-            {filteredOrders.map((order) => (
+            {orders.map((order) => (
               <div
                 key={order.id}
                 className="bg-white shadow-md rounded-lg p-4 border border-gray-100"
@@ -217,8 +232,7 @@ export default function AdminOrders() {
                     <strong>Route:</strong> {order.delivery_route?.name || '—'}
                   </p>
                   <p>
-                    <strong>Total:</strong> KSh{' '}
-                    {order.total_amount?.toLocaleString()}
+                    <strong>Total:</strong> KSh {order.total_amount?.toLocaleString()}
                   </p>
                   <p>
                     <strong>Status:</strong>{' '}
@@ -232,7 +246,6 @@ export default function AdminOrders() {
                   </p>
                 </div>
 
-                {/* Mobile Actions */}
                 <div className="flex justify-end mt-3 space-x-3">
                   {order.status === 'pending' && (
                     <button
@@ -261,6 +274,39 @@ export default function AdminOrders() {
               </div>
             ))}
           </div>
+
+         {/* Pagination Controls */}
+<div className="flex justify-center items-center space-x-2 mt-6 flex-wrap gap-1">
+  <button
+    disabled={currentPage === 1}
+    onClick={() => fetchOrders(currentPage - 1)}
+    className="px-3 py-1 border rounded disabled:opacity-50"
+  >
+    Previous
+  </button>
+
+  {/* Page numbers */}
+  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+    <button
+      key={page}
+      onClick={() => fetchOrders(page)}
+      className={`px-3 py-1 border rounded ${
+        page === currentPage ? 'bg-teal-500 text-white border-teal-500' : ''
+      }`}
+    >
+      {page}
+    </button>
+  ))}
+
+  <button
+    disabled={currentPage === totalPages}
+    onClick={() => fetchOrders(currentPage + 1)}
+    className="px-3 py-1 border rounded disabled:opacity-50"
+  >
+    Next
+  </button>
+</div>
+
         </>
       )}
     </div>

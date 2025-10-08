@@ -12,8 +12,10 @@ export default async function ProductSections() {
       productAPI.getProductsOnSale(),
       productAPI.getProductsFeatured(),
     ]);
-    onSaleProducts = saleRes.data || [];
-    featuredProducts = featuredRes.data || [];
+    
+    onSaleProducts = saleRes.data.products || [];
+featuredProducts = featuredRes.data.products || [];
+
   } catch (err) {
     console.error("Failed to fetch products:", err);
   }

@@ -6,8 +6,8 @@ import { categoryAPI } from "../../lib/api";
 
 export const categoryIcons = {
   "pre-school": "🎨",
-  "grade-1": "✏️",
-  "grade-2": "📝",
+  "grade 1": "✏️",
+  "grade 2": "📝",
   "grade-3": "📖",
   "arts": "🖌️",
   "stationery": "🖊️",
@@ -15,7 +15,7 @@ export const categoryIcons = {
   "books": "📚"
 };
 
-const featuredCategories = ["pre-school","grade-1","grade-2","stationery","arts"];
+const featuredCategories = ["pre-school","grade 1","grade 2","stationery","arts"];
 
 export default function CategorySection() {
   const [categories, setCategories] = useState([]);

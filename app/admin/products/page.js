@@ -12,28 +12,50 @@ export default function AdminProducts() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState(''); // ✅ Separate debounced value
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 20;
 
-  // 🔹 Fetch all products
-  const fetchProducts = async (query = '') => {
-    try {
-      const res = await adminAPI.getAllProducts(query);
-      setProducts(res.data);
-    } catch (err) {
-      console.error('Error fetching products:', err);
-    }
-  };
-
-  // 🔹 Initial data fetch
+  // ✅ Debounce search term
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1); // Reset to page 1 on new search
+    }, 500);
 
-  // 🔹 Fetch categories
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // ✅ Fetch products when debounced search or page changes
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        let res;
+        if (debouncedSearch.trim()) {
+          res = await adminAPI.searchProducts(debouncedSearch, currentPage, itemsPerPage);
+        } else {
+          res = await adminAPI.getAllProducts(currentPage, itemsPerPage);
+        }
+
+        setProducts(res.data.products || []);
+        setCurrentPage(res.data.current_page || 1);
+        setTotalPages(res.data.total_pages || 1);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setProducts([]);
+      }
+    };
+
+    fetchProducts();
+  }, [debouncedSearch, currentPage]);
+
+  // ✅ Fetch categories once
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await categoryAPI.getCategories();
-        setCategories(res.data);
+        setCategories(res.data || []);
       } catch (err) {
         console.error('Failed to fetch categories:', err);
       }
@@ -41,48 +63,54 @@ export default function AdminProducts() {
     fetchCategories();
   }, []);
 
-  // 🔹 Debounced search
-  useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      if (searchTerm.trim()) {
-        adminAPI
-          .searchProducts(searchTerm)
-          .then((res) => setProducts(res.data))
-          .catch((err) => console.error('Error searching products:', err));
-      } else {
-        fetchProducts();
-      }
-    }, 500);
-    return () => clearTimeout(delayDebounce);
-  }, [searchTerm]);
-
-  // 🔹 Delete product
+  // ✅ Delete product
   const handleDelete = async (productId) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
     try {
       await adminAPI.deleteProduct(productId);
-      fetchProducts(searchTerm);
+      // Refetch current page
+      const res = debouncedSearch.trim()
+        ? await adminAPI.searchProducts(debouncedSearch, currentPage, itemsPerPage)
+        : await adminAPI.getAllProducts(currentPage, itemsPerPage);
+      
+      setProducts(res.data.products || []);
+      setTotalPages(res.data.total_pages || 1);
     } catch (err) {
       console.error('Error deleting product:', err);
     }
   };
 
-  // 🔹 Edit product
+  // ✅ Edit product
   const handleEdit = (product) => {
     setEditingProduct(product);
     setShowForm(true);
   };
 
-  // 🔹 Add new product
+  // ✅ Add new product
   const handleAddNew = () => {
     setEditingProduct(null);
     setShowForm(true);
   };
 
-  // 🔹 After form save
-  const handleFormSaved = () => {
+  // ✅ After form save - refetch current page
+  const handleFormSaved = async () => {
     setShowForm(false);
-    fetchProducts(searchTerm);
+    try {
+      const res = debouncedSearch.trim()
+        ? await adminAPI.searchProducts(debouncedSearch, currentPage, itemsPerPage)
+        : await adminAPI.getAllProducts(currentPage, itemsPerPage);
+      
+      setProducts(res.data.products || []);
+      setTotalPages(res.data.total_pages || 1);
+    } catch (err) {
+      console.error('Error refetching products:', err);
+    }
+  };
+
+  // ✅ Pagination handler
+  const goToPage = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
   };
 
   return (
@@ -111,59 +139,104 @@ export default function AdminProducts() {
         />
       </div>
 
-        {/* 🛒 Product Cards Grid */}
-<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-  {products.length > 0 ? (
-    products.map((product) => (
-      <div
-        key={product.id}
-        className="bg-white border rounded-lg p-3 shadow-sm hover:shadow-md transition flex flex-col"
-      >
-        {/* Image */}
-        <div className="w-full h-40 sm:h-44 relative rounded overflow-hidden">
-          <Image
-            src={getImageUrl(product.image) || placeholderSVG}
-            alt={product.name}
-            fill
-            className="object-cover"
-            onError={handleImageError}
-          />
-        </div>
+      {/* 🛒 Product Cards Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+        {products.length > 0 ? (
+          products.map((product) => (
+            <div
+              key={product.id}
+              className="bg-white border rounded-lg p-3 shadow-sm hover:shadow-md transition flex flex-col"
+            >
+              {/* Image */}
+              <div className="w-full h-40 sm:h-44 relative rounded overflow-hidden">
+                <Image
+                  src={getImageUrl(product.image) || placeholderSVG}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                  onError={handleImageError}
+                />
+              </div>
 
-        {/* Details */}
-        <div className="mt-3 flex-1">
-          <h2 className="font-semibold text-gray-900 text-sm sm:text-base line-clamp-2">
-            {product.name}
-          </h2>
-          <p className="text-gray-700 mt-1 text-sm sm:text-base">
-            KSh {product.price?.toLocaleString()}
+              {/* Details */}
+              <div className="mt-3 flex-1">
+                <h2 className="font-semibold text-gray-900 text-sm sm:text-base line-clamp-2">
+                  {product.name}
+                </h2>
+                <p className="text-gray-700 mt-1 text-sm sm:text-base">
+                  KSh {product.price?.toLocaleString()}
+                </p>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row gap-2 mt-3">
+                <button
+                  onClick={() => handleEdit(product)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm sm:text-base w-full sm:w-1/2"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(product.id)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-sm sm:text-base w-full sm:w-1/2"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="col-span-full text-center text-gray-500 text-sm sm:text-base">
+            No products found.
           </p>
-        </div>
-
-        {/* Buttons */}
-        <div className="flex flex-col sm:flex-row gap-2 mt-3">
-          <button
-            onClick={() => handleEdit(product)}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm sm:text-base w-full sm:w-1/2"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => handleDelete(product.id)}
-            className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-sm sm:text-base w-full sm:w-1/2"
-          >
-            Delete
-          </button>
-        </div>
+        )}
       </div>
-    ))
-  ) : (
-    <p className="col-span-full text-center text-gray-500 text-sm sm:text-base">
-      No products found.
-    </p>
-  )}
-</div>
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-6 gap-2">
+          <button
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+          >
+            Prev
+          </button>
+
+          {[...Array(totalPages)].map((_, idx) => {
+            const pageNum = idx + 1;
+            return (
+              <button
+                key={pageNum}
+                onClick={() => goToPage(pageNum)}
+                className={`px-3 py-1 rounded hover:bg-gray-300 ${
+                  pageNum === currentPage ? 'bg-red-600 text-white' : 'bg-gray-200'
+                }`}
+              >
+                {pageNum}
+              </button>
+            );
+          })}
+
+          <button
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
+      {/* Product Form Modal */}
+      {showForm && (
+        <ProductForm
+          product={editingProduct}
+          categories={categories}
+          onSaved={handleFormSaved}
+          onClose={() => setShowForm(false)}
+        />
+      )}
     </div>
   );
 }

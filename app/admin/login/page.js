@@ -13,18 +13,21 @@ export default function AdminLogin() {
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // ✅ Wait for auth store to hydrate before rendering
+  if (!_hasHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-xl">
+        Loading...
+      </div>
+    );
+  }
 
-  // 🚀 Redirect if already logged in as admin
-  useEffect(() => {
-    if (mounted && _hasHydrated && isAdmin) {
-      router.replace("/admin/dashboard");
-    }
-  }, [mounted, _hasHydrated, isAdmin, router]);
+  // ✅ Redirect if already logged in as admin
+  if (isAdmin) {
+    router.replace("/admin/dashboard");
+    return null; // do not render login form
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,9 +50,8 @@ export default function AdminLogin() {
       setUser(user);
       toast.success("Login successful!");
 
-      setTimeout(() => {
-        window.location.href = "/admin/dashboard";
-      }, 100);
+      // ✅ SPA-safe redirect
+      router.replace("/admin/dashboard");
     } catch (error) {
       const errorMessage =
         error.response?.data?.detail || error.message || "Login failed";
@@ -62,16 +64,8 @@ export default function AdminLogin() {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-xl text-gray-700">Loading...</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
+     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-sm sm:max-w-md bg-white rounded-2xl shadow-md p-6 sm:p-8 space-y-6">
         {/* Header */}
         <div className="text-center">
