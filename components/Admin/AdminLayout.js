@@ -19,7 +19,7 @@ const navigation = [
   { name: "Products", href: "/admin/products", icon: ShoppingBagIcon },
   { name: "Orders", href: "/admin/orders", icon: ClipboardDocumentListIcon },
   { name: "Delivery Routes", href: "/admin/delivery-routes", icon: MapPinIcon },
-  { name: "Hero Images", href: "/admin/hero-images", icon: PhotoIcon },
+  { name: "Hero Banners", href: "/admin/hero-banners", icon: PhotoIcon },
 ];
 
 export default function AdminLayout({ children }) {

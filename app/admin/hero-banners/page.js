@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "../../../lib/api";
+import { adminAPI } from "../../../lib/api";
 import BannerForm from "../../../components/Admin/BannerForm";
 import Image from "next/image";
 import { getImageUrl, handleImageError, placeholderSVG } from "utils/imageUtils";
@@ -13,7 +13,7 @@ export default function HeroBannersPage() {
 
   const fetchBanners = async () => {
     try {
-      const res = await api.get("/admin/hero-banners");
+      const res = await adminAPI.getHeroBanners()
       setBanners(res.data);
     } catch (err) {
       console.error("Failed to fetch banners:", err);
@@ -24,44 +24,40 @@ export default function HeroBannersPage() {
     fetchBanners();
   }, []);
 
-  const handleCreate = async (formData) => {
-    try {
-      await api.post("/admin/hero-banners", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      toast.success("Banner created successfully!");
-      fetchBanners();
-    } catch (err) {
-      toast.error("Failed to create banner.");
-      console.error("Failed to create banner:", err.response?.data || err);
-    }
-  };
+    const handleCreate = async (formData) => {
+  try {
+    await adminAPI.createHeroBanner(formData);
+    toast.success("Banner created successfully!");
+    fetchBanners();
+  } catch (err) {
+    toast.error("Failed to create banner.");
+    console.error("Failed to create banner:", err.response?.data || err);
+  }
+};
 
-  const handleUpdate = async (formData) => {
-    try {
-      await api.put(`/admin/hero-banners/${editingBanner.id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      toast.success("Banner updated successfully!");
-      setEditingBanner(null);
-      fetchBanners();
-    } catch (err) {
-      toast.error("Failed to update banner.");
-      console.error("Failed to update banner:", err.response?.data || err);
-    }
-  };
+     const handleUpdate = async (formData) => {
+  try {
+    await adminAPI.updateHeroBanner(editingBanner.id, formData);
+    toast.success("Banner updated successfully!");
+    setEditingBanner(null);
+    fetchBanners();
+  } catch (err) {
+    toast.error("Failed to update banner.");
+    console.error("Failed to update banner:", err.response?.data || err);
+  }
+};
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this banner?")) return;
-    try {
-      await api.delete(`/admin/hero-banners/${id}`);
-      toast.success("Banner deleted successfully!");
-      setBanners((prev) => prev.filter((b) => b.id !== id)); // update UI immediately
-    } catch (err) {
-      toast.error("Failed to delete banner.");
-      console.error("Failed to delete banner:", err.response?.data || err);
-    }
-  };
+  if (!confirm("Are you sure you want to delete this banner?")) return;
+  try {
+    await adminAPI.deleteHeroBanner(id);
+    toast.success("Banner deleted successfully!");
+    setBanners((prev) => prev.filter((b) => b.id !== id));
+  } catch (err) {
+    toast.error("Failed to delete banner.");
+    console.error("Failed to delete banner:", err.response?.data || err);
+  }
+};
 
   const handleCancel = () => {
     setEditingBanner(null);
