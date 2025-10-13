@@ -9,23 +9,23 @@ const placeholderSVG =
  * @param {string} path - Filename, relative path, or full URL
  * @returns {string|null}
  */
-export function getImageUrl(path) {
-  if (!path) return null; // No path provided
 
-  // Already a full URL
+export function getImageUrl(path) {
+  if (!path) return null;
+
+  // Already a full URL (Cloudinary or any external URL)
   if (path.startsWith("http://") || path.startsWith("https://")) {
-    return path;
+    return path; // ✅ Return as-is
   }
 
-  // Remove leading slash
+  // Local backend image path
   const cleanPath = path.startsWith("/") ? path.slice(1) : path;
 
-  // If path already contains 'static/images/', just prepend baseUrl
   if (cleanPath.startsWith("static/images/")) {
     return `${baseUrl}/${cleanPath}`;
   }
 
-  // Otherwise, assume it's just a filename
+  // Assume it's just a filename (old format)
   return `${baseUrl}/static/images/${cleanPath}`;
 }
 
