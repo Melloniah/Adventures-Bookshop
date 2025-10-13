@@ -84,7 +84,7 @@ export default function ProductForm({ product, onSaved }) {
         const formData = new FormData();
         formData.append("file", imageFile);
         const uploadRes = await adminAPI.uploadImage(formData);
-        filename = uploadRes.data.filename;
+        filename = uploadRes.data.url;
       }
 
       const payload = {
