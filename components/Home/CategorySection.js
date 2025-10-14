@@ -23,7 +23,7 @@ export default function CategorySection() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await categoryAPI.getCategories(); // ✅ add ()
+        const res = await categoryAPI.getCategories(); 
         setCategories(res.data || []);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
