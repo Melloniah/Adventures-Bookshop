@@ -153,39 +153,47 @@ export default function ProductsContent() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-              {products.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/products/${product.id}`}
-                  className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden"
-                >
-                  <div className="relative h-48 w-full">
-                    <Image
-                      src={getImageUrl(product.image) || placeholderSVG}
-                      alt={product.name}
-                      fill
-                      className="object-cover"
-                      onError={handleImageError}
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2">{product.name}</h3>
-                    <p className="text-sm text-gray-600 line-clamp-2 mb-3">{product.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-red-600">
-                        KSh {product.price?.toLocaleString()}
-                      </span>
-                      {product.stock_quantity > 0 ? (
-                        <span className="text-xs text-green-600">In Stock</span>
-                      ) : (
-                        <span className="text-xs text-red-600">Out of Stock</span>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+  {products.map((product) => (
+    <Link
+      key={product.id}
+      href={`/products/${product.id}`}
+      className="bg-white rounded-xl shadow hover:shadow-lg transition-all overflow-hidden flex flex-col"
+    >
+      {/* Image container — fixed aspect ratio */}
+      <div className="relative aspect-[1/1] w-full bg-gray-100">
+        <Image
+          src={getImageUrl(product.image) || placeholderSVG}
+          alt={product.name}
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className="object-cover object-center"
+          onError={handleImageError}
+        />
+      </div>
+
+      {/* Product details */}
+      <div className="p-3 sm:p-4 flex flex-col flex-grow justify-between">
+        <div>
+          <h3 className="font-semibold text-gray-900 line-clamp-2 mb-1">{product.name}</h3>
+          <p className="text-sm text-gray-600 line-clamp-2 mb-2">{product.description}</p>
+        </div>
+
+        <div className="flex items-center justify-between mt-auto">
+          <span className="text-lg font-bold text-red-600">
+            KSh {product.price?.toLocaleString()}
+          </span>
+          {product.stock_quantity > 0 ? (
+            <span className="text-xs text-green-600">In Stock</span>
+          ) : (
+            <span className="text-xs text-red-600">Out of Stock</span>
+          )}
+        </div>
+      </div>
+    </Link>
+  ))}
+</div>
+
 
             {/* Pagination Controls */}
             <div className="flex justify-center mt-8 gap-2">
