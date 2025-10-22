@@ -187,16 +187,16 @@ const Header = () => {
         </nav>
 
         {/* Running Banner */}
-        <div className="bg-red-600 text-black text-xs sm:text-sm py-2 overflow-hidden">
+        <div className="bg-red-600 text-white text-xs sm:text-sm py-2 overflow-hidden">
           <div className="animate-marquee whitespace-nowrap">
             <span className="inline-block px-3 sm:px-4">
-              Free Delivery on Orders Over KSh 3,000
+              Free Delivery on Orders Exceeding KSh 3,000
             </span>
             <span className="inline-block px-3 sm:px-4">
               📞 Call Us: +254 724047489
             </span>
             <span className="inline-block px-3 sm:px-4">
-              Free Delivery on Orders Over KSh 3,000
+              Free Delivery on Orders Exceeding KSh 3,000
             </span>
             <span className="inline-block px-3 sm:px-4">
               📞 Call Us: +254 724047489
