@@ -8,6 +8,7 @@ import { useCartStore } from "../../../store/useCartStore";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import { getImageUrl, placeholderSVG } from '../../../utils/imageUtils';
+import Link from "next/link";
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -67,6 +68,12 @@ export default function ProductPage() {
             ADD TO CART
           </button>
         )}
+         <Link
+        href="/products"
+        className="text-red-600 hover:underline text-sm font-medium mb-6 inline-block"
+      >
+        ← Back to Products
+      </Link>
       </div>
     </div>
   );
