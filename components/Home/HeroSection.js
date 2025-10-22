@@ -96,20 +96,21 @@ const HeroSection = () => {
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
         {slides.map((slide) => (
-          <div key={slide.id} className="flex-shrink-0 w-full h-full relative m-0 p-0">
-            <Image
-              src={getImageUrl(slide.image)||placeholderSVG}
-              alt={slide.title || "Hero Banner"}
-              fill
-              className="object-cover m-0 p-0"
-              priority
-              onError={handleImageError}
-              sizes="100vw"
-              style={{ display: 'block' }}
-            />
-
+        <div key={slide.id} className="flex-shrink-0 w-full h-full relative bg-black">
+  <Image
+  src={getImageUrl(slide.image) || placeholderSVG}
+  alt={slide.title || "Hero Banner"}
+  fill
+  priority
+  onError={handleImageError}
+  sizes="100vw"
+  className="object-cover object-center md:object-center"
+  style={{
+    transform: "scale(1.05)", // slight zoom to avoid black bars
+  }}
+/>
             {/* Overlay content */}
-            <div className="absolute inset-0 bg-black/40 flex items-center px-4 sm:px-6 md:px-12">
+            <div className="absolute inset-0 bg-black/40 flex items-end sm:items-center px-4 sm:px-6 md:px-12 pb-10 sm:pb-0">
               <div className="text-left max-w-xs sm:max-w-md md:max-w-lg">
                 <div className="max-w-lg">
                   {slide.description && (
@@ -117,13 +118,15 @@ const HeroSection = () => {
                       {slide.description}
                     </div>
                   )}
-                  <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
-                    {slide.title}
-                  </h1>
+                   <h1 className="text-xl sm:text-3xl md:text-5xl font-bold text-white mb-3 leading-snug drop-shadow-lg">
+  {slide.title}
+</h1>
+
                   {slide.subtitle && (
-                    <p className="text-base sm:text-lg md:text-2xl text-gray-200 mb-8">
-                      {slide.subtitle}
-                    </p>
+                    <p className="text-sm sm:text-base md:text-2xl text-gray-200 mb-6 drop-shadow-md">
+  {slide.subtitle}
+</p>
+
                   )}
                   <Link
                     href="/products"
