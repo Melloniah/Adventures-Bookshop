@@ -4,11 +4,10 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import ProductForm from '../../../components/Products/ProductForm';
 import { getImageUrl, handleImageError, placeholderSVG } from '../../../utils/imageUtils';
-import { adminAPI, categoryAPI } from 'lib/api';
+import { adminAPI, categoryAPI} from 'lib/api';
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -231,12 +230,10 @@ export default function AdminProducts() {
 
       {/* Product Form Modal */}
       {showForm && (
-        <ProductForm
-          product={editingProduct}
-          categories={categories}
-          onSaved={handleFormSaved}
-          onClose={() => setShowForm(false)}
-        />
+           <ProductForm
+    product={editingProduct}
+   onSaved={handleFormSaved}
+  />
       )}
     </div>
   );

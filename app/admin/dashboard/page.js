@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useState as useToggle } from "react";
+import { useState, useEffect } from "react";
 import { adminAPI } from "../../../lib/api";
 
 export default function AdminDashboard() {
@@ -56,6 +56,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      {/* HEADER */}
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
         <p className="text-gray-600">
@@ -66,7 +67,7 @@ export default function AdminDashboard() {
       {stats && (
         <>
           {/* --- STAT CARDS --- */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             <StatCard
               title="Total Products"
               value={stats.total_products}
@@ -81,11 +82,48 @@ export default function AdminDashboard() {
             />
             <StatCard
               title="Active Categories"
-              value={stats.total_categories}
+              value={stats.category_stats?.active || 0}
               iconPath="M12 4v16m8-8H4"
               color="teal"
             />
+            <StatCard
+              title="Inactive Categories"
+              value={stats.category_stats?.inactive || 0}
+              iconPath="M4 4h16v16H4z"
+              color="gray"
+            />
           </section>
+
+          {/* --- CATEGORY BREAKDOWN --- */}
+          {stats.category_stats && (
+            <section className="bg-white rounded-lg shadow p-6 mb-10">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Category Overview
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <MiniStat
+                  label="Total Categories"
+                  value={stats.category_stats.total}
+                />
+                <MiniStat
+                  label="Parent Categories"
+                  value={stats.category_stats.parents}
+                />
+                <MiniStat
+                  label="Subcategories"
+                  value={stats.category_stats.subcategories}
+                />
+                <MiniStat
+                  label="With Products"
+                  value={stats.category_stats.with_products}
+                />
+                <MiniStat
+                  label="Empty Categories"
+                  value={stats.category_stats.empty}
+                />
+              </div>
+            </section>
+          )}
 
           {/* --- RECENT ORDERS --- */}
           {stats.recent_orders?.length > 0 && (
@@ -152,11 +190,13 @@ export default function AdminDashboard() {
 }
 
 /* --- Helper Components --- */
+
 function StatCard({ title, value, iconPath, color }) {
   const colorMap = {
     red: "text-red-600 bg-red-100",
     blue: "text-blue-600 bg-blue-100",
     teal: "text-teal-600 bg-teal-100",
+    gray: "text-gray-600 bg-gray-100",
   };
 
   return (
@@ -186,6 +226,15 @@ function StatCard({ title, value, iconPath, color }) {
   );
 }
 
+function MiniStat({ label, value }) {
+  return (
+    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+      <p className="text-sm text-gray-600">{label}</p>
+      <p className="text-xl font-bold text-gray-900 mt-1">{value}</p>
+    </div>
+  );
+}
+
 function StatusBadge({ status }) {
   const badgeClasses = {
     completed: "bg-green-100 text-green-800",
@@ -205,7 +254,6 @@ function StatusBadge({ status }) {
   );
 }
 
-/* --- Collapsible Mobile Order Card --- */
 function OrderCard({ order }) {
   const [expanded, setExpanded] = useState(false);
 

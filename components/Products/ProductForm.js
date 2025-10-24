@@ -21,20 +21,29 @@ export default function ProductForm({ product, onSaved }) {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Fetch categories
+  // ✅ Fetch & flatten categories with subcategories
   useEffect(() => {
+    const flattenCategories = (categories, prefix = "") =>
+      categories.flatMap(cat => [
+        { id: cat.id, name: `${prefix}${cat.name}` },
+        ...(cat.subcategories && cat.subcategories.length
+          ? flattenCategories(cat.subcategories, `${prefix}— `)
+          : []),
+      ]);
+
     const fetchCategories = async () => {
       try {
-        const res = await categoryAPI.getCategories();
-        setCategories(res.data);
+        const res = await categoryAPI.getCategoryHierarchy();
+        setCategories(flattenCategories(res.data));
       } catch (err) {
         console.error("Failed to fetch categories:", err);
       }
     };
+
     fetchCategories();
   }, []);
 
-  // 🔹 Prefill fields when editing
+  // ✅ Prefill fields when editing
   useEffect(() => {
     if (product) {
       setName(product.name || "");
@@ -49,7 +58,6 @@ export default function ProductForm({ product, onSaved }) {
       setOnSale(product.on_sale ?? false);
       setPreviewUrl(product.image ? getImageUrl(product.image) : placeholderSVG);
     } else {
-      // Reset when adding a new product
       setName("");
       setSlug("");
       setDescription("");
@@ -64,7 +72,7 @@ export default function ProductForm({ product, onSaved }) {
     }
   }, [product]);
 
-  // 🔹 Preview selected image
+  // ✅ Preview selected image
   useEffect(() => {
     if (!imageFile) return;
     const reader = new FileReader();
@@ -72,7 +80,7 @@ export default function ProductForm({ product, onSaved }) {
     reader.readAsDataURL(imageFile);
   }, [imageFile]);
 
-  // 🔹 Submit handler
+  // ✅ Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -173,7 +181,7 @@ export default function ProductForm({ product, onSaved }) {
         />
       </div>
 
-      {/* --- Category selector --- */}
+      {/* --- Category selector (now includes subcategories) --- */}
       <select
         value={categoryId}
         onChange={(e) => setCategoryId(e.target.value)}
@@ -214,22 +222,6 @@ export default function ProductForm({ product, onSaved }) {
           <span>Active</span>
         </label>
       </div>
-
-      {/* --- Badge Preview --- */}
-      {(isFeatured || onSale) && (
-        <div className="flex gap-2 mt-2">
-          {isFeatured && (
-            <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">
-              FEATURED
-            </span>
-          )}
-          {onSale && (
-            <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">
-              ON SALE
-            </span>
-          )}
-        </div>
-      )}
 
       {/* --- Image Upload --- */}
       <div className="mt-2">

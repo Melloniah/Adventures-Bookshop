@@ -29,7 +29,7 @@ export default function ProductsContent() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await productAPI.getAll({}); // Fetch all categories
+        const res = await categoryAPI.getCategoryProductsBySlug(slug, true); // Fetch all categories nested
         setCategories(res.data.categories || []); // Adjust if you have categories endpoint
       } catch (err) {
         console.error("Failed to fetch categories:", err);
