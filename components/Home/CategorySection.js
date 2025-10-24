@@ -6,16 +6,16 @@ import { categoryAPI } from "../../lib/api";
 
 export const categoryIcons = {
   "pre-school": "🎨",
-  "grade 1": "✏️",
-  "grade 2": "📝",
+  "grade-1": "✏️",
+  "grade-2": "📝",
   "grade-3": "📖",
   "arts": "🖌️",
   "stationery": "🖊️",
   "technology": "💻",
-  "books": "📚"
+  "books": "📚",
 };
 
-const featuredCategories = ["pre-school","grade 1","grade 2","stationery","arts"];
+const featuredCategories = ["pre-school", "grade-1", "grade-2", "stationery", "arts"];
 
 export default function CategorySection() {
   const [categories, setCategories] = useState([]);
@@ -23,16 +23,20 @@ export default function CategorySection() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await categoryAPI.getCategories(); 
+        const res = await categoryAPI.getCategoryHierarchy();
         setCategories(res.data || []);
       } catch (err) {
-        console.error("Failed to fetch categories:", err);
+        console.error("Failed to fetch category tree:", err);
       }
     };
     fetchCategories();
   }, []);
 
-  const displayed = categories.filter(cat => featuredCategories.includes(cat.slug));
+  const displayed = categories.flatMap(cat => {
+    const isFeaturedParent = featuredCategories.includes(cat.slug);
+    const featuredSubs = cat.subcategories?.filter(sub => featuredCategories.includes(sub.slug)) || [];
+    return isFeaturedParent ? [cat, ...featuredSubs] : featuredSubs;
+  });
 
   return (
     <section className="py-12 bg-gray-50">
@@ -42,15 +46,19 @@ export default function CategorySection() {
           {displayed.map(cat => (
             <Link key={cat.id} href={`/products?category=${cat.slug}`} className="group">
               <div className="p-6 rounded-lg text-center bg-white hover:shadow-lg transition-shadow">
-                <div className="text-3xl mb-3">{categoryIcons[cat.slug]}</div>
+                <div className="text-3xl mb-3">{categoryIcons[cat.slug] || "🛒"}</div>
                 <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-red-600">{cat.name}</h3>
-                {cat.description && <p className="text-sm text-gray-600">{cat.description}</p>}
+                {cat.description && (
+                  <p className="text-sm text-gray-600 line-clamp-2">{cat.description}</p>
+                )}
               </div>
             </Link>
           ))}
         </div>
         <div className="mt-6 text-center">
-          <Link href="/categories" className="text-red-600 font-semibold hover:underline">View All Categories</Link>
+          <Link href="/categories" className="text-red-600 font-semibold hover:underline">
+            View All Categories
+          </Link>
         </div>
       </div>
     </section>

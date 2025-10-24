@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { adminAPI } from "../../../lib/api";
 import Image from "next/image";
+import { ChevronRight, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -18,9 +20,13 @@ export default function AdminCategoriesPage() {
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [creating, setCreating] = useState(false);
+  const [parentId, setParentId] = useState(null);
+
+  // State to control expanded tree nodes
+  const [expandedId, setExpandedId] = useState(null);
 
   // --------------------------
-  // Fetch categories function
+  // Fetch category tree
   // --------------------------
   const refreshCategories = useCallback(async () => {
     setLoading(true);
@@ -32,11 +38,13 @@ export default function AdminCategoriesPage() {
           skip,
           limit,
         });
+        setCategories(res.data.categories || []);
+        setTotal(res.data.total || 0);
       } else {
-        res = await adminAPI.getAdminCategories({ skip, limit });
+        res = await adminAPI.getCategoryTree();
+        setCategories(res.data || []);
+        setTotal(res.data?.length || 0);
       }
-      setCategories(res.data.categories || []);
-      setTotal(res.data.total || 0);
     } catch (err) {
       console.error("Failed to fetch categories:", err);
     } finally {
@@ -55,10 +63,12 @@ export default function AdminCategoriesPage() {
     if (editingCategory) {
       setName(editingCategory.name || "");
       setDescription(editingCategory.description || "");
+      setParentId(editingCategory.parent_id || null);
       setImageFile(null);
     } else {
       setName("");
       setDescription("");
+      setParentId(null);
       setImageFile(null);
     }
   }, [editingCategory]);
@@ -70,11 +80,11 @@ export default function AdminCategoriesPage() {
     e.preventDefault();
     if (!name) return alert("Name is required!");
     setCreating(true);
-
     try {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("description", description || "");
+      formData.append("parent_id", parentId || "");
       if (imageFile) formData.append("image", imageFile);
 
       if (editingCategory?.id) {
@@ -87,12 +97,13 @@ export default function AdminCategoriesPage() {
         });
       }
 
+      await refreshCategories();
       setEditingCategory(null);
+      setParentId(null);
       setName("");
       setDescription("");
       setImageFile(null);
-      setSkip(0); // reset to first page
-      refreshCategories();
+      setSkip(0);
     } catch (err) {
       console.error("Failed to save category:", err);
       alert(err?.response?.data?.detail || "Failed to save category");
@@ -154,90 +165,123 @@ export default function AdminCategoriesPage() {
         </div>
 
         {/* CREATE / EDIT FORM */}
-        <form onSubmit={handleSubmit} className="mb-8 bg-white p-4 sm:p-6 rounded shadow">
-          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700">Name</label>
+        <form
+          onSubmit={handleSubmit}
+          className="mb-8 bg-white p-4 sm:p-6 rounded shadow"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4 flex-wrap">
+            {/* Name */}
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
               <input
                 type="text"
-                className="mt-1 block w-full border-gray-300 rounded-md"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                placeholder="Enter category name"
                 required
+                className="mt-1 block w-full border-gray-300 rounded-md px-3 py-2"
               />
             </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700">Description</label>
+
+            {/* Description */}
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-medium text-gray-700">
+                Description
+              </label>
               <input
                 type="text"
-                className="mt-1 block w-full border-gray-300 rounded-md"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                placeholder="Optional description"
+                className="mt-1 block w-full border-gray-300 rounded-md px-3 py-2"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Image (optional)</label>
+
+            {/* Parent Category */}
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-medium text-gray-700">
+                Parent Category
+              </label>
+              <select
+                value={parentId || ""}
+                onChange={(e) =>
+                  setParentId(e.target.value ? Number(e.target.value) : null)
+                }
+                className="mt-1 block w-full border-gray-300 rounded-md"
+              >
+                <option value="">None (Top-level)</option>
+                {categories.map((cat) => (
+                  <option
+                    key={cat.id}
+                    value={cat.id}
+                    disabled={editingCategory?.id === cat.id}
+                  >
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Image */}
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-medium text-gray-700">
+                Image (optional)
+              </label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => setImageFile(e.target.files[0])}
+                className="mt-1 block w-full"
               />
             </div>
-            <button
-              type="submit"
-              disabled={creating}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
-            >
-              {creating ? "Saving..." : editingCategory ? "Update" : "Create"}
-            </button>
-            {editingCategory && (
+
+            {/* Submit */}
+            <div className="flex-shrink-0 mt-4 sm:mt-0">
               <button
-                type="button"
-                onClick={() => setEditingCategory(null)}
-                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+                type="submit"
+                disabled={creating}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
               >
-                Cancel
+                {creating
+                  ? "Saving..."
+                  : editingCategory
+                  ? "Update"
+                  : "Create"}
               </button>
+            </div>
+
+            {editingCategory && (
+              <div className="flex-shrink-0 mt-4 sm:mt-0">
+                <button
+                  type="button"
+                  onClick={() => setEditingCategory(null)}
+                  className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+                >
+                  Cancel
+                </button>
+              </div>
             )}
           </div>
         </form>
 
-        {/* CATEGORY LIST */}
+        {/* CATEGORY TREE LIST */}
         {loading ? (
           <p className="text-gray-600 text-center">Loading categories...</p>
         ) : categories.length === 0 ? (
           <p className="text-gray-600 text-center">No categories found.</p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
+          <div className="space-y-3">
             {categories.map((cat) => (
-              <div
+              <CategoryItem
                 key={cat.id}
-                className="p-4 sm:p-6 rounded-lg bg-white shadow flex flex-col justify-between"
-              >
-                <div className="text-center mb-2 font-semibold">{cat.name}</div>
-                {cat.description && (
-                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">{cat.description}</p>
-                )}
-                {cat.image && (
-                  <div className="mb-2 h-20 w-full relative">
-                    <Image src={cat.image} alt={cat.name} fill className="object-cover rounded" />
-                  </div>
-                )}
-                <div className="flex justify-between mt-auto gap-2">
-                  <button
-                    onClick={() => setEditingCategory(cat)}
-                    className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(cat.id)}
-                    className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+                category={cat}
+                onEdit={setEditingCategory}
+                onDelete={handleDelete}
+                expandedId={expandedId}
+                setExpandedId={setExpandedId}
+              />
             ))}
           </div>
         )}
@@ -262,6 +306,100 @@ export default function AdminCategoriesPage() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// ----------------------------------------------------
+// 🧩 Recursive Category Item (Single Expandable Parent)
+// ----------------------------------------------------
+function CategoryItem({
+  category,
+  onEdit,
+  onDelete,
+  level = 0,
+  expandedId,
+  setExpandedId,
+}) {
+  const isExpanded = expandedId === category.id;
+  const hasSubcategories = category.subcategories?.length > 0;
+
+  const toggleExpand = () => {
+    if (isExpanded) setExpandedId(null);
+    else setExpandedId(category.id);
+  };
+
+  return (
+    <div className={`ml-${level * 4} border-l border-gray-200`}>
+      {/* Header Row */}
+      <div className="flex items-center justify-between bg-white p-3 rounded shadow-sm hover:shadow-md transition">
+        <div className="flex items-center gap-2">
+          {hasSubcategories && (
+            <button
+              onClick={toggleExpand}
+              className="text-gray-500 hover:text-gray-800 transition"
+            >
+              {isExpanded ? (
+                <ChevronDown size={18} strokeWidth={2} />
+              ) : (
+                <ChevronRight size={18} strokeWidth={2} />
+              )}
+            </button>
+          )}
+
+          {category.image && (
+            <Image
+              src={category.image}
+              alt={category.name}
+              width={32}
+              height={32}
+              className="rounded object-cover"
+            />
+          )}
+
+          <span className="font-medium text-gray-800">{category.name}</span>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onEdit(category)}
+            className="px-2 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => onDelete(category.id)}
+            className="px-2 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+
+      {/* Subcategories */}
+      <AnimatePresence>
+        {isExpanded && hasSubcategories && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="pl-6 mt-2 space-y-2"
+          >
+            {category.subcategories.map((sub) => (
+              <CategoryItem
+                key={sub.id}
+                category={sub}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                level={level + 1}
+                expandedId={expandedId}
+                setExpandedId={setExpandedId}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

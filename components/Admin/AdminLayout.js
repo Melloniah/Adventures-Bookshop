@@ -22,6 +22,7 @@ const navigation = [
   { name: "Delivery Routes", href: "/admin/delivery-routes", icon: MapPinIcon },
   { name: "Hero Banners", href: "/admin/hero-banners", icon: PhotoIcon },
   { name: "Categories", href: "/admin/adminCategories", icon: TagIcon },
+  { name: "CategoriesTree", href: "/admin/adminCategories/tree", icon: TagIcon },
 ];
 
 export default function AdminLayout({ children }) {
