@@ -55,10 +55,6 @@ const Footer = () => {
                    className="bg-white/10 hover:bg-white/20 w-9 h-9 rounded-full flex items-center justify-center transition-all transform hover:scale-110">
                   <span className="text-lg">📷</span>
                 </a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
-                   className="bg-white/10 hover:bg-white/20 w-9 h-9 rounded-full flex items-center justify-center transition-all transform hover:scale-110">
-                  <span className="text-lg">💼</span>
-                </a>
               </div>
             </div>
 
@@ -84,8 +80,8 @@ const Footer = () => {
               <h3 className="font-bold text-lg mb-4 text-yellow-300">Contact Us</h3>
               <div className="space-y-3 text-sm text-teal-100">
                 <div className="flex items-start gap-2">
-                  <span className="text-yellow-300 text-lg">📍</span>
-                  <p>Information House, Mfangano St, Opp. Quickmart Afya Center</p>
+                  
+                  <p>Location: Information House, Mfangano St, Opp. Quickmart Afya Center</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-yellow-300 text-lg">📞</span>
@@ -117,8 +113,8 @@ const Footer = () => {
                 ))}
               </div>
               <div className="mt-6 p-4 bg-white/10 rounded-lg border border-white/20">
-                <p className="text-xs font-semibold text-yellow-300 mb-1">🎉 Free Delivery</p>
-                <p className="text-xs text-teal-100">On orders over KSh 3,000</p>
+                <p className="text-xs font-semibold text-yellow-300 mb-1"> Free Delivery</p>
+                <p className="text-xs text-teal-100">On orders exceeding KSh 3,000</p>
               </div>
             </div>
           </div>

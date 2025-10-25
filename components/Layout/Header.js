@@ -205,13 +205,13 @@ const Header = () => {
         <div className="bg-gradient-to-r from-red-600 to-red-700 text-white text-sm py-2.5 overflow-hidden border-t border-red-500">
           <div className="animate-marquee whitespace-nowrap">
             <span className="inline-block px-8 font-medium">
-              🎉 Free Delivery on Orders Exceeding KSh 3,000
+              Free Delivery on Orders Exceeding KSh 3,000
             </span>
             <span className="inline-block px-8 font-medium">
               📞 Call Us: +254 724047489
             </span>
             <span className="inline-block px-8 font-medium">
-              🎉 Free Delivery on Orders Exceeding KSh 3,000
+              Free Delivery on Orders Exceeding KSh 3,000
             </span>
             <span className="inline-block px-8 font-medium">
               📞 Call Us: +254 724047489
