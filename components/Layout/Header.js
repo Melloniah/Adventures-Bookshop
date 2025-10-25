@@ -88,14 +88,6 @@ const Header = () => {
                 <span className="hidden sm:inline">+254 724047489</span>
               </a>
 
-              {mounted && (
-                <Link
-                  href="/account"
-                  className="p-2 hover:bg-teal-500 rounded-lg transition"
-                >
-                  <UserIcon className="h-6 w-6" />
-                </Link>
-              )}
 
               {mounted && (
                 <button
