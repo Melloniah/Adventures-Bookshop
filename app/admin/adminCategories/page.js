@@ -74,6 +74,24 @@ export default function AdminCategoriesPage() {
   }, [editingCategory]);
 
   // --------------------------
+  // Flatten categories for dropdown
+  // --------------------------
+  const flattenCategories = (cats, level = 0) => {
+    let flattened = [];
+    cats.forEach((cat) => {
+      flattened.push({ ...cat, level });
+      if (cat.subcategories && cat.subcategories.length > 0) {
+        flattened = flattened.concat(
+          flattenCategories(cat.subcategories, level + 1)
+        );
+      }
+    });
+    return flattened;
+  };
+
+  const flatCategories = flattenCategories(categories);
+
+  // --------------------------
   // Handle create/update
   // --------------------------
   const handleSubmit = async (e) => {
@@ -181,7 +199,7 @@ export default function AdminCategoriesPage() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter category name"
                 required
-                className="mt-1 block w-full border-gray-300 rounded-md px-3 py-2"
+                className="mt-1 block w-full border-gray-300 rounded-md px-3 py-2 border"
               />
             </div>
 
@@ -195,11 +213,11 @@ export default function AdminCategoriesPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Optional description"
-                className="mt-1 block w-full border-gray-300 rounded-md px-3 py-2"
+                className="mt-1 block w-full border-gray-300 rounded-md px-3 py-2 border"
               />
             </div>
 
-            {/* Parent Category */}
+            {/* Parent Category - NOW WITH SUBCATEGORIES */}
             <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-medium text-gray-700">
                 Parent Category
@@ -209,15 +227,17 @@ export default function AdminCategoriesPage() {
                 onChange={(e) =>
                   setParentId(e.target.value ? Number(e.target.value) : null)
                 }
-                className="mt-1 block w-full border-gray-300 rounded-md"
+                className="mt-1 block w-full border-gray-300 rounded-md px-3 py-2 border"
               >
                 <option value="">None (Top-level)</option>
-                {categories.map((cat) => (
+                {flatCategories.map((cat) => (
                   <option
                     key={cat.id}
                     value={cat.id}
                     disabled={editingCategory?.id === cat.id}
+                    style={{ paddingLeft: `${cat.level * 20}px` }}
                   >
+                    {cat.level > 0 && "├─ ".repeat(cat.level)}
                     {cat.name}
                   </option>
                 ))}
@@ -233,7 +253,7 @@ export default function AdminCategoriesPage() {
                 type="file"
                 accept="image/*"
                 onChange={(e) => setImageFile(e.target.files[0])}
-                className="mt-1 block w-full"
+                className="mt-1 block w-full text-sm"
               />
             </div>
 
@@ -358,6 +378,11 @@ function CategoryItem({
           )}
 
           <span className="font-medium text-gray-800">{category.name}</span>
+          {category.parent_id && (
+            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+              Subcategory
+            </span>
+          )}
         </div>
 
         {/* Action buttons */}
