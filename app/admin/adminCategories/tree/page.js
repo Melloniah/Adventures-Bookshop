@@ -41,7 +41,6 @@ function CategoryList({ nodes }) {
             <span className="font-medium">{node.name}</span>
           </div>
 
-          {/* ✅ Use subcategories instead of children */}
           {node.subcategories && node.subcategories.length > 0 && (
             <CategoryList nodes={node.subcategories} />
           )}
