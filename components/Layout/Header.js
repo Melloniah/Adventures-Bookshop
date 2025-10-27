@@ -102,9 +102,13 @@ const Header = () => {
             {/* Right side */}
             <div className="flex items-center gap-3">
               {/* Search icon for mobile */}
-              <button className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
-              </button>
+                <button
+  onClick={() => router.push("/products")}
+  className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+>
+  <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
+</button>
+
 
               {/* Cart */}
               {mounted && (
