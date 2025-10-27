@@ -7,6 +7,15 @@ import Link from "next/link";
 import { productAPI, categoryAPI } from "../../lib/api";
 import { getImageUrl, handleImageError, placeholderSVG } from "utils/imageUtils";
 
+function debounce(func, delay) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
+  };
+}
+
+
 export default function ProductsContent() {
   const [products, setProducts] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
@@ -57,6 +66,23 @@ export default function ProductsContent() {
     };
     fetchProducts(currentPage);
   }, [categorySlug, searchTerm, onSale, isFeatured, currentPage]);
+
+ useEffect(() => {
+  if (searchInput.trim() === "" && !searchTerm) return; // avoid empty spam
+
+  const handler = setTimeout(() => {
+    const params = new URLSearchParams();
+    if (categorySlug) params.append("category", categorySlug);
+    if (onSale) params.append("on_sale", "true");
+    if (isFeatured) params.append("is_featured", "true");
+    if (searchInput.trim()) params.append("search", searchInput.trim());
+    router.push(`/products?${params.toString()}`);
+  }, 400); // 400ms debounce delay
+
+  return () => clearTimeout(handler);
+}, [searchInput, categorySlug, onSale, isFeatured, searchTerm, router]);
+
+
 
   // ✅ Fetch breadcrumbs (Books › Grade 1)
   useEffect(() => {
