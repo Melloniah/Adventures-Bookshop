@@ -19,6 +19,7 @@ export default function AdminCategoriesPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [icon, setIcon] = useState("");
   const [creating, setCreating] = useState(false);
   const [parentId, setParentId] = useState(null);
 
@@ -65,11 +66,13 @@ export default function AdminCategoriesPage() {
       setDescription(editingCategory.description || "");
       setParentId(editingCategory.parent_id || null);
       setImageFile(null);
+      setIcon(editingCategory.icon || "");
     } else {
       setName("");
       setDescription("");
       setParentId(null);
       setImageFile(null);
+      setIcon("");
     }
   }, [editingCategory]);
 
@@ -103,6 +106,7 @@ export default function AdminCategoriesPage() {
       formData.append("name", name);
       formData.append("description", description || "");
       formData.append("parent_id", parentId || "");
+      formData.append("icon", icon || "");
       if (imageFile) formData.append("image", imageFile);
 
       if (editingCategory?.id) {
@@ -256,6 +260,23 @@ export default function AdminCategoriesPage() {
                 className="mt-1 block w-full text-sm"
               />
             </div>
+            {/* Icon */}
+<div className="flex-1 min-w-[200px]">
+  <label className="block text-sm font-medium text-gray-700">
+    Icon (optional)
+  </label>
+  <input
+    type="text"
+    value={icon || ""}
+    onChange={(e) => setIcon(e.target.value)}
+    placeholder="e.g. 📚, 🧮, 🏫"
+    className="mt-1 block w-full border-gray-300 rounded-md px-3 py-2 border"
+  />
+  <p className="text-xs text-gray-500 mt-1">
+    You can paste an emoji or text to represent this category.
+  </p>
+</div>
+
 
             {/* Submit */}
             <div className="flex-shrink-0 mt-4 sm:mt-0">
@@ -367,17 +388,29 @@ function CategoryItem({
             </button>
           )}
 
-          {category.image && (
-            <Image
-              src={category.image}
-              alt={category.name}
-              width={32}
-              height={32}
-              className="rounded object-cover"
-            />
-          )}
+          {category.image ? (
+  <Image
+    src={category.image}
+    alt={category.name}
+    width={32}
+    height={32}
+    className="rounded object-cover"
+  />
+) : category.icon ? (
+  <span className="text-2xl">{category.icon}</span>
+) : (
+  <span className="text-2xl text-gray-400">📚</span>
+)}
 
-          <span className="font-medium text-gray-800">{category.name}</span>
+<span className="font-medium flex items-center gap-2">
+  {category.icon && (
+    <span className="text-xl" role="img" aria-label="icon">
+      {category.icon}
+    </span>
+  )}
+  {category.name}
+</span>
+
           {category.parent_id && (
             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
               Subcategory

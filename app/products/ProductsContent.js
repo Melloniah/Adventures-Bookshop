@@ -160,16 +160,23 @@ export default function ProductsContent() {
                 href={`/products?category=${sub.slug}`}
                 className="bg-white rounded-xl shadow hover:shadow-lg transition-all overflow-hidden flex flex-col text-center"
               >
-                <div className="relative aspect-[1/1] w-full bg-gray-100">
-                  <Image
-                    src={getImageUrl(sub.image) || placeholderSVG}
-                    alt={sub.name}
-                    fill
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    className="object-cover object-center"
-                    onError={handleImageError}
-                  />
-                </div>
+              <div className="relative aspect-[1/1] w-full bg-gray-100 flex items-center justify-center">
+  {sub.image ? (
+    <Image
+      src={getImageUrl(sub.image) || placeholderSVG}
+      alt={sub.name}
+      fill
+      sizes="(max-width: 768px) 50vw, 25vw"
+      className="object-cover object-center rounded-md"
+      onError={handleImageError}
+    />
+  ) : sub.icon ? (
+    <span className="text-6xl">{sub.icon}</span>
+  ) : (
+    <span className="text-6xl text-gray-400">📚</span> // fallback if neither set
+  )}
+</div>
+
                 <div className="p-3">
                   <h3 className="font-semibold text-gray-900">{sub.name}</h3>
                 </div>
