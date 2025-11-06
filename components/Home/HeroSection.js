@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getPublicHeroBannersAPI } from "../../lib/api";
+import { getPublicHeroBannersAPI  } from "../../lib/api";
 import { getImageUrl, handleImageError, placeholderSVG } from "utils/imageUtils";
 
 const HeroSection = () => {
@@ -40,7 +40,7 @@ const HeroSection = () => {
 
   if (slides.length === 0) {
     return (
-      <section className="relative flex items-center justify-center bg-gray-200 h-[600px]">
+      <section className="relative flex items-center justify-center bg-gray-200" style={{ height: '600px' }}>
         <p className="text-gray-600">Loading banners...</p>
       </section>
     );
@@ -48,7 +48,11 @@ const HeroSection = () => {
 
   return (
     <section
-      className="relative overflow-hidden w-full h-[50vh] sm:h-[70vh] lg:h-[90vh]"
+      className="relative overflow-hidden w-full"
+      style={{
+        height: '600px',
+        maxHeight: '1080px',
+      }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -58,21 +62,10 @@ const HeroSection = () => {
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
         {slides.map((slide) => (
-          <div
-            key={slide.id}
-            className="flex-shrink-0 w-full h-full relative bg-black"
-          >
-            <Image
-              src={getImageUrl(slide.image) || placeholderSVG}
-              alt={slide.title || "Hero Banner"}
-              fill
-              className="object-contain sm:object-cover object-center"
-              priority
-              onError={handleImageError}
-              sizes="100vw"
-            />
-
-            {/* Overlay content */}
+          <div key={slide.id} className="flex-shrink-0 w-full h-full relative bg-black">
+          
+            
+            {/* Centered overlay content */}
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center px-4 sm:px-6">
               <div className="text-center max-w-4xl">
                 {slide.description && (
@@ -80,7 +73,7 @@ const HeroSection = () => {
                     {slide.description}
                   </div>
                 )}
-
+                
                 <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight drop-shadow-lg">
                   {slide.title}
                 </h1>
@@ -90,7 +83,7 @@ const HeroSection = () => {
                     {slide.subtitle}
                   </p>
                 )}
-
+                
                 <Link
                   href="/products"
                   className="inline-block bg-white text-black px-8 py-3 sm:px-10 sm:py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-base sm:text-lg shadow-lg"
