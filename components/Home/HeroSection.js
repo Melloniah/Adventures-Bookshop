@@ -63,15 +63,18 @@ const HeroSection = () => {
       >
         {slides.map((slide) => (
           <div key={slide.id} className="flex-shrink-0 w-full h-full relative bg-black">
-            <Image
-              src={getImageUrl(slide.image) || placeholderSVG}
-              alt={slide.title || "Hero Banner"}
-              fill
-              priority
-              onError={handleImageError}
-              sizes="100vw"
-              className="object-cover object-center"
-            />
+            <section className="relative overflow-hidden w-full h-[50vh] sm:h-[70vh] lg:h-[90vh]">
+  <Image
+    src={getImageUrl(slide.image) || placeholderSVG}
+    alt={slide.title || "Hero Banner"}
+    fill
+    className="object-cover object-center"
+    priority
+    onError={handleImageError}
+    sizes="100vw"
+  />
+</section>
+
             
             {/* Centered overlay content */}
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center px-4 sm:px-6">
