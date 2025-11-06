@@ -11,7 +11,8 @@ export default function AdminProducts() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState(''); // ✅ Separate debounced value
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [categories, setCategories] = useState([]); 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 20;
