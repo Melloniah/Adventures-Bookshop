@@ -95,19 +95,20 @@ export default function ProductForm({ product, onSaved }) {
         filename = uploadRes.data.url;
       }
 
-      const formData = new FormData();
+const formData = new FormData();
 formData.append("name", name);
 formData.append("slug", slug);
 formData.append("description", description);
-formData.append("price", price);
-if (originalPrice) formData.append("original_price", originalPrice);
-formData.append("stock_quantity", stock);
-if (categoryId) formData.append("category_id", categoryId);
-formData.append("is_active", isActive);
-formData.append("is_featured", isFeatured);
-formData.append("on_sale", onSale);
+formData.append("price", String(price));
+if (originalPrice) formData.append("original_price", String(originalPrice));
+formData.append("stock_quantity", String(stock));
+if (categoryId) formData.append("category_id", String(categoryId));
+formData.append("is_active", String(isActive));
+formData.append("is_featured", String(isFeatured));
+formData.append("on_sale", String(onSale));
 
 if (imageFile) formData.append("image", imageFile);
+
 
 if (product?.id) {
   await adminAPI.updateProduct(product.id, formData);
