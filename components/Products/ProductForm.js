@@ -80,50 +80,45 @@ export default function ProductForm({ product, onSaved }) {
     reader.readAsDataURL(imageFile);
   }, [imageFile]);
 
-  // ✅ Submit handler
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+// ✅ Submit handler
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      let filename = product?.image || null;
+  try {
+    // Create FormData once
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("slug", slug);
+    formData.append("description", description);
+    formData.append("price", String(price));
+    if (originalPrice) formData.append("original_price", String(originalPrice));
+    formData.append("stock_quantity", String(stock));
+    if (categoryId) formData.append("category_id", String(categoryId));
+    formData.append("is_active", String(isActive));
+    formData.append("is_featured", String(isFeatured));
+    formData.append("on_sale", String(onSale));
 
-      if (imageFile) {
-        const formData = new FormData();
-        formData.append("file", imageFile);
-        const uploadRes = await adminAPI.uploadImage(formData);
-        filename = uploadRes.data.url;
-      }
-
-const formData = new FormData();
-formData.append("name", name);
-formData.append("slug", slug);
-formData.append("description", description);
-formData.append("price", String(price));
-if (originalPrice) formData.append("original_price", String(originalPrice));
-formData.append("stock_quantity", String(stock));
-if (categoryId) formData.append("category_id", String(categoryId));
-formData.append("is_active", String(isActive));
-formData.append("is_featured", String(isFeatured));
-formData.append("on_sale", String(onSale));
-
-if (imageFile) formData.append("image", imageFile);
-
-
-if (product?.id) {
-  await adminAPI.updateProduct(product.id, formData);
-} else {
-  await adminAPI.createProduct(formData);
-}
-
-
-      onSaved();
-    } catch (err) {
-      console.error("Error saving product:", err);
-    } finally {
-      setLoading(false);
+    // Append image if exists
+    if (imageFile) {
+      formData.append("image", imageFile);
     }
-  };
+
+    // Submit
+    if (product?.id) {
+      await adminAPI.updateProduct(product.id, formData);
+    } else {
+      await adminAPI.createProduct(formData);
+    }
+
+    onSaved();
+  } catch (err) {
+    console.error("Error saving product:", err);
+    alert("Failed to save product. Please check the console for details.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <form
