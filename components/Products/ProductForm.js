@@ -94,7 +94,7 @@ const handleSubmit = async (e) => {
     formData.append("price", String(price));
     if (originalPrice) formData.append("original_price", String(originalPrice));
     formData.append("stock_quantity", String(stock));
-    if (categoryId) formData.append("category_id", String(categoryId));
+    formData.append("category_id", String(categoryId));
     formData.append("is_active", String(isActive));
     formData.append("is_featured", String(isFeatured));
     formData.append("on_sale", String(onSale));
@@ -182,6 +182,7 @@ const handleSubmit = async (e) => {
       <select
         value={categoryId}
         onChange={(e) => setCategoryId(e.target.value)}
+        required
         className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-red-500"
       >
         <option value="">Select Category</option>
