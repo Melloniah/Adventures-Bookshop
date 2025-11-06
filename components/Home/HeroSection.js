@@ -48,7 +48,7 @@ const HeroSection = () => {
 
   return (
     <section
-      className="relative overflow-hidden w-full h-[50vh] sm:h-[70vh] lg:h-[90vh]"
+      className="relative w-full h-[60vh] sm:h-[70vh] lg:h-[90vh] overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -66,7 +66,7 @@ const HeroSection = () => {
               src={getImageUrl(slide.image) || placeholderSVG}
               alt={slide.title || "Hero Banner"}
               fill
-              className="object-contain sm:object-cover object-center"
+              className="object-cover object-center"
               priority
               onError={handleImageError}
               sizes="100vw"
