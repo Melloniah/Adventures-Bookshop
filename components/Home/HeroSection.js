@@ -60,41 +60,40 @@ const HeroSection = () => {
         {slides.map((slide) => (
           <div
             key={slide.id}
-            className="flex-shrink-0 w-full h-full relative"
+            className="flex-shrink-0 w-full h-full relative bg-black"
           >
             <Image
               src={getImageUrl(slide.image) || placeholderSVG}
               alt={slide.title || "Hero Banner"}
               fill
-              className="object-cover"
-              style={{ objectPosition: 'center center' }}
+              className="object-cover object-center"
               priority
               onError={handleImageError}
               sizes="100vw"
             />
 
             {/* Overlay content */}
-            <div className="absolute inset-0 bg-black/50 sm:bg-black/40 flex items-center justify-center px-4 sm:px-6">
-              <div className="text-center max-w-4xl w-full">
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center px-4 sm:px-6">
+              <div className="text-center max-w-4xl">
                 {slide.description && (
-                  <div className="inline-block bg-yellow-400 text-black px-3 py-1.5 sm:px-6 sm:py-2 rounded-full text-xs sm:text-sm md:text-base font-medium mb-3 sm:mb-6">
+                  <div className="inline-block bg-yellow-400 text-black px-6 py-2 rounded-full text-sm sm:text-base font-medium mb-6">
                     {slide.description}
                   </div>
                 )}
 
-                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-3 sm:mb-4 md:mb-6 leading-tight drop-shadow-lg px-2">
+                <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight drop-shadow-lg">
                   {slide.title}
                 </h1>
 
                 {slide.subtitle && (
-                  <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-gray-200 mb-4 sm:mb-6 md:mb-8 drop-shadow-md px-2 line-clamp-3">
+                  <p className="text-base sm:text-xl md:text-2xl lg:text-3xl text-gray-200 mb-6 sm:mb-8 drop-shadow-md">
                     {slide.subtitle}
                   </p>
                 )}
 
                 <Link
                   href="/products"
-                  className="inline-block bg-white text-black px-6 py-2.5 sm:px-8 sm:py-3 md:px-10 md:py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-sm sm:text-base md:text-lg shadow-lg"
+                  className="inline-block bg-white text-black px-8 py-3 sm:px-10 sm:py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-base sm:text-lg shadow-lg"
                 >
                   Shop Now
                 </Link>
