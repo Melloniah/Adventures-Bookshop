@@ -132,7 +132,7 @@ const Footer = () => {
                 <span>•</span>
                 <Link href="/track-order" className="hover:text-yellow-300 transition-colors">Track Order</Link>
               </div>
-              <p>Designed by <span className="text-yellow-300 font-semibold">Melloniah</span></p>
+              <p>Designed by <span className="text-yellow-300 font-semibold">Summit Innovations</span></p>
             </div>
           </div>
         </div>
