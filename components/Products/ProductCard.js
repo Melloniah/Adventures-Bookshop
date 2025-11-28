@@ -84,15 +84,15 @@ const ProductCard = ({ product, showSaleBadge = false }) => {
           )}
         </div>
       </div>
+<button
+  onClick={handleAddToCart}
+  disabled={product.stock_quantity <= 0}
+  className="w-full mt-3 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  <ShoppingCartIcon className="h-4 w-4 mr-2" />
+  {product.stock_quantity > 0 ? "ADD TO CART" : "OUT OF STOCK"}
+</button>
 
-      <button
-        onClick={handleAddToCart}
-        disabled={product.stock_quantity <= 0}
-        className="w-full mt-3 bg-gray-100 text-gray-700 py-2 px-4 rounded hover:bg-red-600 hover:text-white transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <ShoppingCartIcon className="h-4 w-4 mr-2" />
-        {product.stock_quantity > 0 ? "ADD TO CART" : "OUT OF STOCK"}
-      </button>
     </div>
   </div>
 </div>
