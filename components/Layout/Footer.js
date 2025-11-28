@@ -4,17 +4,22 @@ import Image from 'next/image';
 
 const Footer = () => {
   const quickLinks = [
-    { name: 'Pre-school', href: '/products?category=pre-school' },
-    { name: 'Lower Primary', href: '/products?category=grade3' },
-    { name: 'Secondary School', href: '/products?category=grade9' },
+    { name: 'Pre-school', href: '/products?category=pre-primary-2' },
+    { name: 'Lower Primary', href: '/products?category=grade-3' },
+    { name: 'Secondary School', href: '/products?category=grade-9' },
     { name: 'Stationery', href: '/products?category=stationery' },
     { name: 'Technology', href: '/products?category=technology' },
     { name: 'Toys', href: '/products?category=toys' },
   ];
 
   const popularTags = [
-    'Stationery', 'Textbooks', 'Books', 'Art Supplies', 'Technology'
-  ];
+  { name: "Stationery", category: "stationery" },
+  { name: "Textbooks", category: "books" },
+  { name: "Books", category: "books" },
+  { name: "Art Supplies", category: "arts" },
+  { name: "Technology", category: "technology" },
+];
+
 
   return (
     <>
@@ -103,14 +108,15 @@ const Footer = () => {
               <h3 className="font-bold text-lg mb-4 text-yellow-300">Popular Tags</h3>
               <div className="flex flex-wrap gap-2">
                 {popularTags.map((tag) => (
-                  <Link
-                    key={tag}
-                    href={`/products?search=${tag.toLowerCase()}`}
-                    className="bg-white/10 hover:bg-yellow-400 hover:text-teal-900 px-3 py-1.5 rounded-full text-xs font-medium transition-all transform hover:scale-105"
-                  >
-                    {tag}
-                  </Link>
-                ))}
+  <Link
+    key={tag.name}
+    href={`/products?category=${tag.category}`}
+    className="bg-white/10 hover:bg-yellow-400 hover:text-teal-900 px-3 py-1.5 rounded-full text-xs font-medium transition-all transform hover:scale-105"
+  >
+    {tag.name}
+  </Link>
+))}
+
               </div>
               <div className="mt-6 p-4 bg-white/10 rounded-lg border border-white/20">
                 <p className="text-xs font-semibold text-yellow-300 mb-1"> Free Delivery</p>
