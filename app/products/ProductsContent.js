@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ProductCard from "components/Products/ProductCard";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -214,41 +215,9 @@ export default function ProductsContent() {
           <>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
               {products.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/products/${product.id}`}
-                  className="bg-white rounded-xl shadow hover:shadow-lg transition-all overflow-hidden flex flex-col"
-                >
-                  <div className="relative aspect-[1/1] w-full bg-gray-100">
-                    <Image
-                      src={getImageUrl(product.image) || placeholderSVG}
-                      alt={product.name}
-                      fill
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                      className="object-cover object-center"
-                      onError={handleImageError}
-                    />
-                  </div>
-                  <div className="p-3 flex flex-col flex-grow justify-between">
-                    <h3 className="font-semibold text-gray-900 line-clamp-2 mb-1">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 line-clamp-2 mb-2">
-                      {product.description}
-                    </p>
-                    <div className="flex items-center justify-between mt-auto">
-                      <span className="text-lg font-bold text-red-600">
-                        KSh {product.price?.toLocaleString()}
-                      </span>
-                      {product.stock_quantity > 0 ? (
-                        <span className="text-xs text-green-600">In Stock</span>
-                      ) : (
-                        <span className="text-xs text-red-600">Out of Stock</span>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              ))}
+  <ProductCard key={product.id} product={product} />
+))}
+
             </div>
 
             {/* Pagination */}
