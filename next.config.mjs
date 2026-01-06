@@ -43,12 +43,10 @@ const nextConfig = {
 
   // Production optimizations
   reactStrictMode: true,
-  swcMinify: true,
+
 
   // Experimental features
-  experimental: {
-    serverComponentsExternalPackages: [],
-  },
+  serverExternalPackages: [],
 
   // Trailing slash handling
   trailingSlash: false,
