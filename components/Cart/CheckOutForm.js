@@ -13,7 +13,9 @@ export default function CheckoutForm() {
     full_name: '',
     phone: '',
     email: '',
-    location: ''
+    location: '',
+    estate: '',
+    notes: ''
   });
   const [paymentMethod, setPaymentMethod] = useState('mpesa');
   const [loading, setLoading] = useState(false);
@@ -59,33 +61,28 @@ export default function CheckoutForm() {
     setLoading(true);
 
     try {
-      // Map selected IDs to names
-      const routeName = routes.find(r => r.id === parseInt(selectedRoute))?.name || '';
       const stopObj = stops.find(s => s.id === parseInt(selectedStop));
-      const stopName = stopObj?.name || '';
       const fee = stopObj?.price || 0;
 
       const orderData = {
-  full_name: customerInfo.full_name,
-  email: customerInfo.email,
-  phone: customerInfo.phone,
-  location: deliverOrder ? customerInfo.location : null,
-  delivery_route_id: deliverOrder ? parseInt(selectedRoute) : null,  // ✅ correct
-  delivery_stop_id: deliverOrder ? parseInt(selectedStop) : null,    // ✅ correct
-  delivery_fee: deliverOrder ? fee : 0,
-  notes: customerInfo.notes || '',
-  payment_method: paymentMethod,
-  items: cartItems.map((item) => ({
-    product_id: item.id,
-    quantity: item.quantity,
-    price: item.price,
-  })),
-};
+        full_name: customerInfo.full_name,
+        email: customerInfo.email || null,
+        phone: customerInfo.phone,
+        location: deliverOrder && customerInfo.location ? customerInfo.location : null,
+        estate: deliverOrder && customerInfo.estate ? customerInfo.estate : null,
+        delivery_route_id: deliverOrder && selectedRoute ? parseInt(selectedRoute) : null,
+        delivery_stop_id: deliverOrder && selectedStop ? parseInt(selectedStop) : null,
+        delivery_fee: deliverOrder ? fee : 0,
+        notes: customerInfo.notes || '',
+        payment_method: paymentMethod,
+        items: cartItems.map((item) => ({
+          product_id: item.id,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      };
 
-      console.log('Order data being sent:', orderData); // ✅ ADD THIS
-    console.log('deliverOrder:', deliverOrder); // ✅ ADD THIS
-    console.log('selectedRoute:', selectedRoute); // ✅ ADD THIS
-    console.log('selectedStop:', selectedStop); // ✅ ADD THIS
+      console.log('Order data being sent:', orderData);
 
       const orderResponse = await orderAPI.customerAddAOrder(orderData);
       const orderResult = orderResponse.data;
@@ -127,8 +124,8 @@ export default function CheckoutForm() {
   };
 
   const handleContinueShopping = () => {
-    clearCart();        // Ensure cart is cleared
-    router.push('/');   // Navigate to home page
+    clearCart();
+    router.push('/');
   };
 
   if (cartItems.length === 0) {
@@ -179,9 +176,8 @@ export default function CheckoutForm() {
       </div>
 
       {/* Checkout Form */}
-     {/* Checkout Form */}
       <form onSubmit={handleSubmit}>
-        {/* Customer Info */}
+        {/* BASIC INFO - ALWAYS SHOWN */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
             <label className="block text-sm font-semibold mb-2 text-gray-700">Full Name *</label>
@@ -196,12 +192,13 @@ export default function CheckoutForm() {
         </div>
 
         <div className="mb-6">
-          <label className="block text-sm font-semibold mb-2 text-gray-700">Email</label>
+          <label className="block text-sm font-semibold mb-2 text-gray-700">Email (Optional)</label>
           <input type="email" name="email" value={customerInfo.email} onChange={handleInputChange}
+            placeholder="your.email@example.com"
             className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" />
         </div>
 
-        {/* Deliver toggle */}
+        {/* DELIVER TOGGLE */}
         <div className="mb-6 flex items-center">
           <input
             type="checkbox"
@@ -213,12 +210,27 @@ export default function CheckoutForm() {
           <label htmlFor="deliverOrder" className="text-gray-700 font-semibold">Deliver my order</label>
         </div>
 
-        {/* Delivery Info (only if delivery is chosen) */}
+        {/* DELIVERY SECTION - ONLY SHOWN WHEN deliverOrder IS TRUE */}
         {deliverOrder && (
           <>
             <div className="mb-6">
-              <label className="block text-sm font-semibold mb-2 text-gray-700">Delivery Location *</label>
+              <label className="block text-sm font-semibold mb-2 text-gray-700">Delivery Location/Address *</label>
               <textarea name="location" required value={customerInfo.location} onChange={handleInputChange}
+                placeholder="Enter your full delivery address"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" rows={3} />
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-semibold mb-2 text-gray-700">Estate/Building Name (Optional)</label>
+              <input type="text" name="estate" value={customerInfo.estate} onChange={handleInputChange}
+                placeholder="E.g., Greenview Apartments, Block C"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" />
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-semibold mb-2 text-gray-700">Delivery Notes (Optional)</label>
+              <textarea name="notes" value={customerInfo.notes} onChange={handleInputChange}
+                placeholder="E.g., Apartment 5B, Call when you arrive, Leave at gate"
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" rows={3} />
             </div>
 
@@ -294,5 +306,3 @@ export default function CheckoutForm() {
     </div>
   );
 }
-
-  
