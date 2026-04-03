@@ -1,6 +1,32 @@
 import { Suspense } from "react";
 import ProductsContent from "./ProductsContent";
 
+export const metadata = {
+  title: "All Products",  // becomes "All Products | Adventures Bookshop" automatically
+  description:
+    "Browse our full range of books, stationery, school supplies, art materials and technology at Adventures Bookshop. Quality products at affordable prices, delivered in Nairobi.",
+  keywords: [
+    "bookshop",
+    "books",
+    "stationery",
+    "buy books nairobi",
+    "school stationery kenya",
+    "art supplies nairobi",
+    "exercise books kenya",
+    "affordable stationery nairobi",
+  ],
+  alternates: {
+    canonical: "https://adventuresbookshop.org/products",
+  },
+  openGraph: {
+    title: "All Products | Adventures Bookshop",
+    description:
+      "Browse books, stationery, school supplies and more at Adventures Bookshop — Nairobi's trusted bookstore.",
+    url: "https://adventuresbookshop.org/products",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
+};
+
 export default function ProductsPage() {
   return (
     <Suspense fallback={
