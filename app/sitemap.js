@@ -6,14 +6,23 @@ export default async function sitemap() {
 
   try {
     const res = await productAPI.getAll();
-    products = res.data || [];
+    // Handle different response shapes
+    products = Array.isArray(res.data)
+      ? res.data
+      : Array.isArray(res.data?.results)
+      ? res.data.results
+      : [];
   } catch (err) {
     console.error("Sitemap: failed to fetch products", err);
   }
 
   try {
     const res = await categoryAPI.getCategoryHierarchy();
-    categories = res.data || [];
+    categories = Array.isArray(res.data)
+      ? res.data
+      : Array.isArray(res.data?.results)
+      ? res.data.results
+      : [];
   } catch (err) {
     console.error("Sitemap: failed to fetch categories", err);
   }
@@ -41,7 +50,7 @@ export default async function sitemap() {
 
   const productPages = products.map((product) => ({
     url: `https://adventuresbookshop.org/products/${product.id}`,
-    lastModified: product.updatedAt || new Date(),
+    lastModified: product.updatedAt || product.updated_at || new Date(),
     changeFrequency: "weekly",
     priority: 0.7,
   }));
