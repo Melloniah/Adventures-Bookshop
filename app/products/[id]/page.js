@@ -50,10 +50,7 @@ export async function generateMetadata({ params }) {
       description: "Browse our full range of books and stationery at Adventures Bookshop.",
     };
   }
-  <div className="bg-red-500 text-white p-10">
-      <h1>IF YOU SEE THIS, THE ROUTE IS WORKING. ID: {id}</h1>
-      <ProductDetail id={id} />
-    </div>
+ 
 }
 
 // ✅ JSON-LD structured data for the product
@@ -101,6 +98,10 @@ export default async function ProductPage({ params }) {
   
   return (
     <>
+     <div className="bg-red-500 text-white p-10">
+      <h1>IF YOU SEE THIS, THE ROUTE IS WORKING. ID: {id}</h1>
+      <ProductDetail id={id} />
+    </div>
       <ProductSchema id={params.id} />
       <ProductDetail id={params.id} />
     </>
