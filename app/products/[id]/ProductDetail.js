@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { productAPI } from "../../../lib/api";
+import { productAPI } from "../../../../lib/api";
 import Image from "next/image";
 import { useCartStore } from "../../../store/useCartStore";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
