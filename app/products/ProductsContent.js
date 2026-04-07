@@ -94,7 +94,7 @@ export default function ProductsContent() {
     const fetchBreadcrumbs = async () => {
       try {
         // Change this line:
-        await categoryAPI.getCategoryBreadcrumbs(categorySlug);
+        const res = await categoryAPI.getCategoryBreadcrumbs(categorySlug);
         setBreadcrumbs(res.data);
       } catch (err) {
         console.error("Failed to load breadcrumbs", err);
