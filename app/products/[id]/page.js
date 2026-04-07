@@ -4,9 +4,11 @@ import ProductDetail from "./ProductDetail";
 
 // ✅ Dynamic SEO metadata per product
 export async function generateMetadata({ params }) {
-  const { id } = await params;
+  const { id } = await params; // 1. You resolved it here...
+  
   try {
-    const res = await productAPI.getById(params.id);
+    // 2. USE 'id' HERE (NOT params.id)
+    const res = await productAPI.getById(id); 
     const product = res.data;
 
     const imageUrl = getImageUrl(product.image)
@@ -14,15 +16,15 @@ export async function generateMetadata({ params }) {
       : "https://adventuresbookshop.org/og-image.jpg";
 
     return {
-      
-      title: product.name,  // layout.js template adds "| Adventures Bookshop" automatically
+      title: product.name,
       description: product.description
         ? `${product.description.slice(0, 150)}...`
         : `Buy ${product.name} at Adventures Bookshop. Quality school supplies and stationery in Nairobi.`,
       openGraph: {
         title: `${product.name} | Adventures Bookshop`,
         description: product.description || `Buy ${product.name} at Adventures Bookshop, Nairobi.`,
-        url: `https://adventuresbookshop.org/products/${params.id}`,
+        // 3. USE 'id' HERE TOO
+        url: `https://adventuresbookshop.org/products/${id}`, 
         images: [
           {
             url: imageUrl,
@@ -40,17 +42,17 @@ export async function generateMetadata({ params }) {
         images: [imageUrl],
       },
       alternates: {
-        canonical: `https://adventuresbookshop.org/products/${params.id}`,
+        // 4. AND HERE
+        canonical: `https://adventuresbookshop.org/products/${id}`,
       },
     };
-  } catch {
-    // Fallback if product fetch fails
+  } catch (error) {
+    console.error("Metadata fetch error:", error);
     return {
       title: "Product Not Found",
       description: "Browse our full range of books and stationery at Adventures Bookshop.",
     };
   }
- 
 }
 
 // ✅ JSON-LD structured data for the product
