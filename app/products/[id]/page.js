@@ -4,13 +4,16 @@ import ProductDetail from "./ProductDetail";
 
 // ✅ Dynamic SEO metadata per product
 export async function generateMetadata({ params }) {
-  const { id } = await params; // 1. You resolved it here...
+  const { id } = await params; 
   
   try {
     // 2. USE 'id' HERE (NOT params.id)
     const res = await productAPI.getById(id); 
-    const product = res.data;
+    const product = res.data?.product || res.data;
 
+    if (!product || !product.name) {
+  throw new Error("Product data missing");
+    }
     const imageUrl = getImageUrl(product.image)
       ? `https://adventuresbookshop.org${getImageUrl(product.image)}`
       : "https://adventuresbookshop.org/og-image.jpg";
@@ -59,7 +62,7 @@ export async function generateMetadata({ params }) {
 async function ProductSchema({ id }) {
   try {
     const res = await productAPI.getById(id);
-    const product = res.data;
+    const product = res.data?.product || res.data;
 
     const schema = {
       "@context": "https://schema.org",
