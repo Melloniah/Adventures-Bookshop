@@ -4,6 +4,7 @@ import ProductDetail from "./ProductDetail";
 
 // ✅ Dynamic SEO metadata per product
 export async function generateMetadata({ params }) {
+  const { id } = await params;
   try {
     const res = await productAPI.getById(params.id);
     const product = res.data;
@@ -90,7 +91,9 @@ async function ProductSchema({ id }) {
   }
 }
 
-export default function ProductPage({ params }) {
+export default async function ProductPage({ params }) {
+  const { id } = await params;
+  
   return (
     <>
       <ProductSchema id={params.id} />
