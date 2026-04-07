@@ -92,15 +92,15 @@ async function ProductSchema({ id }) {
     return null;
   }
 }
-
 export default async function ProductPage({ params }) {
+  // 1. We resolve the promise here
   const { id } = await params;
   
   return (
     <>
-   
-      <ProductSchema id={params.id} />
-      <ProductDetail id={params.id} />
+      {/* 2. Use the 'id' variable, NOT 'params.id' */}
+      <ProductSchema id={id} />
+      <ProductDetail id={id} />
     </>
   );
 }
