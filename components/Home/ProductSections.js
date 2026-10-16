@@ -27,7 +27,7 @@ export default async function ProductSections() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
 
             {/* Books Card */}
-            <Link href="/products?category=books">
+            <Link href="/products">
               <div className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition cursor-pointer">
                 <Image
                   src="/books.jpg"
