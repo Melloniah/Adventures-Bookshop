@@ -203,24 +203,24 @@ const Header = () => {
 
 
 {/* Running Banner */}
-<div className="bg-gradient-to-r from-sky-200 to-sky-300 text-sky-950 text-sm py-2.5 overflow-hidden border-t border-sky-300">
+<div className="bg-gradient-to-r from-sky-200 to-sky-300 text-black text-sm py-2.5 overflow-hidden border-t border-sky-300">
   <div className="animate-marquee whitespace-nowrap">
-    <span className="inline-block px-8 font-medium">
+    <span className="inline-block px-8 font-semibold">
       Free Delivery on Orders Exceeding KSh 4,000
     </span>
-    <span className="inline-block px-8 font-medium">
+    <span className="inline-block px-8 font-semibold">
       Call Us: +254 724047489
     </span>
-    <span className="inline-block px-8 font-medium">
+    <span className="inline-block px-8 font-semibold">
       Mfangano Street, Opposite Quickmart Afya Center
     </span>
-    <span className="inline-block px-8 font-medium">
+    <span className="inline-block px-8 font-semibold">
       Free Delivery on Orders Exceeding KSh 4,000
     </span>
-    <span className="inline-block px-8 font-medium">
+    <span className="inline-block px-8 font-semibold">
       Call Us: +254 724047489
     </span>
-    <span className="inline-block px-8 font-medium">
+    <span className="inline-block px-8 font-semibold">
       Mfangano Street, Opposite Quickmart Afya Center
     </span>
   </div>
