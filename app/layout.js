@@ -24,6 +24,7 @@ export const metadata = {
     "affordable books nairobi",
     "pay after delivery bookstore",
     "mfangano street nairobi",
+    "Information House",
     "art materials kenya",
     "exercise books nairobi",
   ],

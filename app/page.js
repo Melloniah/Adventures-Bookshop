@@ -19,6 +19,7 @@ export const metadata = {
     "technology students nairobi",
     "adventures bookshop",
     "mfangano street nairobi",
+    "Information House",
   ],
   authors: [{ name: "Adventures Bookshop" }],
   creator: "Adventures Bookshop",
