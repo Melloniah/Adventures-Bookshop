@@ -212,7 +212,7 @@ const Header = () => {
       Call Us: +254 724047489
     </span>
     <span className="inline-block px-8 font-semibold">
-      Mfangano Street, Opposite Quickmart Afya Center
+      Information Hse, Ground floor, Opposite Quickmart Afya Center
     </span>
     <span className="inline-block px-8 font-semibold">
       Free Delivery on Orders Exceeding KSh 4,000
@@ -221,7 +221,8 @@ const Header = () => {
       Call Us: +254 724047489
     </span>
     <span className="inline-block px-8 font-semibold">
-      Mfangano Street, Opposite Quickmart Afya Center
+      Information Hse, Ground floor, Opposite Quickmart Afya Center
+
     </span>
   </div>
 </div>
