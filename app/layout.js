@@ -56,7 +56,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Adventures Bookshop | Your Story Starts Here",
     description:
-      "Books, stationery and school supplies delivered in Nairobi. Free delivery on orders over KSh 3,000.",
+      "Books, stationery and school supplies delivered in Nairobi. Free delivery on orders over KSh 4,000.",
     images: ["/og-image.jpg"],
   },
 

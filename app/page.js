@@ -29,7 +29,7 @@ export const metadata = {
   openGraph: {
     title: "Adventures Bookshop | Books, School Supplies & Stationery in Nairobi",
     description:
-      "Your one-stop shop for school supplies, books, stationery, art materials and technology. Free delivery on orders over KSh 3,000.",
+      "Your one-stop shop for school supplies, books, stationery, art materials and technology. Free delivery on orders over KSh 4,000.",
     url: "https://adventuresbookshop.org/", 
     siteName: "Adventures Bookshop",
     images: [
@@ -47,7 +47,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Adventures Bookshop | Books, School Supplies in Nairobi",
     description:
-      "Your one-stop shop for school supplies, books, stationery and more. Free delivery on orders over KSh 3,000.",
+      "Your one-stop shop for school supplies, books, stationery and more. Free delivery on orders over KSh 4,000.",
     images: ["/og-image.jpg"], 
   },
   robots: {

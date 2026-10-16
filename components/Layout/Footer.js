@@ -120,7 +120,7 @@ const Footer = () => {
               </div>
               <div className="mt-6 p-4 bg-white/10 rounded-lg border border-white/20">
                 <p className="text-xs font-semibold text-yellow-300 mb-1"> Free Delivery</p>
-                <p className="text-xs text-teal-100">On orders exceeding KSh 3,000</p>
+                <p className="text-xs text-teal-100">On orders exceeding KSh 4,000</p>
               </div>
             </div>
           </div>
@@ -130,7 +130,7 @@ const Footer = () => {
         <div className="border-t border-white/10 bg-teal-950/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-teal-200">
-              <p>© 2025 Adventures Bookshop. All Rights Reserved.</p>
+              <p>© 2026 Adventures Bookshop. All Rights Reserved.</p>
               <div className="flex items-center gap-4">
                 <Link href="/" className="hover:text-yellow-300 transition-colors">Home</Link>
                 <span>•</span>
