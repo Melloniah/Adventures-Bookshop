@@ -9,13 +9,14 @@ export const categoryIcons = {
   "grade-1": "✏️",
   "grade-2": "📝",
   "grade-3": "📖",
+  "grade-4": "📓",
   "arts": "🖌️",
   "stationery": "🖊️",
   "technology": "💻",
   "books": "📚",
 };
 
-const featuredCategories = ["pre-school", "grade-1", "grade-2", "stationery", "arts"];
+const featuredCategories = ["pre-school", "grade-1", "grade-2", "grade-3", "grade-4", "arts"];
 
 export default function CategorySection() {
   const [categories, setCategories] = useState([]);
@@ -62,11 +63,8 @@ export default function CategorySection() {
     <section className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Header row */}
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Shop By Category
-          </h2>
+        {/* Header row: button on the left, title next to it */}
+        <div className="flex items-center gap-4 mb-8">
 
           {/* All Categories dropdown trigger */}
           <div className="relative" ref={dropdownRef}>
@@ -93,7 +91,7 @@ export default function CategorySection() {
 
             {/* Dropdown panel */}
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+              <div className="absolute left-0 mt-2 w-72 sm:w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
                 <div className="p-3 bg-red-600">
                   <p className="text-white font-semibold text-sm">All Categories</p>
                 </div>
@@ -141,6 +139,10 @@ export default function CategorySection() {
               </div>
             )}
           </div>
+
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            Shop By Category
+          </h2>
         </div>
 
         {/* Featured categories grid */}
