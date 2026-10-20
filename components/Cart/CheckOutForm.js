@@ -167,11 +167,11 @@ export default function CheckoutForm() {
 
         <div className="flex justify-between items-center font-bold text-lg mt-2">
           <span>Delivery Fee:</span>
-          <span className="text-xl text-teal-600">KSh {(deliverOrder ? deliveryFee : 0).toLocaleString()}</span>
+          <span className="text-xl text-blue-600">KSh {(deliverOrder ? deliveryFee : 0).toLocaleString()}</span>
         </div>
         <div className="flex justify-between items-center font-bold text-lg mt-2">
           <span>Total Amount:</span>
-          <span className="text-xl text-teal-600">KSh {(totalAmount + (deliverOrder ? deliveryFee : 0)).toLocaleString()}</span>
+          <span className="text-xl text-blue-600">KSh {(totalAmount + (deliverOrder ? deliveryFee : 0)).toLocaleString()}</span>
         </div>
       </div>
 
@@ -298,7 +298,7 @@ export default function CheckoutForm() {
 
         <button type="submit"
           disabled={loading}
-          className="w-full bg-teal-600 text-white py-4 px-6 rounded-lg hover:bg-teal-700 transition-colors text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-teal-700 transition-colors text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Processing Order...' : `Complete Order - KSh ${(totalAmount + (deliverOrder ? deliveryFee : 0)).toLocaleString()}`}
         </button>

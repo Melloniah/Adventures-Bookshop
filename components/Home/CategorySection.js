@@ -70,7 +70,7 @@ export default function CategorySection() {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen((prev) => !prev)}
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg font-semibold text-sm transition-colors shadow-sm"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg font-semibold text-sm transition-colors shadow-sm"
             >
               {/* Hamburger icon */}
               <span className="flex flex-col gap-1">
@@ -92,7 +92,7 @@ export default function CategorySection() {
             {/* Dropdown panel */}
             {dropdownOpen && (
               <div className="absolute left-0 mt-2 w-72 sm:w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
-                <div className="p-3 bg-red-600">
+                <div className="p-3 bg-blue-600">
                   <p className="text-white font-semibold text-sm">All Categories</p>
                 </div>
                 <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
@@ -101,13 +101,13 @@ export default function CategorySection() {
                       key={cat.id}
                       href={`/products?category=${cat.slug}`}
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 hover:text-red-600 transition-colors group"
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 hover:text-blue-700 transition-colors group"
                     >
                       <span className="text-xl">
                         {categoryIcons[cat.slug] || "🛒"}
                       </span>
                       <div>
-                        <p className="text-sm font-medium text-gray-800 group-hover:text-red-600">
+                        <p className="text-sm font-medium text-gray-800 group-hover:text-blue-700">
                           {cat.name}
                         </p>
                         {cat.description && (
@@ -117,7 +117,7 @@ export default function CategorySection() {
                         )}
                       </div>
                       <svg
-                        className="w-4 h-4 ml-auto text-gray-300 group-hover:text-red-400"
+                        className="w-4 h-4 ml-auto text-gray-300 group-hover:text-blue-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -131,7 +131,7 @@ export default function CategorySection() {
                   <Link
                     href="/categories"
                     onClick={() => setDropdownOpen(false)}
-                    className="block text-center text-sm text-red-600 font-semibold hover:underline"
+                    className="block text-center text-sm text-blue-700 font-semibold hover:underline"
                   >
                     Browse All Categories →
                   </Link>
@@ -151,7 +151,7 @@ export default function CategorySection() {
             <Link key={cat.id} href={`/products?category=${cat.slug}`} className="group">
               <div className="p-6 rounded-lg text-center bg-white hover:shadow-lg transition-all hover:-translate-y-0.5 border border-gray-100">
                 <div className="text-3xl mb-3">{categoryIcons[cat.slug] || "🛒"}</div>
-                <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-red-600 text-sm sm:text-base">
+                <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-blue-700 text-sm sm:text-base">
                   {cat.name}
                 </h3>
                 {cat.description && (
@@ -166,7 +166,7 @@ export default function CategorySection() {
 
         {/* Bottom link */}
         <div className="mt-6 text-center">
-          <Link href="/categories" className="text-red-600 font-semibold hover:underline text-sm sm:text-base">
+          <Link href="/categories" className="text-blue-700 font-semibold hover:underline text-sm sm:text-base">
             View All Categories →
           </Link>
         </div>

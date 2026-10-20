@@ -60,7 +60,7 @@ export default function ProductDetail({ id }) {  // ✅ receives id as prop now
         {product.stock_quantity > 0 && (
           <button
             onClick={handleAddToCart}
-            className="w-full mt-3 bg-teal-400 text-black-700 py-2 px-4 rounded hover:bg-red-600 hover:text-white transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full mt-3 bg-blue-500 text-black-700 py-2 px-4 rounded hover:bg-red-600 hover:text-white transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ShoppingCartIcon className="h-4 w-4 mr-2" />
             ADD TO CART

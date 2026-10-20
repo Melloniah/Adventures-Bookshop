@@ -53,12 +53,12 @@ const Header = () => {
     <>
       <header className={`bg-white sticky top-0 z-50 transition-shadow duration-300 ${isScrolled ? 'shadow-md' : 'shadow-sm'}`}>
         {/* Top bar */}
-        <div className="bg-gradient-to-r from-teal-600 to-teal-700 px-4 py-2.5 text-sm text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2.5 text-sm text-white">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <div className="flex items-center gap-4">
               <a
                 href="mailto:adventuresbookshop@gmail.com"
-                className="flex items-center gap-2 hover:text-teal-100 transition-colors group"
+                className="flex items-center gap-2 hover:text-blue-100 transition-colors group"
               >
                 <span className="text-base">✉️</span>
                 <span className="hidden sm:inline group-hover:underline">adventuresbooks@gmail.com</span>
@@ -66,7 +66,7 @@ const Header = () => {
             </div>
             <a
               href="tel:+254724047489"
-              className="flex items-center gap-2 hover:text-teal-100 transition-colors group"
+              className="flex items-center gap-2 hover:text-blue-100 transition-colors group"
             >
               <PhoneIcon className="h-4 w-4" />
               <span className="font-medium group-hover:underline">+254 724047489</span>
@@ -90,7 +90,7 @@ const Header = () => {
                 />
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="text-teal-700 font-bold text-xl tracking-tight">
+                <span className="text-blue-700 font-bold text-xl tracking-tight">
                   Adventures
                 </span>
                 <span className="text-gray-700 font-semibold text-sm tracking-wide">
@@ -102,21 +102,20 @@ const Header = () => {
             {/* Right side */}
             <div className="flex items-center gap-3">
               {/* Search icon for mobile */}
-                <button
-  onClick={() => router.push("/products")}
-  className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
->
-  <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
-</button>
-
+              <button
+                onClick={() => router.push("/products")}
+                className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
+              </button>
 
               {/* Cart */}
               {mounted && (
                 <button
                   onClick={() => setIsCartOpen(true)}
-                  className="relative p-2 hover:bg-teal-50 rounded-lg transition-colors group"
+                  className="relative p-2 hover:bg-blue-50 rounded-lg transition-colors group"
                 >
-                  <ShoppingCartIcon className="h-6 w-6 text-gray-700 group-hover:text-teal-600 transition-colors" />
+                  <ShoppingCartIcon className="h-6 w-6 text-gray-700 group-hover:text-blue-600 transition-colors" />
                   {getTotalItems() > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
                       {getTotalItems()}
@@ -124,7 +123,6 @@ const Header = () => {
                   )}
                 </button>
               )}
-
 
               {/* Mobile Menu Button */}
               <button
@@ -142,7 +140,7 @@ const Header = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="bg-gradient-to-r from-teal-600 to-teal-700 border-t border-teal-500">
+        <nav className="bg-gradient-to-r from-blue-600 to-blue-700 border-t border-blue-500">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center justify-between">
@@ -153,8 +151,8 @@ const Header = () => {
                     href={link.href}
                     className={`px-4 py-3 text-sm font-medium rounded-t transition-all ${
                       isActive(link.href)
-                        ? "bg-white text-teal-700 shadow-sm"
-                        : "text-white hover:bg-teal-500"
+                        ? "bg-white text-blue-700 shadow-sm"
+                        : "text-white hover:bg-blue-500"
                     }`}
                   >
                     {link.name}
@@ -179,9 +177,9 @@ const Header = () => {
                     key={link.href}
                     href={link.href}
                     className={`block py-2.5 px-4 rounded-lg text-sm font-medium transition-colors ${
-                      isActive(link.href) 
-                        ? "bg-white text-teal-700" 
-                        : "text-white hover:bg-teal-500"
+                      isActive(link.href)
+                        ? "bg-white text-blue-700"
+                        : "text-white hover:bg-blue-500"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -201,31 +199,29 @@ const Header = () => {
           </div>
         </nav>
 
-
-{/* Running Banner */}
-<div className="bg-gradient-to-r from-sky-200 to-sky-300 text-black text-sm py-2.5 overflow-hidden border-t border-sky-300">
-  <div className="animate-marquee whitespace-nowrap">
-    <span className="inline-block px-8 font-semibold">
-      Free Delivery on Orders Exceeding KSh 4,000
-    </span>
-    <span className="inline-block px-8 font-semibold">
-      Call Us: +254 724047489
-    </span>
-    <span className="inline-block px-8 font-semibold">
-      Information Hse, Ground floor, Opposite Quickmart Afya Center
-    </span>
-    <span className="inline-block px-8 font-semibold">
-      Free Delivery on Orders Exceeding KSh 4,000
-    </span>
-    <span className="inline-block px-8 font-semibold">
-      Call Us: +254 724047489
-    </span>
-    <span className="inline-block px-8 font-semibold">
-      Information Hse, Ground floor, Opposite Quickmart Afya Center
-
-    </span>
-  </div>
-</div>
+        {/* Running Banner */}
+        <div className="bg-gradient-to-r from-sky-200 to-sky-300 text-black text-sm py-2.5 overflow-hidden border-t border-sky-300">
+          <div className="animate-marquee whitespace-nowrap">
+            <span className="inline-block px-8 font-semibold">
+              Free Delivery on Orders Exceeding KSh 4,000
+            </span>
+            <span className="inline-block px-8 font-semibold">
+              Call Us: +254 724047489
+            </span>
+            <span className="inline-block px-8 font-semibold">
+              Information Hse, Ground floor, Opposite Quickmart Afya Center
+            </span>
+            <span className="inline-block px-8 font-semibold">
+              Free Delivery on Orders Exceeding KSh 4,000
+            </span>
+            <span className="inline-block px-8 font-semibold">
+              Call Us: +254 724047489
+            </span>
+            <span className="inline-block px-8 font-semibold">
+              Information Hse, Ground floor, Opposite Quickmart Afya Center
+            </span>
+          </div>
+        </div>
       </header>
 
       {/* Cart Sidebar */}

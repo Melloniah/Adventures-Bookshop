@@ -13,18 +13,17 @@ const Footer = () => {
   ];
 
   const popularTags = [
-  { name: "Stationery", category: "stationery" },
-  { name: "Textbooks", category: "books" },
-  { name: "Books", category: "books" },
-  { name: "Art Supplies", category: "arts" },
-  { name: "Technology", category: "technology" },
-];
-
+    { name: "Stationery", category: "stationery" },
+    { name: "Textbooks", category: "books" },
+    { name: "Books", category: "books" },
+    { name: "Art Supplies", category: "arts" },
+    { name: "Technology", category: "technology" },
+  ];
 
   return (
     <>
       {/* --- FOOTER --- */}
-      <footer className="bg-gradient-to-b from-teal-700 to-teal-900 text-white">
+      <footer className="bg-gradient-to-b from-blue-700 to-blue-900 text-white">
         {/* Main Footer */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -41,14 +40,14 @@ const Footer = () => {
                 />
                 <div>
                   <h3 className="font-bold text-lg">Adventures</h3>
-                  <p className="text-xs text-teal-200">Bookshop</p>
+                  <p className="text-xs text-blue-200">Bookshop</p>
                 </div>
               </div>
-              <p className="text-sm text-teal-100 mb-4">
+              <p className="text-sm text-blue-100 mb-4">
                 Your one-stop shop for educational materials and stationery with fast delivery.
               </p>
               <div className="flex space-x-3">
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
                    className="bg-white/10 hover:bg-white/20 w-9 h-9 rounded-full flex items-center justify-center transition-all transform hover:scale-110">
                   <span className="text-lg">📘</span>
                 </a>
@@ -69,9 +68,9 @@ const Footer = () => {
               <ul className="grid grid-cols-2 gap-2">
                 {quickLinks.map((link) => (
                   <li key={link.name}>
-                    <Link 
-                      href={link.href} 
-                      className="text-sm text-teal-100 hover:text-yellow-300 transition-colors inline-block hover:translate-x-1 duration-200"
+                    <Link
+                      href={link.href}
+                      className="text-sm text-blue-100 hover:text-yellow-300 transition-colors inline-block hover:translate-x-1 duration-200"
                     >
                       → {link.name}
                     </Link>
@@ -83,9 +82,9 @@ const Footer = () => {
             {/* Contact Info */}
             <div>
               <h3 className="font-bold text-lg mb-4 text-yellow-300">Contact Us</h3>
-              <div className="space-y-3 text-sm text-teal-100">
+              <div className="space-y-3 text-sm text-blue-100">
                 <div className="flex items-start gap-2">
-                  
+
                   <p>Location: Information House, Mfangano St, Opp. Quickmart Afya Center</p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -108,28 +107,27 @@ const Footer = () => {
               <h3 className="font-bold text-lg mb-4 text-yellow-300">Popular Tags</h3>
               <div className="flex flex-wrap gap-2">
                 {popularTags.map((tag) => (
-  <Link
-    key={tag.name}
-    href={`/products?category=${tag.category}`}
-    className="bg-white/10 hover:bg-yellow-400 hover:text-teal-900 px-3 py-1.5 rounded-full text-xs font-medium transition-all transform hover:scale-105"
-  >
-    {tag.name}
-  </Link>
-))}
-
+                  <Link
+                    key={tag.name}
+                    href={`/products?category=${tag.category}`}
+                    className="bg-white/10 hover:bg-yellow-400 hover:text-blue-900 px-3 py-1.5 rounded-full text-xs font-medium transition-all transform hover:scale-105"
+                  >
+                    {tag.name}
+                  </Link>
+                ))}
               </div>
               <div className="mt-6 p-4 bg-white/10 rounded-lg border border-white/20">
                 <p className="text-xs font-semibold text-yellow-300 mb-1"> Free Delivery</p>
-                <p className="text-xs text-teal-100">On orders exceeding KSh 4,000</p>
+                <p className="text-xs text-blue-100">On orders exceeding KSh 4,000</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Footer */}
-        <div className="border-t border-white/10 bg-teal-950/50">
+        <div className="border-t border-white/10 bg-blue-950/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-teal-200">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-blue-200">
               <p>© 2026 Adventures Bookshop. All Rights Reserved.</p>
               <div className="flex items-center gap-4">
                 <Link href="/" className="hover:text-yellow-300 transition-colors">Home</Link>
