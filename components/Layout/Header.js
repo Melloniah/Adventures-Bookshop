@@ -53,7 +53,7 @@ const Header = () => {
     <>
       <header className={`bg-white sticky top-0 z-50 transition-shadow duration-300 ${isScrolled ? 'shadow-md' : 'shadow-sm'}`}>
         {/* Top bar */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2.5 text-sm text-white">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-2.5 text-sm text-white">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <div className="flex items-center gap-4">
               <a
@@ -115,9 +115,9 @@ const Header = () => {
                   onClick={() => setIsCartOpen(true)}
                   className="relative p-2 hover:bg-blue-50 rounded-lg transition-colors group"
                 >
-                  <ShoppingCartIcon className="h-6 w-6 text-gray-700 group-hover:text-blue-600 transition-colors" />
+                  <ShoppingCartIcon className="h-6 w-6 text-gray-700 group-hover:text-blue-500 transition-colors" />
                   {getTotalItems() > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                    <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
                       {getTotalItems()}
                     </span>
                   )}
@@ -140,7 +140,7 @@ const Header = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="bg-gradient-to-r from-blue-600 to-blue-700 border-t border-blue-500">
+        <nav className="bg-gradient-to-r from-blue-500 to-blue-700 border-t border-blue-500">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center justify-between">

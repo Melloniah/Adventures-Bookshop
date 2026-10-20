@@ -117,7 +117,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                           <Link
                             href="/checkout"
                             onClick={onClose}
-                            className="flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-red-700"
+                            className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-500 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-600"
                           >
                             Checkout
                           </Link>
@@ -136,7 +136,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                             or{' '}
                             <button
                               type="button"
-                              className="font-medium text-red-600 hover:text-red-500"
+                              className="font-medium text-blue-600 hover:text-blue-500"
                               onClick={onClose}
                             >
                               Continue Shopping

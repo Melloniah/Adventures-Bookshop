@@ -135,7 +135,7 @@ export default function CheckoutForm() {
         <p className="text-gray-600 mb-8">Add some products to continue with checkout</p>
         <button
           onClick={handleContinueShopping}
-          className="bg-red-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+          className="bg-blue-500 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
         >
           Continue Shopping
         </button>
@@ -148,12 +148,12 @@ export default function CheckoutForm() {
       <h2 className="text-3xl font-bold mb-8 text-center">Checkout</h2>
 
       {/* Order Summary */}
-      <div className="bg-red-50 p-6 rounded-lg mb-8 border-l-4 border-red-500">
+      <div className="bg-blue-50 p-6 rounded-lg mb-8 border-l-4 border-blue-500">
         <h3 className="font-semibold mb-4 text-lg">Order Summary</h3>
         {cartItems.map((item) => (
-          <div key={item.id} className="flex justify-between items-center mb-2 pb-2 border-b border-red-100">
+          <div key={item.id} className="flex justify-between items-center mb-2 pb-2 border-b border-blue-100">
             <span className="text-sm font-medium">{item.name} × {item.quantity}</span>
-            <span className="text-lg font-bold text-red-600">KSh {(item.price * item.quantity).toLocaleString()}</span>
+            <span className="text-lg font-bold text-blue-600">KSh {(item.price * item.quantity).toLocaleString()}</span>
           </div>
         ))}
 
@@ -182,12 +182,12 @@ export default function CheckoutForm() {
           <div>
             <label className="block text-sm font-semibold mb-2 text-gray-700">Full Name *</label>
             <input type="text" name="full_name" required value={customerInfo.full_name} onChange={handleInputChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" />
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" />
           </div>
           <div>
             <label className="block text-sm font-semibold mb-2 text-gray-700">Phone *</label>
             <input type="tel" name="phone" required value={customerInfo.phone} onChange={handleInputChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" />
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" />
           </div>
         </div>
 
@@ -195,7 +195,7 @@ export default function CheckoutForm() {
           <label className="block text-sm font-semibold mb-2 text-gray-700">Email (Optional)</label>
           <input type="email" name="email" value={customerInfo.email} onChange={handleInputChange}
             placeholder="your.email@example.com"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" />
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" />
         </div>
 
         {/* DELIVER TOGGLE */}
@@ -205,7 +205,7 @@ export default function CheckoutForm() {
             id="deliverOrder"
             checked={deliverOrder}
             onChange={() => setDeliverOrder(!deliverOrder)}
-            className="mr-3 h-5 w-5 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
+            className="mr-3 h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
           />
           <label htmlFor="deliverOrder" className="text-gray-700 font-semibold">Deliver my order</label>
         </div>
@@ -217,21 +217,21 @@ export default function CheckoutForm() {
               <label className="block text-sm font-semibold mb-2 text-gray-700">Delivery Location/Address *</label>
               <textarea name="location" required value={customerInfo.location} onChange={handleInputChange}
                 placeholder="Enter your full delivery address"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" rows={3} />
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" rows={3} />
             </div>
 
             <div className="mb-6">
               <label className="block text-sm font-semibold mb-2 text-gray-700">Estate/Building Name (Optional)</label>
               <input type="text" name="estate" value={customerInfo.estate} onChange={handleInputChange}
                 placeholder="E.g., Greenview Apartments, Block C"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" />
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" />
             </div>
 
             <div className="mb-6">
               <label className="block text-sm font-semibold mb-2 text-gray-700">Delivery Notes (Optional)</label>
               <textarea name="notes" value={customerInfo.notes} onChange={handleInputChange}
                 placeholder="E.g., Apartment 5B, Call when you arrive, Leave at gate"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none" rows={3} />
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" rows={3} />
             </div>
 
             <div className="mb-8">
@@ -239,7 +239,7 @@ export default function CheckoutForm() {
               <select
                 value={selectedRoute}
                 onChange={(e) => setSelectedRoute(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
               >
                 <option value="">Select a route</option>
                 {routes.map((route) => (
@@ -260,7 +260,7 @@ export default function CheckoutForm() {
                       const stop = stops.find((s) => s.id === parseInt(stopId));
                       setDeliveryFee(stop ? stop.price : 0);
                     }}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
                   >
                     <option value="">Select a stop</option>
                     {stops.map((stop) => (
@@ -279,8 +279,8 @@ export default function CheckoutForm() {
         <div className="mb-8">
           <label className="block text-sm font-semibold mb-4 text-gray-700">Payment Method</label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors ${paymentMethod === 'mpesa' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-red-300'}`}>
-              <input type="radio" name="payment" value="mpesa" checked={paymentMethod === 'mpesa'} onChange={(e) => setPaymentMethod(e.target.value)} className="mr-4 text-red-500" />
+            <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors ${paymentMethod === 'mpesa' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}`}>
+              <input type="radio" name="payment" value="mpesa" checked={paymentMethod === 'mpesa'} onChange={(e) => setPaymentMethod(e.target.value)} className="mr-4 text-blue-500" />
               <div>
                 <div className="font-semibold">M-Pesa</div>
                 <div className="text-sm text-gray-500">Secure STK Push</div>
@@ -298,7 +298,7 @@ export default function CheckoutForm() {
 
         <button type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-teal-700 transition-colors text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-blue-500 text-white py-4 px-6 rounded-lg hover:bg-blue-600 transition-colors text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Processing Order...' : `Complete Order - KSh ${(totalAmount + (deliverOrder ? deliveryFee : 0)).toLocaleString()}`}
         </button>

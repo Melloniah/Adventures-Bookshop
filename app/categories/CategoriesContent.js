@@ -45,7 +45,7 @@ export default function CategoriesContent() {
               )}
               <Link
                 href={`/products?category=${parent.slug}`}
-                className="text-2xl font-semibold hover:text-red-600 transition"
+                className="text-2xl font-semibold hover:text-blue-600 transition"
               >
                 {parent.name}
               </Link>
@@ -75,7 +75,7 @@ export default function CategoriesContent() {
                         </div>
                       )}
                       <h4 className="font-semibold">{prod.name}</h4>
-                      <p className="text-red-600 font-medium">KSh {prod.price}</p>
+                      <p className="text-blue-600 font-medium">KSh {prod.price}</p>
                     </Link>
                   ))}
                 </div>
@@ -119,14 +119,14 @@ export default function CategoriesContent() {
                               <li key={p.id}>
                                 <Link
                                   href={`/products/${p.slug}`}
-                                  className="hover:text-red-600"
+                                  className="hover:text-blue-600"
                                 >
                                   {p.name}
                                 </Link>
                               </li>
                             ))}
                             {sub.products.length > 3 && (
-                              <li className="text-red-600">
+                              <li className="text-blue-600">
                                 <Link href={`/products?category=${sub.slug}`}>
                                   View all →
                                 </Link>
