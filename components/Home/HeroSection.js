@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { getPublicHeroBannersAPI } from "../../lib/api";
 import { getImageUrl, handleImageError, placeholderSVG } from "utils/imageUtils";
 
@@ -69,34 +68,6 @@ const HeroSection = () => {
                 onError={handleImageError}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 100vw"
               />
-
-              {/* Overlay content */}
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center px-4 sm:px-8 md:px-12">
-                <div className="text-center w-full max-w-xs sm:max-w-xl md:max-w-3xl lg:max-w-5xl">
-                  {slide.description && (
-                    <div className="inline-block bg-yellow-400 text-black px-3 py-1 sm:px-6 sm:py-2 rounded-full text-xs sm:text-sm md:text-base font-medium mb-2 sm:mb-4 md:mb-6">
-                      {slide.description}
-                    </div>
-                  )}
-
-                  <h1 className="text-xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-2 sm:mb-4 leading-tight drop-shadow-lg">
-                    {slide.title}
-                  </h1>
-
-                  {slide.subtitle && (
-                    <p className="text-xs sm:text-base md:text-xl lg:text-2xl text-gray-200 mb-3 sm:mb-6 drop-shadow-md line-clamp-2 sm:line-clamp-none">
-                      {slide.subtitle}
-                    </p>
-                  )}
-
-                  <Link
-                    href="/products"
-                    className="inline-block bg-white text-black px-5 py-2 sm:px-8 sm:py-3 md:px-10 md:py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-sm sm:text-base md:text-lg shadow-lg"
-                  >
-                    Shop Now
-                  </Link>
-                </div>
-              </div>
             </div>
           </div>
         ))}
